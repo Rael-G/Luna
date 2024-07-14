@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="silk.net.glfw" Version="2.21.0" PrivateAssets="true" />
+    <PackageReference Include="silk.net.opengl" Version="2.21.0" PrivateAssets="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Luna.Core\Luna.Core.csproj" />
+    <ProjectReference Include="..\Luna.Maths\Luna.Maths.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
