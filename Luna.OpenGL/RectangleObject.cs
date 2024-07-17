@@ -36,8 +36,8 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     public override void Render()
     {
         Program.Use();
-        Program.UniformMat4("transform", Data.Transform.AsSpan());
-        Program.UniformVec4("color", Data.Color.ToMatrix().AsSpan());
+        Program.UniformMat4("transform", Data.Transform.Transpose());
+        Program.UniformVec4("color", Data.Color.ToMatrix());
         _gl.BindVertexArray(RectangleVAO.Handle);
         ReadOnlySpan<int> _ = new();
         _gl.DrawElements(PrimitiveType.Triangles, RectangleVAO.Size, DrawElementsType.UnsignedInt, _);

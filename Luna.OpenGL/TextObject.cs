@@ -36,8 +36,8 @@ internal class TextObject(TextData data) : RenderObject<TextData>
     public override void Render()
     {
         Program.Use();
-        Program.UniformVec3("textColor", Text.Color.ToMatrix().AsSpan());
-        Program.UniformMat4("transform", Text.Transform.AsSpan());
+        Program.UniformVec3("textColor", Text.Color.ToMatrix());
+        Program.UniformMat4("transform", Text.Transform);
 
         _gl.ActiveTexture(TextureUnit.Texture0);
         _gl.BindVertexArray(TextVAO.Handle);

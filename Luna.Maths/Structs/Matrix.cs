@@ -6,10 +6,10 @@ public class Matrix : IEnumerable<float>
 {
     public int Rows { get; }
     public int Columns { get; }
-    public float[,] Data { get; }
+    public float[] Data { get; }
 
-    public float Length 
-    { 
+    public float Length
+    {
         get
         {
             var sum = 0.0;
@@ -19,75 +19,76 @@ public class Matrix : IEnumerable<float>
         }
     }
 
-    public float this[int row, int colunm]
-    { 
-        get => Data[row, colunm];
-        set => Data[row, colunm] = value;
+    public float this[int row, int column]
+    {
+        get => Data[row * Columns + column];
+        set => Data[row * Columns + column] = value;
     }
 
     public Matrix(int rows, int columns)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(rows, 1, nameof(rows));
         ArgumentOutOfRangeException.ThrowIfLessThan(columns, 1, nameof(columns));
-        
+
         Rows = rows;
         Columns = columns;
-        Data = new float[rows, columns];
+        Data = new float[rows * columns];
     }
 
-    public Matrix(Matrix matrix)
+    public Matrix(int rows, int columns, float[] data)
     {
-        Rows = matrix.Rows;
-        Columns = matrix.Columns;
-        Data = new float[Rows, Columns];
-        Array.Copy(matrix.Data, Data, matrix.Data.Length);
+        Rows = rows;
+        Columns = columns;
+        Data = data;
     }
 
     public Matrix(float[,] data)
     {
         Rows = data.GetLength(0);
         Columns = data.GetLength(1);
-        Data = new float[Rows, Columns];
-        Array.Copy(data, Data, data.Length);
+        Data = new float[Rows * Columns];
+        for (int i = 0; i < Rows; i++)
+            for (int j = 0; j < Columns; j++)
+                this[i, j] = data[i, j];
     }
 
-    public static bool operator == (Matrix? a, Matrix? b)
+    public static bool operator ==(Matrix? a, Matrix? b)
     {
-        if (a is null || b is null || a.Rows != b.Rows || a.Columns != b.Columns) 
+        if (a is null || b is null || a.Rows != b.Rows || a.Columns != b.Columns)
             return false;
 
-        for(int i = 0; i < a.Rows; i++)
-            for(int j = 0; j < a.Columns; j++)
-                if(a[i,j] != b[i,j]) return false;
-        
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < a.Columns; j++)
+                if (a[i, j] != b[i, j]) return false;
+
         return true;
     }
 
-    public static bool operator != (Matrix? a, Matrix? b)
+    public static bool operator !=(Matrix? a, Matrix? b)
         => !(a == b);
-    
-    public static bool operator > (Matrix? a, Matrix? b)
+
+    public static bool operator >(Matrix? a, Matrix? b)
         => a?.Length > b?.Length;
-    
-    public static bool operator < (Matrix? a, Matrix? b)
+
+    public static bool operator <(Matrix? a, Matrix? b)
         => !(a > b);
 
-    public static bool operator >= (Matrix? a, Matrix? b)
+    public static bool operator >=(Matrix? a, Matrix? b)
         => a > b || a == b;
-    
-    public static bool operator <= (Matrix? a, Matrix? b)
+
+    public static bool operator <=(Matrix? a, Matrix? b)
         => a < b || a == b;
-    
-    public static Matrix operator + (Matrix a, Matrix b)
+
+    public static Matrix operator +(Matrix a, Matrix b)
     {
-        if (a.Rows != b.Rows || a.Columns != b.Columns) 
+        if (a.Rows != b.Rows || a.Columns != b.Columns)
             throw new InvalidOperationException("This operation requires matrices of the same size.");
-        
+
         var matrix = new Matrix(a.Rows, a.Columns);
 
-        for(int i = 0; i < a.Rows; i++)
+        for (int i = 0; i < a.Rows; i++)
         {
-            for(int j = 0; j < a.Columns; j++)
+            for (int j = 0; j < a.Columns; j++)
             {
                 matrix[i, j] = a[i, j] + b[i, j];
             }
@@ -96,16 +97,16 @@ public class Matrix : IEnumerable<float>
         return matrix;
     }
 
-    public static Matrix operator - (Matrix a, Matrix b)
+    public static Matrix operator -(Matrix a, Matrix b)
     {
-        if (a.Rows != b.Rows || a.Columns != b.Columns) 
+        if (a.Rows != b.Rows || a.Columns != b.Columns)
             throw new InvalidOperationException("This operation requires matrices of the same size.");
-        
+
         var matrix = new Matrix(a.Rows, a.Columns);
 
-        for(int i = 0; i < a.Rows; i++)
+        for (int i = 0; i < a.Rows; i++)
         {
-            for(int j = 0; j < a.Columns; j++)
+            for (int j = 0; j < a.Columns; j++)
             {
                 matrix[i, j] = a[i, j] - b[i, j];
             }
@@ -114,31 +115,30 @@ public class Matrix : IEnumerable<float>
         return matrix;
     }
 
-    public static Matrix operator - (Matrix a)
+    public static Matrix operator -(Matrix a)
         => a * -1;
-    
 
-    public static Matrix operator * (Matrix a, Matrix b)
+    public static Matrix operator *(Matrix a, Matrix b)
     {
-        if (a.Columns != b.Rows) 
+        if (a.Columns != b.Rows)
             throw new InvalidOperationException("Matrix multiplication requires the number of columns in the first matrix to be equal to the number of rows in the second matrix.");
-        
+
         var matrix = new Matrix(a.Rows, b.Columns);
 
-        for(int i = 0; i <a.Rows; i++)
-            for(int j = 0; j < b.Columns; j++)
+        for (int i = 0; i < a.Rows; i++)
+            for (int j = 0; j < b.Columns; j++)
             {
                 var aux = 0.0f;
                 for (int k = 0; k < a.Columns; k++)
-                     aux += a[i, k] * b[k, j];
-                
+                    aux += a[i, k] * b[k, j];
+
                 matrix[i, j] = aux;
             }
-        
+
         return matrix;
     }
 
-    public static Matrix operator * (Matrix a, float b)
+    public static Matrix operator *(Matrix a, float b)
     {
         for (int i = 0; i < a.Rows; i++)
             for (int j = 0; j < a.Columns; j++)
@@ -146,29 +146,38 @@ public class Matrix : IEnumerable<float>
         return a;
     }
 
-    public static Matrix operator * (float a, Matrix b)
+    public static Matrix operator *(float a, Matrix b)
         => b * a;
 
-    public static Matrix operator / (Matrix a, float b)
+    public static Matrix operator /(Matrix a, float b)
     {
         for (int i = 0; i < a.Rows; i++)
             for (int j = 0; j < a.Columns; j++)
                 a[i, j] /= b;
         return a;
     }
-    
+
     public static implicit operator Matrix(float[,] data)
         => new(data);
 
     public static implicit operator float[,](Matrix matrix)
+    {
+        var data = new float[matrix.Rows, matrix.Columns];
+        for (int i = 0; i < matrix.Rows; i++)
+            for (int j = 0; j < matrix.Columns; j++)
+                data[i, j] = matrix[i, j];
+        return data;
+    }
+
+    public static implicit operator float[](Matrix matrix)
         => matrix.Data;
     
     public static Matrix Identity(int size)
     {
-        var vector = new Matrix(size, 1);
+        var vector = new Matrix(1, size);
         for (int i = 0; i < size; i++)
-            vector[i, 0] = 1;
-        
+            vector[0, i] = 1;
+
         return vector.Diagonal();
     }
 
@@ -179,10 +188,10 @@ public class Matrix : IEnumerable<float>
         if (Length == 0)
             return matrix;
 
-        for(int i = 0; i < Rows; i++)
-            for(int j = 0; j < Columns; j++)
+        for (int i = 0; i < Rows; i++)
+            for (int j = 0; j < Columns; j++)
                 matrix[i, j] = this[i, j] / Length;
-        
+
         return matrix;
     }
 
@@ -198,26 +207,26 @@ public class Matrix : IEnumerable<float>
 
     public Matrix Diagonal()
     {
-        if (Columns > 1) throw new InvalidOperationException("This operation requires a column matrix.");
-        
+        if (Columns > 1) ArgumentOutOfRangeException.ThrowIfGreaterThan(Columns, 1, nameof(Columns));
+
         var diagonal = new Matrix(Rows, Rows);
 
         for (int i = 0; i < Rows; i++)
             for (int j = 0; j < Rows; j++)
-                diagonal[i, j] = i == j? Data[i, 0] : 0;
+                diagonal[i, j] = i == j ? this[i, 0] : 0;
 
         return diagonal;
     }
 
     public Matrix Lerp(Matrix to, float weight)
     {
-        if (Rows != to.Rows || Columns != to.Columns) 
+        if (Rows != to.Rows || Columns != to.Columns)
             throw new InvalidOperationException("This operation requires matrices of the same size.");
 
         var matrix = new Matrix(Rows, Columns);
         for (int i = 0; i < Rows; i++)
             for (int j = 0; j < Columns; j++)
-                matrix[i,j] = Data[i, j].Lerp(to[i,j], weight);
+                matrix[i, j] = this[i, j].Lerp(to[i, j], weight);
 
         return matrix;
     }
@@ -235,10 +244,9 @@ public class Matrix : IEnumerable<float>
 
     public override int GetHashCode()
         => Data.GetHashCode();
-    
+
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
-    
 
     public IEnumerator<float> GetEnumerator()
     {

@@ -8,7 +8,7 @@ public static class Vector2Extensions
         => new(vector.X, vector.Y, 0.0f);
 
     public static Matrix ToMatrix(this Vector2 vector)
-        => new(new float[,]{ { vector.X }, { vector.Y }, { 0.0f }} );
+        => new(3, 1, [vector.X , vector.Y , 0.0f] );
 
     public static Vector2? ToVector2(this Matrix matrix)
     {
