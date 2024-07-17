@@ -1,26 +1,27 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Transform2D
 {
     public Transform2D()
     {
-        Position = Vector2D.Zero;
+        Position = Vector2.Zero;
         Rotation = 0;
-        Scale = new(1.0, 1.0);
+        Scale = new(1.0f, 1.0f);
     }
 
-    public Transform2D(Vector2D position, double rotation, Vector2D scale)
+    public Transform2D(Vector2 position, float rotation, Vector2 scale)
     {
         Position = position;
         Rotation = rotation;
         Scale = scale;
     }
 
-    public Vector2D Position { get; set; }
+    public Vector2 Position { get; set; }
 
-    public Vector2D GlobalPosition 
+    public Vector2 GlobalPosition 
     {
         get 
         {
@@ -29,35 +30,35 @@ public class Transform2D
         }
     }
 
-    public double Rotation { get; set; }
+    public float Rotation { get; set; }
 
-    public double GlobalRotation 
+    public float GlobalRotation 
     { 
         get => Parent?.GlobalRotation + Rotation?? Rotation;
     }
 
-    public Vector2D Scale { get; set; }
+    public Vector2 Scale { get; set; }
 
-    public Vector2D GlobalScale
+    public Vector2 GlobalScale
     {
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
     }
 
     internal Transform2D? Parent { get; set; }
 
-    public double RotationDegrees 
+    public float RotationDegrees 
     { 
         get => Rotation.ToDegrees(); 
         set => Rotation = value.ToRadians(); 
     }
 
-    public double GlobalRotationDegrees 
+    public float GlobalRotationDegrees 
     { 
         get => GlobalRotation.ToDegrees();
     }
 
-    internal Matrix ModelMatrix()
-         => Transformations.TranslationMatrix(GlobalPosition) *
-            Transformations.RotationMatrix(GlobalRotation, Vector3D.Backward) *
-            Transformations.ScaleMatrix(GlobalScale);  
+    public Matrix ModelMatrix()
+         => Transformations.TranslationMatrix(GlobalPosition.ToVector3()) *
+            Transformations.RotationMatrix(GlobalRotation, Vector3.UnitZ) *
+            Transformations.ScaleMatrix(GlobalScale.ToVector3());  
 }

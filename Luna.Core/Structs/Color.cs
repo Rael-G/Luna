@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using Luna.Maths;
+﻿using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
-public readonly struct Color : IEnumerable<double>
+public struct Color
 {
-    public Color(double r = 0.0, double g = 0.0, double b = 0.0, double a = 0.0)
+    public Color(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f)
     {
         R = r;
         G = g;
@@ -13,43 +12,56 @@ public readonly struct Color : IEnumerable<double>
         A = a;
     }
 
-    public readonly double R 
+    public float R 
     { 
-        get => Matrix[0, 0]; 
-        set => Matrix[0, 0] = Math.Clamp(value, 0.0, 1.0);
+        readonly get => _r; 
+        set => _r = (float)Math.Clamp(value, 0.0, 1.0);
     }
 
-    public readonly double G 
+    public float G 
     { 
-        get =>  Matrix[1, 0];
-        set => Matrix[1, 0] = Math.Clamp(value, 0.0, 1.0);
+        readonly get => _g;
+        set => _g = (float)Math.Clamp(value, 0.0, 1.0);
     }
 
-    public readonly double B 
-    {
-        get =>  Matrix[2, 0];
-        set => Matrix[2, 0] = Math.Clamp(value, 0.0, 1.0); 
-    }
-
-    public readonly double A 
+    public float B 
     { 
-        get =>  Matrix[3, 0];
-        set => Matrix[3, 0] = Math.Clamp(value, 0.0, 1.0);
+        readonly get => _b;
+        set => _b = (float)Math.Clamp(value, 0.0, 1.0); 
     }
 
-    private readonly Matrix Matrix = new(4, 1);
+    public float A 
+    { 
+        readonly get => _a;
+        set => _a = (float)Math.Clamp(value, 0.0, 1.0);
+    }
 
-    public static implicit operator Matrix(Color color)
-    => new(color.Matrix);
+    private float _r;
+    private float _g;
+    private float _b;
+    private float _a;
+
+    public readonly Matrix ToMatrix()
+        => new(new float[,]{ {R}, {G}, {B}, {A} });
     
-    public static explicit operator Color(Matrix matrix)
-        => new(matrix[0,0], matrix[1,0], matrix[2,0], matrix[3,0]);
+    public static Color? ToColor(Matrix matrix)
+    {
+        try
+        {
+            return new(matrix[0,0], matrix[1,0], matrix[2,0], matrix[3,0]);
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
-    public Color Lerp(Color color, double weight)
-        => (Color)Matrix.Lerp(color.Matrix, weight);
 
-    public Color Mix(Color color)
-        => Lerp(color, 0.5);
+    public readonly Color Lerp(Color other, float weight)
+        => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;
+
+    public readonly Color Mix(Color color)
+        => Lerp(color, 0.5f);
 
     public static Color Desaturate(Color c)
     {
@@ -59,11 +71,4 @@ public readonly struct Color : IEnumerable<double>
 
     public static Color Invert(Color c)
         => new(1.0f - c.R, 1.0f - c.G, 1.0f - c.B, c.A);
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
-
-    public IEnumerator<double> GetEnumerator()
-        => Matrix.GetEnumerator();
-
 }

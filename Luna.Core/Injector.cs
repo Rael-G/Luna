@@ -1,17 +1,43 @@
-﻿namespace Luna.Core;
+﻿namespace Luna;
 
 public class Injector
 {
-    private static readonly Dictionary<Type, object> Services = [];
+    private static readonly Dictionary<Type, Lazy<object>> Services = [];
 
-    public static void Add<T>(object obj)
+    /// <summary>
+    /// Injector.AddSingleton<IMyService>(new MyService());
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj"></param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static void AddSingleton<T>(object obj) where T : class
     {
-        Services.Add(typeof(T), obj);
+        if (!Services.TryAdd(typeof(T), new Lazy<object>(() => obj)))
+        {
+            throw new DependencyInjectionException($"Service of type {typeof(T).Name} is already registered.");
+        }
     }
 
-    public static T? Get<T>()
+    /// <summary>
+    /// Injector.AddTransient<IMyService>(() => new MyService());
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="factory"></param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static void AddTransient<T>(Func<T> factory) where T : class
     {
-        Services.GetValueOrDefault(typeof(T));
-        return (T?)Services.GetValueOrDefault(typeof(T));
+        if (!Services.TryAdd(typeof(T), new Lazy<object>(() => factory())))
+        {
+            throw new DependencyInjectionException($"Service of type {typeof(T).Name} is already registered.");
+        }
+    }
+
+    public static T Get<T>()
+    {
+        if (Services.TryGetValue(typeof(T), out var service))
+        {
+            return (T)service.Value;
+        }
+        throw new DependencyInjectionException($"Service of type {typeof(T).Name} is not registered.");
     }
 }

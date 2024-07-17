@@ -1,4 +1,4 @@
-﻿namespace Luna.Core;
+﻿namespace Luna;
 
 public interface IRenderObjectFactory
 {

@@ -1,6 +1,6 @@
 ﻿using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public struct RectangleData
 {

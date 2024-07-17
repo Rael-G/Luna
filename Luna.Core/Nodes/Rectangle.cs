@@ -1,45 +1,38 @@
-﻿using Luna.Maths;
-
-namespace Luna.Core;
+﻿namespace Luna;
 
 public class Rectangle : Node2D
 {
-    public double Width { get; set; }
-    public double Height { get; set; }
+    public float Width { get; set; }
+    public float Height { get; set; }
     public Color Color { get; set; }
 
-    internal override void InternalAwake()
+    public override void Awake()
     {
-        var ViewProj = Camera?.Project()?? Matrix.Identity(4);
-        var tranform = ViewProj * Transform.ModelMatrix(); 
-        var renderMap = Injector.Get<IRenderMap>();
-        var factory = Injector.Get<IRenderObjectFactory>();
-        renderMap.Add(RUID, factory!.CreateRenderObject(new RectangleData
-        { 
-            Width = Width, Height = Height, Transform = tranform, Color = Color 
-        }));
+         CreateRenderObject
+         (
+            new RectangleData
+            { 
+                Width = Width, Height = Height, Transform = TransformMatrix, Color = Color 
+            }
+         );
 
-        base.InternalAwake();
+        base.Awake();
     }
 
-    internal protected override void Render()
+    public override void Update()
     {
-        var ViewProj = Camera?.Project()?? Matrix.Identity(4);
-        var tranform = ViewProj * Transform.ModelMatrix(); 
-        var renderMap = Injector.Get<IRenderMap>();
-        renderMap.Update(RUID, new RectangleData
-        { 
-            Width = Width, Height = Height, Transform = tranform, Color = Color 
-        });
-        renderMap.Render(RUID);
-
-        base.Render();
+        Transform.Rotation += 0.001f;
     }
 
-    ~Rectangle()
+    public override void LateUpdate()
     {
-        var renderMap = Injector.Get<IRenderMap>();
-        renderMap.Remove(RUID);
+        UpdateRenderObject
+         (
+            new RectangleData
+            { 
+                Width = Width, Height = Height, Transform = TransformMatrix, Color = Color 
+            }
+         );
+        base.LateUpdate();
     }
-
 }

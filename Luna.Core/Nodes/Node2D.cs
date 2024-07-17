@@ -1,8 +1,19 @@
-﻿namespace Luna.Core;
+﻿using Luna.Maths;
+
+namespace Luna;
 
 public class Node2D : Node
 {
     public Transform2D Transform { get; }
+
+    public Matrix TransformMatrix
+    {
+        get 
+        {
+            var ViewProj = Camera?.Project()?? Matrix.Identity(4);
+            return ViewProj * Transform.ModelMatrix(); 
+        }
+    }
 
     protected override Node? Parent 
     { 

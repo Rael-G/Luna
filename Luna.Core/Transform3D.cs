@@ -1,26 +1,27 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Transform3D
 {
     public Transform3D()
     {
-        Position = Vector3D.Zero;
-        Rotation = Vector3D.Zero;
-        Scale = new(1.0, 1.0, 1.0);
+        Position = Vector3.Zero;
+        Rotation = Vector3.Zero;
+        Scale = new(1.0f, 1.0f, 1.0f);
     }
 
-    public Transform3D(Vector3D position, Vector3D rotation, Vector3D scale)
+    public Transform3D(Vector3 position, Vector3 rotation, Vector3 scale)
     {
         Position = position;
         Rotation = rotation;
         Scale = scale;
     }
 
-    public Vector3D Position { get; set; }
+    public Vector3 Position { get; set; }
 
-    public Vector3D GlobalPosition 
+    public Vector3 GlobalPosition 
     { 
         get 
         {
@@ -29,38 +30,38 @@ public class Transform3D
         }
     }
 
-    public Vector3D Rotation { get; set; }
+    public Vector3 Rotation { get; set; }
 
-    public Vector3D GlobalRotation 
+    public Vector3 GlobalRotation 
     { 
         get => Parent?.GlobalRotation.CombineRotation(Rotation)?? Rotation;
     }
 
-    public Vector3D Scale { get; set; }
+    public Vector3 Scale { get; set; }
 
-    public Vector3D GlobalScale
+    public Vector3 GlobalScale
     {
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
     }
 
     internal Transform3D? Parent { get; set; }
 
-    public Vector3D RotationDegrees 
+    public Vector3 RotationDegrees 
     { 
         get => Rotation.ToDegrees(); 
         set => Rotation = value.ToRadians(); 
     }
 
-    public Vector3D GlobalRotationDegrees 
+    public Vector3 GlobalRotationDegrees 
     { 
         get => GlobalRotation.ToDegrees();
     }
 
     internal Matrix ModelMatrix()
         =>  Transformations.TranslationMatrix(GlobalPosition) *
-            Transformations.RotationMatrix(GlobalRotation.X, Vector3D.Right) *
-            Transformations.RotationMatrix(GlobalRotation.Y, Vector3D.Up) *
-            Transformations.RotationMatrix(GlobalRotation.Z, Vector3D.Backward) *
+            Transformations.RotationMatrix(GlobalRotation.X, Vector3.UnitX) *
+            Transformations.RotationMatrix(GlobalRotation.Y, Vector3.UnitY) *
+            Transformations.RotationMatrix(GlobalRotation.Z, Vector3.UnitZ) *
             Transformations.ScaleMatrix(GlobalScale);
 
 }

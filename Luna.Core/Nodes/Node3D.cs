@@ -1,8 +1,19 @@
-﻿namespace Luna.Core;
+﻿using Luna.Maths;
+
+namespace Luna;
 
 public class Node3D : Node
 {
     public Transform3D Transform { get; set; }
+
+    public Matrix TransformMatrix
+    {
+        get 
+        {
+            var ViewProj = Camera?.Project()?? Matrix.Identity(4);
+            return ViewProj * Transform.ModelMatrix(); 
+        }
+    }
 
     public virtual ICamera? Camera 
     { 

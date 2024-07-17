@@ -1,8 +1,8 @@
-﻿namespace Luna.Core;
+﻿namespace Luna;
 
 public class Node
 {
-    internal string RUID { get; }
+    public string RUID { get; }
 
     protected virtual Node? Parent { get; set;}
 
@@ -19,85 +19,75 @@ public class Node
     /// <summary>
     ///  Configures this GameObject only before window initialization.
     /// </summary>
-    protected virtual void Config(){ }
-
-    internal virtual void InternalConfig()
+    public virtual void Config()
     {
-        Config();
-
         foreach (var child in Children)
-            child.InternalConfig();
+            child.Config();
     }
 
     /// <summary>
     /// Performs initialization operations before the Start method.
     /// </summary>
-    protected virtual void Awake(){ }
-
-    internal virtual void InternalAwake()
+    public virtual void Awake()
     {
-        Awake();
         IsAwake = true;
 
         foreach (var child in Children)
-            child.InternalAwake();
+            child.Awake();
     }
 
     /// <summary>
     /// Initializes this GameObject.
     /// </summary>
-    protected virtual void Start(){ }
-
-    internal virtual void InternalStart()
-    {
-        Start();
+    public virtual void Start()
+    { 
         foreach (var child in Children)
-            child.InternalStart();
+            child.Start();
     }
 
     /// <summary>
     /// Updates this GameObject once per frame.
     /// </summary>
-    protected virtual void EarlyUpdate(){ }
-
-    internal virtual void InternalEarlyUpdate()
-    {
-        EarlyUpdate();
+    public virtual void EarlyUpdate()
+    { 
         foreach (var child in Children)
-            child.InternalEarlyUpdate();
+            child.EarlyUpdate();
     }
 
     /// <summary>
     /// Updates this GameObject once per frame.
     /// </summary>
-    protected virtual void Update(){ }
-
-    internal virtual void InternalUpdate()
-    {
-        Update();
+    public virtual void Update()
+    { 
         foreach (var child in Children)
-            child.InternalUpdate();
+            child.Update();
     }
 
     /// <summary>
     /// Updates this GameObject once per frame.
     /// </summary>
-    protected virtual void LateUpdate(){ }
-
-    internal virtual void InternalLateUpdate()
+    public virtual void LateUpdate()
     {
-        LateUpdate();
         foreach (var child in Children)
-            child.InternalLateUpdate();
+            child.LateUpdate();
     }
 
     /// <summary>
     ///  Performs drawing operations.
     /// </summary>
-    internal protected virtual void Render()
+    public virtual void Render()
     {
+        var map = Injector.Get<IRenderMap>();
+        map.Render(RUID);
+
         foreach (var child in Children)
             child.Render();
+    }
+
+    public virtual void Input(InputEvent inputEvent)
+    {
+        foreach (var child in Children)
+            child.Input(inputEvent);
     }
 
     public virtual void AddChild(params Node[] nodes)
@@ -108,8 +98,8 @@ public class Node
             Children.Add(node);
             if (Window.Running && !IsAwake)
             {
-                node.InternalAwake();
-                node.InternalStart();
+                node.Awake();
+                node.Start();
             }
             
         }
@@ -123,8 +113,8 @@ public class Node
             node.Parent = this;
             if (Window.Running && !IsAwake)
             {
-                node.InternalAwake();
-                node.InternalStart();
+                node.Awake();
+                node.Start();
             }
         }
     }
@@ -135,8 +125,25 @@ public class Node
         node.Parent = null;
     }
 
+    protected internal void CreateRenderObject<TData>(TData data)
+    {
+        var factory = Injector.Get<IRenderObjectFactory>();
+        var map = Injector.Get<IRenderMap>();
+
+        var obj = factory.CreateRenderObject(data);
+        map.Add(RUID, obj);
+    }
+
+    protected internal void UpdateRenderObject<TData>(TData data)
+    {
+        var map = Injector.Get<IRenderMap>();
+        map.Update(RUID, data);
+    }
+
     ~Node()
     {
         Children.Clear();
+        var renderMap = Injector.Get<IRenderMap>();
+        renderMap.Remove(RUID);
     }
 }

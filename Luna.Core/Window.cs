@@ -1,19 +1,18 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
 
-namespace Luna.Core;
+namespace Luna;
 
 public static class Window
 {
-    internal static readonly IWindow EngineWindow = Injector.Get<IWindow>()?? 
-        throw new InjectionException("IWindow Service was not added to the Injector.");
+    public static readonly IWindow EngineWindow = Injector.Get<IWindow>();
     
     public static string Title { get => EngineWindow.Title; set => EngineWindow.Title = value; }
 
     public static bool Running { get => EngineWindow.Running; set => EngineWindow.Running = value; }
 
-    public static Vector2D Size { get => EngineWindow.Size; set => EngineWindow.Size = value; }
+    public static Vector2 Size { get => EngineWindow.Size; set => EngineWindow.Size = value; }
 
-    public static double AspectRatio { get => Size.X / Size.Y; }
+    public static float AspectRatio { get => Size.X / Size.Y; }
 
     public static bool Vsync { get => EngineWindow.Vsync; set => EngineWindow.Vsync = value; }
 

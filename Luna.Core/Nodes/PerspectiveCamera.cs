@@ -1,6 +1,7 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class PerspectiveCamera : Node3D, ICamera
 {
@@ -15,30 +16,30 @@ public class PerspectiveCamera : Node3D, ICamera
         } 
     }
 
-    public Vector3D Target 
+    public Vector3 Target 
     {
         get
         {
-            if (_target != null) return (Vector3D)_target;
+            if (_target != null) return (Vector3)_target;
 
-            var front = Vector3D.Zero;
-            front.X = Math.Cos(Transform.GlobalRotation.Y) * Math.Cos(Transform.GlobalRotation.Z);
-            front.Y = Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
-                Math.Cos(Transform.GlobalRotation.Z) - Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z);
-            front.Z = Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
-                Math.Cos(Transform.GlobalRotation.Z) + Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z);
+            var front = Vector3.Zero;
+            front.X = (float)(Math.Cos(Transform.GlobalRotation.Y) * Math.Cos(Transform.GlobalRotation.Z));
+            front.Y = (float)(Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
+                Math.Cos(Transform.GlobalRotation.Z) - Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z));
+            front.Z = (float)(Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
+                Math.Cos(Transform.GlobalRotation.Z) + Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z));
                 
             return front;
         }  
         set => _target = value;
     }
 
-    public Vector3D Up { get; set; } = Vector3D.Up;
-    public double Fov { get; set; } = 45.0;
-    public double Near { get; set; } = 0.1;
-    public double Far { get; set; } = 1000.0;
+    public Vector3 Up { get; set; } = Vector3.UnitY;
+    public float Fov { get; set; } = 45.0f;
+    public float Near { get; set; } = 0.1f;
+    public float Far { get; set; } = 1000.0f;
 
-    public Vector3D? _target;
+    private Vector3? _target;
 
     public virtual Matrix Project()
     => Transformations.PerspectiveProjection

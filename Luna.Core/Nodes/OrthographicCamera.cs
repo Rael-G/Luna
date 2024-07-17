@@ -1,15 +1,15 @@
 ﻿using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class OrtographicCamera : Node2D, ICamera
 {
-    public double Left { get; set; } = -1.0;
-    public double Right { get; set; } = 1.0;
-    public double Bottom { get; set; } = -1.0;
-    public double Top { get; set; } = 1.0;
-    public double Near { get; set; } = -1.0;
-    public double Far { get; set; } = 10.0;
+    public float Left { get; set; } = -1.0f;
+    public float Right { get; set; } = 1.0f;
+    public float Bottom { get; set; } = -1.0f;
+    public float Top { get; set; } = 1.0f;
+    public float Near { get; set; } = -1.0f;
+    public float Far { get; set; } = 10.0f;
 
     protected override Node? Parent 
     { 
@@ -28,7 +28,7 @@ public class OrtographicCamera : Node2D, ICamera
     {
         var proj = Transformations.OrthographicProjection
             (Left, Right, Bottom, Top, Near, Far);
-        var view = Transformations.TranslationMatrix(-Transform.GlobalPosition);
+        var view = Transformations.TranslationMatrix(-Transform.GlobalPosition.ToVector3());
         return proj * view;
     }
             
