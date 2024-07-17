@@ -1,9 +1,11 @@
-﻿namespace Luna.Maths;
+﻿using System.Numerics;
+
+namespace Luna.Maths;
 
 public readonly struct Transformations
 {
-    public static Matrix TranslationMatrix(Vector3D point)
-        => new (new double[,]
+    public static Matrix TranslationMatrix(Vector3 point)
+        => new (new float[,]
         {
             { 1, 0, 0, point.X },
             { 0, 1, 0, point.Y },
@@ -11,15 +13,15 @@ public readonly struct Transformations
             { 0, 0, 0, 1 }
         });
 
-    public static Matrix RotationMatrix(double angle, Vector3D axis)
+    public static Matrix RotationMatrix(float angle, Vector3 axis)
     {
         axis = axis.Normalize();
 
-        var cosTheta = Math.Cos(angle);
+        var cosTheta = (float)Math.Cos(angle);
         var oneMinusCosTheta = 1 - cosTheta;
-        var sinTheta = Math.Sin(angle);
+        var sinTheta = (float)Math.Sin(angle);
 
-        return new (new double[,]
+        return new (new float[,]
         {
             {
                 cosTheta + axis.X * axis.X * oneMinusCosTheta,
@@ -40,22 +42,22 @@ public readonly struct Transformations
                 0
             },
             {
-                0.0, 0.0, 0.0, 1.0
+                0.0f, 0.0f, 0.0f, 1.0f
             }
 
         });
     }
 
-    public static Matrix ScaleMatrix(Vector3D scale)
+    public static Matrix ScaleMatrix(Vector3 scale)
     {
-        var scaleMatrix = new Matrix(new double[,]{{scale.X}, {scale.Y}, {scale.Z}, {1.0}});
+        var scaleMatrix = new Matrix(new float[,]{{scale.X}, {scale.Y}, {scale.Z}, {1.0f}});
         return scaleMatrix.Diagonal();
     }
 
-    public static Matrix ShearMatrix(Vector3D shearFactor, Vector3D axis)
+    public static Matrix ShearMatrix(Vector3 shearFactor, Vector3 axis)
     {
         axis = axis.Normalize();
-        return new(new double[,]
+        return new(new float[,]
             {
                 { 1, shearFactor.Y * axis.X, shearFactor.Z * axis.X, 0 },
                 { shearFactor.X * axis.Y, 1, shearFactor.Z * axis.Y, 0 },
@@ -64,7 +66,7 @@ public readonly struct Transformations
             });
     }
 
-    public static Matrix LookAtMatrix(Vector3D eye, Vector3D center, Vector3D up)
+    public static Matrix LookAtMatrix(Vector3 eye, Vector3 center, Vector3 up)
     {
         var viewDirection = (center - eye).Normalize();
         var rightVector = viewDirection.Cross(up).Normalize();
@@ -72,7 +74,7 @@ public readonly struct Transformations
 
         viewDirection = -viewDirection;
 
-        return new Matrix(new double[,]
+        return new Matrix(new float[,]
         {
             { rightVector.X, rightVector.Y, rightVector.Z, -rightVector.Dot(eye) },
             { trueUp.X, trueUp.Y, trueUp.Z, -trueUp.Dot(eye) },
@@ -81,8 +83,8 @@ public readonly struct Transformations
         });
     }
 
-    public static Matrix OrthographicProjection(double left = -1.0, double right = 1.0, double bottom = -1.0, double top = 1.0, double near = 1.0, double far = 10.0)
-        => new (new double[,]
+    public static Matrix OrthographicProjection(float left = -1.0f, float right = 1.0f, float bottom = -1.0f, float top = 1.0f, float near = 1.0f, float far = 10.0f)
+        => new (new float[,]
         {
             { 2 / (right - left), 0, 0, -(right + left) / (right - left) },
             { 0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom) },
@@ -90,15 +92,28 @@ public readonly struct Transformations
             { 0, 0, 0, 1 }
         });
 
-    public static Matrix PerspectiveProjection(double fovy = 45.0, double aspect = 16.0 / 9.0, double near = 1.0, double far = 10.0)
+    public static Matrix PerspectiveProjection(float fovy = 45.0f, float aspect = 16.0f / 9.0f, float near = 1.0f, float far = 10.0f)
     {
-        var f = 1.0 / Math.Tan(fovy.ToRadians() / 2);
-        return new Matrix(new double[,]
+        var f = 1.0f / (float)Math.Tan(fovy.ToRadians() / 2);
+        return new Matrix(new float[,]
         {
             { f / aspect, 0, 0, 0 },
             { 0, f, 0, 0 },
             { 0, 0, (far + near) / (near - far), 2 * far * near / (near - far) },
             { 0, 0, -1, 0 }
+        });
+    }
+
+    public static Matrix FlipMatrix(Vector3 axis)
+    {
+        var x = axis.X == 0.0f? 1.0f : -axis.X;
+        var y = axis.Y == 0.0f? 1.0f : -axis.Y;
+        var z = axis.Z == 0.0f? 1.0f : -axis.Z;
+        return new (new float[,]{
+            { x ,   0.0f, 0.0f, 0.0f },
+            { 0.0f, y ,   0.0f, 0.0f },
+            { 0.0f, 0.0f, z,    0.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f }
         });
     }
 

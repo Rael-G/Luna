@@ -2,24 +2,24 @@
 
 namespace Luna.Maths;
 
-public class Matrix : IEnumerable<double>
+public class Matrix : IEnumerable<float>
 {
     public int Rows { get; }
     public int Columns { get; }
-    public double[,] Data { get; }
+    public float[,] Data { get; }
 
-    public double Length 
+    public float Length 
     { 
         get
         {
             var sum = 0.0;
             foreach (var data in Data)
                 sum += Math.Pow(data, 2.0);
-            return Math.Sqrt(sum);
+            return (float)Math.Sqrt(sum);
         }
     }
 
-    public double this[int row, int colunm]
+    public float this[int row, int colunm]
     { 
         get => Data[row, colunm];
         set => Data[row, colunm] = value;
@@ -32,22 +32,22 @@ public class Matrix : IEnumerable<double>
         
         Rows = rows;
         Columns = columns;
-        Data = new double[rows, columns];
+        Data = new float[rows, columns];
     }
 
     public Matrix(Matrix matrix)
     {
         Rows = matrix.Rows;
         Columns = matrix.Columns;
-        Data = new double[Rows, Columns];
+        Data = new float[Rows, Columns];
         Array.Copy(matrix.Data, Data, matrix.Data.Length);
     }
 
-    public Matrix(double[,] data)
+    public Matrix(float[,] data)
     {
         Rows = data.GetLength(0);
         Columns = data.GetLength(1);
-        Data = new double[Rows, Columns];
+        Data = new float[Rows, Columns];
         Array.Copy(data, Data, data.Length);
     }
 
@@ -128,7 +128,7 @@ public class Matrix : IEnumerable<double>
         for(int i = 0; i <a.Rows; i++)
             for(int j = 0; j < b.Columns; j++)
             {
-                var aux = 0.0;
+                var aux = 0.0f;
                 for (int k = 0; k < a.Columns; k++)
                      aux += a[i, k] * b[k, j];
                 
@@ -138,7 +138,7 @@ public class Matrix : IEnumerable<double>
         return matrix;
     }
 
-    public static Matrix operator * (Matrix a, double b)
+    public static Matrix operator * (Matrix a, float b)
     {
         for (int i = 0; i < a.Rows; i++)
             for (int j = 0; j < a.Columns; j++)
@@ -146,10 +146,10 @@ public class Matrix : IEnumerable<double>
         return a;
     }
 
-    public static Matrix operator * (double a, Matrix b)
+    public static Matrix operator * (float a, Matrix b)
         => b * a;
 
-    public static Matrix operator / (Matrix a, double b)
+    public static Matrix operator / (Matrix a, float b)
     {
         for (int i = 0; i < a.Rows; i++)
             for (int j = 0; j < a.Columns; j++)
@@ -157,10 +157,10 @@ public class Matrix : IEnumerable<double>
         return a;
     }
     
-    public static implicit operator Matrix(double[,] data)
+    public static implicit operator Matrix(float[,] data)
         => new(data);
 
-    public static implicit operator double[,](Matrix matrix)
+    public static implicit operator float[,](Matrix matrix)
         => matrix.Data;
     
     public static Matrix Identity(int size)
@@ -209,7 +209,7 @@ public class Matrix : IEnumerable<double>
         return diagonal;
     }
 
-    public Matrix Lerp(Matrix to, double weight)
+    public Matrix Lerp(Matrix to, float weight)
     {
         if (Rows != to.Rows || Columns != to.Columns) 
             throw new InvalidOperationException("This operation requires matrices of the same size.");
@@ -222,7 +222,7 @@ public class Matrix : IEnumerable<double>
         return matrix;
     }
 
-    public double DistanceTo(Matrix to)
+    public float DistanceTo(Matrix to)
         => (to - this).Length;
 
     public override bool Equals(object? obj)
@@ -240,7 +240,7 @@ public class Matrix : IEnumerable<double>
         => GetEnumerator();
     
 
-    public IEnumerator<double> GetEnumerator()
+    public IEnumerator<float> GetEnumerator()
     {
         for (int i = 0; i < Rows; i++)
             for (int j = 0; j < Columns; j++)
