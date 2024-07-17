@@ -1,6 +1,4 @@
-﻿using Luna.Core;
-
-namespace Luna.Engine.OpenGl;
+﻿namespace Luna.OpenGl;
 
 internal abstract class RenderObject<TData>() 
     : IRenderObject

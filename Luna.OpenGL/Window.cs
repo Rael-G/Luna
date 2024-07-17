@@ -1,9 +1,8 @@
-﻿using Luna.Core;
-using Luna.Maths;
+﻿using System.Numerics;
 using Silk.NET.GLFW;
 using Silk.NET.OpenGL;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal unsafe class Window : IWindow
 {
@@ -23,7 +22,7 @@ internal unsafe class Window : IWindow
         set => _running = value; 
     }
 
-    public Vector2D Size
+    public Vector2 Size
     {
         get => _windowSize;
         set 
@@ -64,7 +63,7 @@ internal unsafe class Window : IWindow
     private ScrollCallback? _scrollCallback;
 
     private string _title = string.Empty;
-    private Vector2D _windowSize = new(800, 600);
+    private Vector2 _windowSize = new(800, 600);
     private bool _running;
     private bool _vsync;
     private bool _disableCursor;
@@ -124,13 +123,13 @@ internal unsafe class Window : IWindow
         Glfw?.PollEvents();
     }
 
-    public Core.InputAction KeyStatus(Luna.Core.Keys key)
+    public InputAction KeyStatus(Keys key)
     {
         if (Glfw is null)
             throw new WindowException("Window was not initialized");
 
 
-        return (Core.InputAction)Glfw.GetKey(WindowHandle, (Silk.NET.GLFW.Keys)key);
+        return (InputAction)Glfw.GetKey(WindowHandle, (Silk.NET.GLFW.Keys)key);
     }
 
     public void SetKeyCallback(KeyCallback keyCallback)
@@ -161,7 +160,7 @@ internal unsafe class Window : IWindow
     private void KeyCallback(WindowHandle* window, Silk.NET.GLFW.Keys key, int scanCode, Silk.NET.GLFW.InputAction action, Silk.NET.GLFW.KeyModifiers mods)
     {
         if (_keyCallback is not null)
-            _keyCallback((Core.Keys)key, (Core.InputAction)action, (Core.KeyModifiers)mods);
+            _keyCallback((Keys)key, (InputAction)action, (KeyModifiers)mods);
     }
 
     private void ScrollCallback(WindowHandle* window, double offsetX, double offsetY)
@@ -171,13 +170,11 @@ internal unsafe class Window : IWindow
     }
 
     private void FrameBufferSizeCallback(WindowHandle* window, int width, int height)
-        => Size = new Vector2D(width, height);
+        => Size = new Vector2(width, height);
     
 
     private void ErrorCallback(Silk.NET.GLFW.ErrorCode error, string description)
-    {
-        //TODO
-        //Log System
-    }
+        => Console.WriteLine($"GLFW error {error}. {description}");
+    
 
 }

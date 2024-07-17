@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using Luna.Core;
 using Silk.NET.OpenGL;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal static class ShaderManager
 {
@@ -156,5 +155,12 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform4(loc, vec4);
+    }
+
+    public static void UniformVec3(Program program, string name, float[] vec3)
+    {
+        var programId = GetShader(program);
+        var loc = _gl.GetUniformLocation(programId, name);
+        _gl.Uniform3(loc, vec3);
     }
 }

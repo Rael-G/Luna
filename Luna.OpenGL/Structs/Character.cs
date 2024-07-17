@@ -1,0 +1,11 @@
+﻿using System.Numerics;
+
+namespace Luna.OpenGl;
+
+internal struct Character
+{
+    public uint TextureID;
+    public Vector2 Size;
+    public Vector2 Bearing;
+    public uint Advance;
+}

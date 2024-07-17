@@ -1,17 +1,16 @@
-﻿using Luna.Core;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal static class GlErrorUtils
 {
     private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
 
-    public static bool CheckError()
+    public static bool CheckError(string issue = "")
     {
         GLEnum error = _gl.GetError();
         if (error != GLEnum.NoError)
-            Console.WriteLine($"OpenGL Error: {error}");
+            Console.WriteLine($"OpenGL Error: {error}. " + (!string.IsNullOrEmpty(issue)? $" At {issue}.": ""));
         return error != GLEnum.NoError;
     }
 

@@ -1,8 +1,6 @@
-﻿using Luna.Core;
-using Luna.Maths;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 {
@@ -10,9 +8,9 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     private const string VertexName = "RectangleVertexShader.glsl";
     private const string FragmentName = "RectangleFragmentShader.glsl";
 
-    private RectangleData Data { get; set; } = data;
+    private RectangleData Data = data;
 
-    private RectangleVAO RectangleVAO { get; set; } = new RectangleVAO((float)data.Width, (float)data.Height);
+    private RectangleVAO RectangleVAO = new((float)data.Width, (float)data.Height);
 
     private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
 
@@ -39,10 +37,10 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     {
         Program.Use();
         Program.UniformMat4("transform", Data.Transform.AsSpan());
-        Program.UniformVec4("color", ((Matrix)Data.Color).AsSpan());
-        _gl.BindVertexArray(RectangleVAO.Id);
+        Program.UniformVec4("color", Data.Color.ToMatrix().AsSpan());
+        _gl.BindVertexArray(RectangleVAO.Handle);
         ReadOnlySpan<int> _ = new();
-        _gl.DrawElements(PrimitiveType.Triangles, RectangleVAO.Size(), DrawElementsType.UnsignedInt, _);
+        _gl.DrawElements(PrimitiveType.Triangles, RectangleVAO.Size, DrawElementsType.UnsignedInt, _);
         _gl.BindVertexArray(0);
 
         GlErrorUtils.CheckError();

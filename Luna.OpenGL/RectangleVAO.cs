@@ -1,11 +1,10 @@
-﻿using Luna.Core;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal class RectangleVAO
 {
-    public uint Id { get; private set; }
+    public uint Handle { get; private set; }
 
     private readonly float _width;
     private readonly float _height;
@@ -36,13 +35,12 @@ internal class RectangleVAO
         Generate();
     }
 
-    public static uint Size()
-        => (uint)Indices.Length;
+    public static uint Size => (uint)Indices.Length;
 
     private unsafe void Generate()
     {
-        Id = _gl.GenVertexArray();
-        _gl.BindVertexArray(Id);
+        Handle = _gl.GenVertexArray();
+        _gl.BindVertexArray(Handle);
 
         _vbo = _gl.GenBuffer();
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
@@ -55,7 +53,7 @@ internal class RectangleVAO
         _gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), null);
         _gl.EnableVertexAttribArray(0);
 
-        GlErrorUtils.CheckVao(Id);
+        GlErrorUtils.CheckVao(Handle);
         GlErrorUtils.CheckVbo(_vbo);
         GlErrorUtils.CheckEbo(_ebo);
 
@@ -66,7 +64,7 @@ internal class RectangleVAO
 
     ~RectangleVAO()
     {
-        _gl.DeleteVertexArray(Id);
+        _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(_vbo);
         _gl.DeleteBuffer(_ebo);
     }

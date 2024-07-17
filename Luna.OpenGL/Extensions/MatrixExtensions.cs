@@ -1,6 +1,6 @@
 ﻿using Luna.Maths;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal static class MatrixExtensions
 {

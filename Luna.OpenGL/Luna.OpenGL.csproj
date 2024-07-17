@@ -8,8 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="silk.net.glfw" Version="2.21.0" PrivateAssets="true" />
-    <PackageReference Include="silk.net.opengl" Version="2.21.0" PrivateAssets="true" />
+    <PackageReference Include="FreeTypeSharp" Version="3.0.0" />
+    <PackageReference Include="Silk.NET.GLFW" Version="2.21.0" PrivateAssets="true" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" PrivateAssets="true" />
   </ItemGroup>
 
   <ItemGroup>

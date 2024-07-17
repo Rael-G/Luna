@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luna.Engine.OpenGl;
+namespace Luna.OpenGl;
 
 internal class Program
 {
@@ -24,6 +24,9 @@ internal class Program
     
     public void UniformVec4(string name, float[] value)
         => ShaderManager.UniformVec4(this, name, value);
+
+    public void UniformVec3(string name, float[] vec3)
+        => ShaderManager.UniformVec3(this, name, vec3);
 
     public static string DefaultShaderPath(string name)
     {
