@@ -1,47 +1,54 @@
-﻿using FreeTypeSharp;
+﻿using System.Numerics;
+using FreeTypeSharp;
 using Luna.OpenGl.FreeTypeSharp;
 
 namespace Luna.OpenGl;
 
+using FontKey = (string Path, Vector2 Size);
+
 internal class FontManager
 {
-    private static readonly Dictionary<string, Face> Fonts = [];
-    private static readonly Dictionary<string, int> Counters = [];
+    private static readonly Dictionary<FontKey, Face> Fonts = [];
+    private static readonly Dictionary<FontKey, int> Counters = [];
 
-    public static Face GetFont(TextData font)
+    public static Face GetFont(FontKey font)
     {
-        if (Fonts.TryGetValue(font.Name, out var face))
+        if (Fonts.TryGetValue(font, out var face))
         {
-            StartUsing(font);
             return face;
         }
-        
-        return GetFromPath(font);
+
+        face = GetFromPath(font);
+        return face;
     }
 
-    public static void Free(TextData font)
+    public static void StartUsing(FontKey fontKey)
     {
-        if (!Counters.TryGetValue(font.Name, out var count))
-            return;
-        
-        count = --Counters[font.Name];
+        if (!Counters.TryGetValue(fontKey, out _))
+            Counters.Add(fontKey, 1);
 
-        if (count <= 0)
+        Counters[fontKey]++;
+    }
+
+    public static void StopUsing(FontKey fontKey)
+    {
+        int count = 0;
+        try
         {
-            Counters.Remove(font.Name);
-            Fonts.Remove(font.Name);
+            count = --Counters[fontKey];
+        }
+        finally
+        {
+            if (count <= 0)
+            {
+                Counters.Remove(fontKey);
+                Fonts.Remove(fontKey);
+                GlyphManager.Free(fontKey);
+            }
         }
     }
 
-    private static void StartUsing(TextData font)
-    {
-        if (!Counters.TryGetValue(font.Name, out var count))
-            Counters.Add(font.Name, 1);
-
-        Counters[font.Name]++;
-    }
-
-    private static unsafe Face GetFromPath(TextData font)
+    private static unsafe Face GetFromPath(FontKey font)
     {
         var library = new Library();
         Face face;
@@ -51,10 +58,10 @@ internal class FontManager
         }
         catch(FreeTypeException e)
         {
-            throw new ResourceException($"Failed to load font {font.Name} on path: {font.Path}.", e);
+            throw new ResourceException($"Failed to load font on path: {font.Path}.", e);
         }
-        Fonts.Add(font.Name, face);
-        StartUsing(font);
+        face.SetPixelSizes((uint)font.Size.X, (uint)font.Size.Y);
+        Fonts.Add(font, face);
         return face;
     }
 

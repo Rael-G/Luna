@@ -2,7 +2,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Luna.Core\Luna.Core.csproj" />
-    <ProjectReference Include="..\Luna.Engine\Luna.Engine.csproj" />
+    <ProjectReference Include="..\Luna.OpenGL\Luna.OpenGL.csproj" />
+    <ProjectReference Include="..\..\Box2DSharp\src\Box2DSharp.csproj" />
+    <ProjectReference Include="..\Luna.Box2D\Luna.Box2D.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -11,5 +13,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="Assets\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

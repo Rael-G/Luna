@@ -28,7 +28,7 @@ internal unsafe class Window : IWindow
         set 
         {
             _windowSize = value;
-            Gl?.Viewport(0, 0, (uint)_windowSize.X, (uint)_windowSize.Y);
+            GL?.Viewport(0, 0, (uint)_windowSize.X, (uint)_windowSize.Y);
         }
     }
 
@@ -54,7 +54,7 @@ internal unsafe class Window : IWindow
     
 #pragma warning disable CA2211 // Non-constant fields should not be visible
     public static Glfw? Glfw;
-    public static GL? Gl;
+    public static GL? GL;
 #pragma warning restore CA2211 // Non-constant fields should not be visible
     private static WindowHandle* WindowHandle = null!;
 
@@ -89,8 +89,8 @@ internal unsafe class Window : IWindow
 
         Glfw.MakeContextCurrent(WindowHandle);
 
-        Gl = GL.GetApi(new GlfwContext(Glfw, WindowHandle));
-        if (Gl is null)
+        GL = GL.GetApi(new GlfwContext(Glfw, WindowHandle));
+        if (GL is null)
         {
             Glfw.Terminate();
             throw new WindowException("GL failed to load context.");
@@ -113,8 +113,8 @@ internal unsafe class Window : IWindow
 
     public void BeginRender()
     {
-        Gl?.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        Gl?.ClearColor((float)Colors.DimGray.R, (float)Colors.DimGray.G, (float)Colors.DimGray.B, (float)Colors.DimGray.A);
+        GL?.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL?.ClearColor(Colors.DimGray);
     }
     
     public void EndRender()

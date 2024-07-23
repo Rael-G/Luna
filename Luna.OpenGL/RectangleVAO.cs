@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace Luna.OpenGl;
 
@@ -6,8 +7,7 @@ internal class RectangleVAO
 {
     public uint Handle { get; private set; }
 
-    private readonly float _width;
-    private readonly float _height;
+    private readonly Vector2 _size;
 
     private uint _vbo;
     private uint _ebo;
@@ -15,9 +15,9 @@ internal class RectangleVAO
     private float[] Vertices => 
     [
         0.0f, 0.0f, 0.0f,  // Bottom left
-        0.0f, _height, 0.0f,  // Top left
-        _width, _height, 0.0f,   //Top right
-        _width, 0.0f, 0.0f,    // Bottom right
+        0.0f, _size.Y, 0.0f,  // Top left
+        _size.X, _size.Y, 0.0f,   //Top right
+        _size.X, 0.0f, 0.0f,    // Bottom right
     ];
 
     private static readonly uint[] Indices = 
@@ -26,12 +26,11 @@ internal class RectangleVAO
         1, 2, 3    // second triangle
     ];
 
-    private readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
-    public RectangleVAO(float width, float height)
+    public RectangleVAO(Vector2 size)
     {
-        _width = width;
-        _height = height;
+        _size = size;
         Generate();
     }
 

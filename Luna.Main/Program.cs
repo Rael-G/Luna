@@ -1,34 +1,18 @@
-﻿using Luna.Core;
-using Luna.Maths;
-using Luna.Engine.OpenGl;
+﻿using System.Numerics;
+using Box2DSharp.Collision.Shapes;
+using Luna;
+using Luna.Box2D;
+using Luna.Core;
+using Luna.OpenGl;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        OpenGl.AddServices();
+        LunaOpenGL.AddServices();
         var root = new Root();
-        var camera = new OrtographicCamera(){
-            Left = 0.0,
-            Right = Window.Size.X,
-            Top = 0.0,
-            Bottom = Window.Size.Y
-        };
         
-        var rect = new Rectangle
-        {
-            Width = Window.Size.X / 2,
-            Height = Window.Size.Y / 2,
-            Color = Colors.Red
-        };
-        var position = rect.Transform.Position;
-        position.X = 400;
-        position.Y = 300;
-        rect.Transform.Position = position;
-        var a = Vector2D.Zero + Vector2D.Left;
-        root.AddChild(camera);
-        root.AddChild(rect);
-
+        
         var host = new Host(root);
         host.Run();
     }
@@ -36,15 +20,60 @@ internal class Program
 
 public class Root : Node2D
 {
-    protected override void Config()
+    Label label;
+    public override void Config()
     {
         Window.Title = "Hello Rectangle!";
         Window.Size = new(800, 600);
+        base.Config();
     }
 
-    protected override void Update()
+    public override void Awake()
     {
-        if (Input.KeyboardKeyDown(Keys.Escape))
+        base.Awake();
+    }
+
+    public override void Start()
+    {
+        var camera = new OrtographicCamera(){
+            Left = 0.0f,
+            Right = Window.Size.X,
+            Bottom = Window.Size.Y,
+            Top = 0.0f 
+        };
+        AddChild(camera);
+        var rect = new Rectangle
+        {
+            Size = new(400, 300),
+            Color = Colors.Red
+        };
+
+        rect.Transform.Position = new Vector2{ X = 400, Y = 297 };
+
+        label = new Label
+        {
+            Text = "Hello, World!",
+            Path = Directory.GetCurrentDirectory() + "/Assets/fonts/OpenSans-Regular.ttf",
+            FlipV = true,
+            CenterH = true,
+            CenterV = true
+
+        };
+        label.Transform.Position = new Vector2{ X = 400, Y = 300 };
+
+        AddChild(rect, label);
+        
+
+        base.Start();
+    }
+
+    public override void Update()
+    {
+        var utils = Injector.Get<IUtils>();
+        utils.MeasureTextSize((label.Path, label.Size), "i");
+        if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
+
+        base.Update();
     }
 }

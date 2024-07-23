@@ -1,8 +1,9 @@
 ﻿using System.Numerics;
-using Luna.OpenGl.FreeTypeSharp;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGl;
+
+using FontKey = (string Path, Vector2 Size);
 
 internal class TextVAO
 {
@@ -12,17 +13,17 @@ internal class TextVAO
 
     public readonly Dictionary<char, Character> Characters = [];
 
-    private readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
-    private readonly Face Font;
+    private readonly FontKey _fontKey;
 
     private const uint PointerJump = 4 * sizeof(float);
     public uint Vbo { get; private set; }
 
     public TextVAO(TextData data)
     {
-        Font = FontManager.GetFont(data);
-        Font.SetPixelSizes(0, (uint)data.PixelSize);
+        _fontKey = data.FontKey;
+        FontManager.StartUsing(data.FontKey);
         Generate();
     }
 
@@ -31,30 +32,7 @@ internal class TextVAO
         _gl.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
         for (uint c = 0; c < 128; c++)
         {
-
-            Font.LoadChar((char)c, LoadFlags.Render);
-            var bitmap = Font.Glyph.Bitmap;
-            
-            var texture = _gl.GenTexture();
-            _gl.BindTexture(TextureTarget.Texture2D, texture);
-
-            _gl.TexImage2D<byte>(TextureTarget.Texture2D, 0, InternalFormat.R8, bitmap.Width, 
-                bitmap.Rows, 0, PixelFormat.Red, PixelType.UnsignedByte, bitmap.Buffer);
-
-            _gl.TextureParameter(texture, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
-            _gl.TextureParameter(texture, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
-            _gl.TextureParameter(texture, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);
-            _gl.TextureParameter(texture, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
-            
-            Character character = new()
-            {
-                TextureID = texture,
-                Size = new Vector2(bitmap.Width, bitmap.Rows),
-                Bearing = new Vector2(Font.Glyph.BitmapLeft, Font.Glyph.BitmapTop),
-                Advance = (uint)Font.Glyph.Advance.X
-            };
-
-            Characters.Add((char)c, character);
+            Characters.Add((char)c, GlyphManager.GetGlyph(_fontKey, (char)c));
         }
 
         _gl.Enable(EnableCap.Blend);
@@ -90,5 +68,6 @@ internal class TextVAO
     {
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(Vbo);
+        FontManager.StopUsing(_fontKey);
     }
 }

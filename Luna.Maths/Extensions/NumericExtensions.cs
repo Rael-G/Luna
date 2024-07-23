@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Luna.Maths;
+﻿namespace Luna.Maths;
 
 public static class NumericExtensions
 {
@@ -12,4 +10,7 @@ public static class NumericExtensions
     
     public static float Lerp(this float from, float to, float weight)
         => from + (to - from) * weight;
+
+    public static float Clamp(this float f, float min, float max)
+        => Math.Clamp(f, min, max);
 }

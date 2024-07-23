@@ -4,11 +4,11 @@ namespace Luna;
 
 public class OrtographicCamera : Node2D, ICamera
 {
-    public float Left { get; set; } = -1.0f;
+    public float Left { get; set; } = 0.0f;
     public float Right { get; set; } = 1.0f;
-    public float Bottom { get; set; } = -1.0f;
-    public float Top { get; set; } = 1.0f;
-    public float Near { get; set; } = -1.0f;
+    public float Bottom { get; set; } = 1.0f;
+    public float Top { get; set; } = 0.0f;
+    public float Near { get; set; } = -10.0f;
     public float Far { get; set; } = 10.0f;
 
     protected override Node? Parent 

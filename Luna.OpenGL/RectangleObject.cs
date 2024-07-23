@@ -10,9 +10,9 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 
     private RectangleData Data = data;
 
-    private RectangleVAO RectangleVAO = new((float)data.Width, (float)data.Height);
+    private RectangleVAO RectangleVAO = new(data.Size);
 
-    private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
     private readonly Program Program = new
     (
@@ -48,8 +48,8 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 
     public override void Update(RectangleData data)
     {
-        if (Data.Width != data.Width || Data.Height != data.Height)
-            RectangleVAO = new((float)data.Width, (float)data.Height);
+        if (Data.Size != data.Size) 
+            RectangleVAO = new(Data.Size);
 
         Data = data;
     }

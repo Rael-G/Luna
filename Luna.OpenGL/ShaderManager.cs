@@ -8,7 +8,7 @@ internal static class ShaderManager
     private static readonly Dictionary<string, uint> Shaders = [];
     private static readonly Dictionary<string, int> Counters = [];
 
-    private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
     private static string BinaryPath
     {
@@ -51,7 +51,6 @@ internal static class ShaderManager
         if (Shaders.TryGetValue(program.Name, out var id))
             return id;
         
-
         return GetFromBinary(program);
     }
 

@@ -44,6 +44,8 @@ public class Transform3D
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
     }
 
+    public Vector3 RotationAxis { get; set; }
+
     internal Transform3D? Parent { get; set; }
 
     public Vector3 RotationDegrees 
@@ -59,9 +61,11 @@ public class Transform3D
 
     internal Matrix ModelMatrix()
         =>  Transformations.TranslationMatrix(GlobalPosition) *
+            Transformations.TranslationMatrix(RotationAxis) *
             Transformations.RotationMatrix(GlobalRotation.X, Vector3.UnitX) *
             Transformations.RotationMatrix(GlobalRotation.Y, Vector3.UnitY) *
             Transformations.RotationMatrix(GlobalRotation.Z, Vector3.UnitZ) *
+            Transformations.TranslationMatrix(-RotationAxis) *
             Transformations.ScaleMatrix(GlobalScale);
 
 }

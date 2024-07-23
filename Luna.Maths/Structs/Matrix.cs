@@ -174,9 +174,9 @@ public class Matrix : IEnumerable<float>
     
     public static Matrix Identity(int size)
     {
-        var vector = new Matrix(1, size);
+        var vector = new Matrix(size, 1);
         for (int i = 0; i < size; i++)
-            vector[0, i] = 1;
+            vector[i, 0] = 1;
 
         return vector.Diagonal();
     }

@@ -1,6 +1,6 @@
 ﻿namespace Luna.OpenGl;
 
-internal abstract class RenderObject<TData>() 
+public abstract class RenderObject<TData>() 
     : IRenderObject
 {
     public abstract void Render();

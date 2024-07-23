@@ -1,6 +1,6 @@
 ﻿namespace Luna;
 
-public interface ICollisionBody
+public interface IFixed
 {
     void FixedUpdate();
 }

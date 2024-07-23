@@ -8,11 +8,11 @@ internal class TextObject(TextData data) : RenderObject<TextData>
     private const string VertexName = "FontVertexShader.glsl";
     private const string FragmentName = "FontFragmentShader.glsl";
 
-    private TextData Text { get; set; } = data;
+    private TextData Text = data;
 
-    private readonly TextVAO TextVAO = new(data);
+    private TextVAO TextVAO = new(data);
 
-    private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
     private readonly Program Program = new
     (
@@ -37,7 +37,7 @@ internal class TextObject(TextData data) : RenderObject<TextData>
     {
         Program.Use();
         Program.UniformVec3("textColor", Text.Color.ToMatrix());
-        Program.UniformMat4("transform", Text.Transform);
+        Program.UniformMat4("transform", Text.Transform.Transpose());
 
         _gl.ActiveTexture(TextureUnit.Texture0);
         _gl.BindVertexArray(TextVAO.Handle);
@@ -49,10 +49,10 @@ internal class TextObject(TextData data) : RenderObject<TextData>
         {
             Character ch = TextVAO.Characters[c];
 
-            var yFix = Text.FlipV? TextVAO.Characters['H'].Bearing.Y + ch.Bearing.Y : ch.Size.Y - ch.Bearing.Y;
+            var yFix = Text.FlipV? TextVAO.Characters['H'].Bearing.Y - ch.Bearing.Y : -(ch.Size.Y - ch.Bearing.Y);
 
             float xpos = (float)(x + ch.Bearing.X);
-            float ypos = (float)(y - yFix );
+            float ypos = (float)(y + yFix );
 
             float w = ch.Size.X;
             float h = ch.Size.Y;
@@ -76,11 +76,8 @@ internal class TextObject(TextData data) : RenderObject<TextData>
 
     public override void Update(TextData data)
     {
+        if (data.FontKey != Text.FontKey)
+            TextVAO = new(data);
         Text = data;
-    }
-
-    ~TextObject()
-    {
-        FontManager.Free(Text);
     }
 }

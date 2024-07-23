@@ -4,7 +4,7 @@ namespace Luna;
 
 public class Node2D : Node
 {
-    public Transform2D Transform { get; }
+    public virtual Transform2D Transform { get; }
 
     public Matrix TransformMatrix
     {
@@ -28,8 +28,6 @@ public class Node2D : Node
         }
     }
 
-    public Node? _parent;
-
     public virtual OrtographicCamera? Camera 
     { 
         get
@@ -46,10 +44,12 @@ public class Node2D : Node
         } 
     }
 
-    public OrtographicCamera? _camera;
-
     public Node2D()
     {
         Transform = new();
     }
+
+    public Node? _parent;
+    private OrtographicCamera? _camera;
+
 }

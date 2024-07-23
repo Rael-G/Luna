@@ -2,7 +2,7 @@
 
 namespace Luna.OpenGl;
 
-internal struct Character
+public struct Character
 {
     public uint TextureID;
     public Vector2 Size;

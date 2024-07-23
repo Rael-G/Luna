@@ -4,7 +4,7 @@ namespace Luna.OpenGl;
 
 internal static class GlErrorUtils
 {
-    private static readonly GL _gl = Window.Gl?? throw new WindowException("Window.Gl is null.");
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
     public static bool CheckError(string issue = "")
     {

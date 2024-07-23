@@ -1,31 +1,31 @@
-﻿namespace Luna;
+﻿using Luna.Core;
 
-public class Host
+namespace Luna;
+
+public class Host(Node root)
 {
-    public Node Root { get; set; }
-
-    private readonly InputHandler InputHandler = _ => {};
-
-    public Host(Node root)
-    {
-        Root = root;
-        InputHandler += Root.Input;
-    }
+    public Node Root { get; set; } = root;
 
     public void Run()
     {
+        Tree.Root = Root;
+        Time.StartTimer();
         Root.Config();
 
         Window.EngineWindow.Init();
 
         Injector.Get<IWindow>().SetKeyCallback((key, action, mods) 
-            => InputHandler(new KeyboardEvent(key, action, mods)));
+            => Root.Input(new KeyboardEvent(key, action, mods)));
 
        Root.Awake();
        Root.Start();
 
+       Physics.Add(Root);
+
         while (Window.Running)
         {
+            Time.NextFrame();
+            Time.SetDeltaTime();
             Root.EarlyUpdate();
             Root.Update();
             Root.LateUpdate();

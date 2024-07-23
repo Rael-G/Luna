@@ -56,6 +56,23 @@ public struct Color
         }
     }
 
+    public static implicit operator System.Drawing.Color (Color color)
+        => System.Drawing.Color.FromArgb(
+            (int)0.0f.Lerp(255.0f, color.A), 
+            (int)0.0f.Lerp(255.0f, color.R), 
+            (int)0.0f.Lerp(255.0f, color.G), 
+            (int)0.0f.Lerp(255.0f, color.B)
+        );
+
+    public static implicit operator Color(System.Drawing.Color color)
+        => new()
+    {
+        R = color.R / 255.0f,
+        G = color.G / 255.0f,
+        B = color.B / 255.0f,
+        A = color.A / 255.0f
+    };
+
 
     public readonly Color Lerp(Color other, float weight)
         => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;

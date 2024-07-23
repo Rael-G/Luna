@@ -1,19 +1,30 @@
-﻿namespace Luna;
+﻿using Luna.Core;
 
-public class Node
+namespace Luna;
+
+public class Node : IFixed
 {
-    public string RUID { get; }
+    public string UID { get; }
+
+    public string Alias { get; set; } 
+
+    public bool Paused { get; set; }
+
+    public bool Invisible { get; set; }
 
     protected virtual Node? Parent { get; set;}
 
+    private bool _awake;
+    private bool _started;
+
     private List<Node> Children { get; }
 
-    protected bool IsAwake { get; set; }
 
     public Node()
     {
-        RUID = Guid.NewGuid().ToString();
+        UID = Guid.NewGuid().ToString();
         Children = [];
+        Alias = GetType().Name;
     }
 
     /// <summary>
@@ -30,8 +41,9 @@ public class Node
     /// </summary>
     public virtual void Awake()
     {
-        IsAwake = true;
+        if (_awake)    return;
 
+        _awake = true;
         foreach (var child in Children)
             child.Awake();
     }
@@ -40,7 +52,10 @@ public class Node
     /// Initializes this GameObject.
     /// </summary>
     public virtual void Start()
-    { 
+    {
+        if (_started)  return;
+
+        _started = true;
         foreach (var child in Children)
             child.Start();
     }
@@ -49,7 +64,9 @@ public class Node
     /// Updates this GameObject once per frame.
     /// </summary>
     public virtual void EarlyUpdate()
-    { 
+    {   
+        if (Paused)  return;
+
         foreach (var child in Children)
             child.EarlyUpdate();
     }
@@ -58,7 +75,9 @@ public class Node
     /// Updates this GameObject once per frame.
     /// </summary>
     public virtual void Update()
-    { 
+    {
+        if (Paused)  return;
+
         foreach (var child in Children)
             child.Update();
     }
@@ -68,8 +87,18 @@ public class Node
     /// </summary>
     public virtual void LateUpdate()
     {
+        if (Paused)  return;
+
         foreach (var child in Children)
             child.LateUpdate();
+    }
+
+    public virtual void FixedUpdate()
+    {
+        if (Paused)  return;
+
+        foreach (var child in Children)
+            child.FixedUpdate();
     }
 
     /// <summary>
@@ -77,8 +106,10 @@ public class Node
     /// </summary>
     public virtual void Render()
     {
+        if (Invisible)  return;
+
         var map = Injector.Get<IRenderMap>();
-        map.Render(RUID);
+        map.Render(UID);
 
         foreach (var child in Children)
             child.Render();
@@ -94,28 +125,14 @@ public class Node
     {
         foreach (var node in nodes)
         {
+            if (Children.FirstOrDefault(c => c == node) != null) 
+                continue;
+
             node.Parent = this;
             Children.Add(node);
-            if (Window.Running && !IsAwake)
-            {
-                node.Awake();
-                node.Start();
-            }
-            
-        }
-    }
-
-    public virtual void AddChild(IEnumerable<Node> nodes)
-    {
-        Children.AddRange(nodes);
-        foreach (var node in nodes)
-        {
-            node.Parent = this;
-            if (Window.Running && !IsAwake)
-            {
-                node.Awake();
-                node.Start();
-            }
+            if (Window.Running && _awake)   node.Awake();
+            if (Window.Running && _started) node.Start();
+            Tree.AddNode(node);
         }
     }
 
@@ -123,6 +140,22 @@ public class Node
     {
         Children.Remove(node);
         node.Parent = null;
+        Tree.RemoveNode(node.UID);
+    }
+
+    // Alias is opcional, if you want to use this method to find a node, every node on the hierarchy path need to have an alias
+    public T? FindNode<T>(string alias) where T : Node
+    {
+        var aliases = alias.Split('/', options: StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        Node? node = this;
+        for (int i = 0; i < aliases.Length; i++)
+        {
+            if (node is null) return null;
+            node = node?.Children.Find(n => n.Alias == aliases[i]);
+        }
+
+        return node as T;
     }
 
     protected internal void CreateRenderObject<TData>(TData data)
@@ -131,19 +164,18 @@ public class Node
         var map = Injector.Get<IRenderMap>();
 
         var obj = factory.CreateRenderObject(data);
-        map.Add(RUID, obj);
+        map.Add(UID, obj);
     }
 
     protected internal void UpdateRenderObject<TData>(TData data)
     {
         var map = Injector.Get<IRenderMap>();
-        map.Update(RUID, data);
+        map.Update(UID, data);
     }
 
     ~Node()
     {
-        Children.Clear();
         var renderMap = Injector.Get<IRenderMap>();
-        renderMap.Remove(RUID);
+        renderMap.Remove(UID);
     }
 }

@@ -25,8 +25,8 @@ public class Transform2D
     {
         get 
         {
-            if (Parent is null) return Position;
-            return Parent.GlobalPosition + Position;
+            if (Parent is null) return Position - Origin;
+            return Parent.GlobalPosition + Position - Origin;
         }
     }
 
@@ -44,6 +44,8 @@ public class Transform2D
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
     }
 
+    public Vector2 Origin { get; set; }
+
     internal Transform2D? Parent { get; set; }
 
     public float RotationDegrees 
@@ -59,6 +61,8 @@ public class Transform2D
 
     public Matrix ModelMatrix()
          => Transformations.TranslationMatrix(GlobalPosition.ToVector3()) *
+            Transformations.TranslationMatrix(Origin.ToVector3()) *
             Transformations.RotationMatrix(GlobalRotation, Vector3.UnitZ) *
+            Transformations.TranslationMatrix(-Origin.ToVector3()) *
             Transformations.ScaleMatrix(GlobalScale.ToVector3());  
 }

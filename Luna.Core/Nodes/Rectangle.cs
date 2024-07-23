@@ -1,27 +1,32 @@
-﻿namespace Luna;
+﻿using System.Numerics;
+
+namespace Luna;
 
 public class Rectangle : Node2D
 {
-    public float Width { get; set; }
-    public float Height { get; set; }
+    public Vector2 Size { get; set; }
+
     public Color Color { get; set; }
+
+    public bool Center { get; set; }
 
     public override void Awake()
     {
-         CreateRenderObject
-         (
+        CreateRenderObject
+        (
             new RectangleData
             { 
-                Width = Width, Height = Height, Transform = TransformMatrix, Color = Color 
+                Size = Size, Transform = TransformMatrix, Color = Color 
             }
-         );
+        );
 
         base.Awake();
     }
 
-    public override void Update()
+    public override void EarlyUpdate()
     {
-        Transform.Rotation += 0.001f;
+        CenterRect();
+        base.EarlyUpdate();
     }
 
     public override void LateUpdate()
@@ -30,9 +35,15 @@ public class Rectangle : Node2D
          (
             new RectangleData
             { 
-                Width = Width, Height = Height, Transform = TransformMatrix, Color = Color 
+                Size = Size, Transform = TransformMatrix, Color = Color 
             }
          );
         base.LateUpdate();
+    }
+
+    private void CenterRect()
+    {
+        if (Center)
+            Transform.Origin = Size * Transform.Scale / 2;
     }
 }
