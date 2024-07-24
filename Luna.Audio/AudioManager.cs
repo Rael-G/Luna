@@ -1,4 +1,6 @@
 ﻿using System.Numerics;
+using Luna.Core;
+using Luna.Maths;
 using Silk.NET.OpenAL;
 
 namespace Luna.Audio;
@@ -31,13 +33,24 @@ public static class AudioManager
         return new(path, handle, buffer);
     }
 
-    public unsafe static void SetListener(Vector3 position, Vector3 front, Vector3 up)
+    public unsafe static void SetListener(Vector3 position, Vector3 velocity, Vector3 front, Vector3 up)
     {
         _al.SetListenerProperty(ListenerVector3.Position, position);
+        _al.SetListenerProperty(ListenerVector3.Velocity, velocity);
         fixed (float* orientationPtr = new float[]{ front.X, front.Y, front.Z, up.X, up.Y, up.Z })
         {
             _al.SetListenerProperty(ListenerFloatArray.Orientation, orientationPtr);
         }
+    }
+
+    public static void SetDistanceModel(Core.DistanceModel distanceModel)
+    {
+        _al.DistanceModel((Silk.NET.OpenAL.DistanceModel)distanceModel);
+    }
+
+    public static void SetGlobalVolume(float volume)
+    {
+        _al.SetListenerProperty(ListenerFloat.Gain, volume.Clamp(0f, 1f));
     }
 
     public static void StartUsing(string path)

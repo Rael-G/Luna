@@ -61,12 +61,45 @@ public class Source(string path, uint handle, uint buffer) : Disposable
         }
     }
 
+    public float ReferenceDistance
+    {
+        get => _referenceDistance;
+        set
+        {
+            _referenceDistance = Math.Abs(value);
+            _al.SetSourceProperty(Handle, SourceFloat.ReferenceDistance, _referenceDistance);
+        }
+    }
+
+    public float MaxDistance 
+    {
+        get => _maxDistance;
+        set
+        {
+            _maxDistance = Math.Abs(value);
+            _al.SetSourceProperty(Handle, SourceFloat.MaxDistance, _maxDistance);
+        }
+    }
+
+    public float RolloffFactor 
+    {
+        get => _rollofFactor;
+        set
+        {
+            _rollofFactor = Math.Abs(value);
+            _al.SetSourceProperty(Handle, SourceFloat.RolloffFactor, _rollofFactor);
+        }
+    }
+
     private readonly string _path = path;
-    private float _volume;
-    private float _pitch;
+    private float _volume = 1f;
+    private float _pitch = 1f;
     private bool _loop;
-    private float _speed;
+    private float _speed = 1f;
     private Vector3 _position;
+    private float _referenceDistance = 1f;
+    private float _maxDistance = 1000f;
+    private float _rollofFactor = 1f;
 
     public void Play()
     {

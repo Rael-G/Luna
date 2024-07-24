@@ -43,6 +43,24 @@ public class AudioPlayer  : Disposable, IAudioPlayer
         set => _source.Position = value;
     }
 
+    public float ReferenceDistance
+    {
+        get =>_source.ReferenceDistance;
+        set => _source.ReferenceDistance = value;
+    }
+
+    public float MaxDistance 
+    {
+        get =>_source.MaxDistance;
+        set => _source.MaxDistance = value;
+    }
+
+    public float RolloffFactor 
+    {
+        get =>_source.RolloffFactor;
+        set => _source.RolloffFactor = value;
+    }
+
     public void Pause()
         => _source.Pause();
     

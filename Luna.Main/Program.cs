@@ -40,7 +40,7 @@ public class Root : Node2D
             Right = Window.Size.X,
             Bottom = Window.Size.Y,
             Top = 0.0f,
-            IsListener = true
+            Listener = new()
         };
         AddChild(camera);
         var rect = new Rectangle
@@ -63,7 +63,7 @@ public class Root : Node2D
         label.Transform.Position = new Vector2{ X = 400, Y = 300 };
         
         var sound = new Sound2D(Directory.GetCurrentDirectory() + "/Assets/audio/music/Death.wav");
-        sound.Transform.Position = new Vector2(4750, 4750);
+        sound.Transform.Position = new Vector2(0, 0);
         AddChild(rect, label, sound);
         sound.Play();
 

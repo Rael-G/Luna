@@ -13,7 +13,7 @@ public class OrtographicCamera : Node2D, ICamera
     public float Near { get; set; } = -10.0f;
     public float Far { get; set; } = 10.0f;
 
-    public bool IsListener { get; set; }
+    public Listener? Listener { get; set; }
 
     protected override Node? Parent 
     { 
@@ -28,13 +28,6 @@ public class OrtographicCamera : Node2D, ICamera
         } 
     }
 
-    public override void LateUpdate()
-    {
-        if (IsListener)
-            Utils.SetListener(Transform.GlobalPosition.ToVector3(), -Vector3.UnitZ, Vector3.UnitY);
-        base.LateUpdate();
-    }
-
     public virtual Matrix Project()
     {
         var proj = Transformations.OrthographicProjection
@@ -42,5 +35,11 @@ public class OrtographicCamera : Node2D, ICamera
         var view = Transformations.TranslationMatrix(-Transform.GlobalPosition.ToVector3());
         return proj * view;
     }
-            
+
+    public override void LateUpdate()
+    {
+        Listener?.UpdateListener(Transform);
+        base.LateUpdate();
+    }
+
 }

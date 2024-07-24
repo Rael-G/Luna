@@ -10,7 +10,6 @@ public class EngineUtils : IEngineUtils
 {
     public Vector2 MeasureTextSize(FontKey font, string text)
     {
-        Console.WriteLine(1);
         float width = 0.0f;
         float maxHeight = 0.0f;
 

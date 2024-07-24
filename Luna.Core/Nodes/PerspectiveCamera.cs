@@ -41,14 +41,13 @@ public class PerspectiveCamera : Node3D, ICamera
     public float Near { get; set; } = 0.1f;
     public float Far { get; set; } = 1000.0f;
 
-    public bool IsListener { get; set; }
+    public Listener? Listener { get; set; }
 
     private Vector3? _target;
 
     public override void LateUpdate()
     {
-        if (IsListener)
-            Utils.SetListener(Transform.GlobalPosition, (Target - Transform.GlobalPosition).Normalize(), Up);
+        Listener?.UpdateListener(Transform, (Target - Transform.GlobalPosition).Normalize(), Up);
         base.LateUpdate();
     }
 
