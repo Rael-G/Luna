@@ -22,12 +22,13 @@ public unsafe class AudioContext : Disposable
     private AudioContext()
     {
         ALContext = ALContext.GetApi();
-        _device = ALContext.OpenDevice(null);
+        _device = ALContext.OpenDevice("");
 
         _context = ALContext.CreateContext(_device, null);
         ALContext.MakeContextCurrent(_context);
 
         _al = AL.GetApi();
+         _al.GetError();
     }
 
     public override void Dispose(bool disposing)

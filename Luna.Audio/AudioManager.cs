@@ -22,7 +22,7 @@ public static class AudioManager
             byte[] audioData = LoadWave(path, out var channels, out var bits, out var sampleRate);
             _al.BufferData(buffer, GetSoundFormat(channels, bits), audioData, sampleRate);
         }
-        catch(NotSupportedException e)
+        catch(Exception e)
         {
             throw new ResourceException($"Failed to load audio source from path: {path}", e);
         }

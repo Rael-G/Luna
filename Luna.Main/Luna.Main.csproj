@@ -5,6 +5,7 @@
     <ProjectReference Include="..\Luna.OpenGL\Luna.OpenGL.csproj" />
     <ProjectReference Include="..\..\Box2DSharp\src\Box2DSharp.csproj" />
     <ProjectReference Include="..\Luna.Box2D\Luna.Box2D.csproj" />
+    <ProjectReference Include="..\Luna.Audio\Luna.Audio.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

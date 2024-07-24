@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
-using Box2DSharp.Collision.Shapes;
 using Luna;
-using Luna.Box2D;
+using Luna.Audio;
 using Luna.Core;
 using Luna.OpenGl;
 
@@ -10,6 +9,7 @@ internal class Program
     private static void Main(string[] args)
     {
         LunaOpenGL.AddServices();
+        LunaAudio.AddServices();
         var root = new Root();
         
         
@@ -39,7 +39,8 @@ public class Root : Node2D
             Left = 0.0f,
             Right = Window.Size.X,
             Bottom = Window.Size.Y,
-            Top = 0.0f 
+            Top = 0.0f,
+            IsListener = true
         };
         AddChild(camera);
         var rect = new Rectangle
@@ -60,17 +61,18 @@ public class Root : Node2D
 
         };
         label.Transform.Position = new Vector2{ X = 400, Y = 300 };
-
-        AddChild(rect, label);
         
+        var sound = new Sound2D(Directory.GetCurrentDirectory() + "/Assets/audio/music/Death.wav");
+        sound.Transform.Position = new Vector2(4750, 4750);
+        AddChild(rect, label, sound);
+        sound.Play();
 
         base.Start();
     }
 
     public override void Update()
     {
-        var utils = Injector.Get<IEngineUtils>();
-        utils.MeasureTextSize((label.Path, label.Size), "i");
+        
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
 

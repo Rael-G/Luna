@@ -176,12 +176,12 @@ public class Node : Disposable, IFixed
 
     public override void Dispose(bool disposing)
     {
+        var renderMap = Injector.Get<IRenderMap>();
+        renderMap.Remove(UID);
+
         foreach (var child in Children)
         {
             child.Dispose();
         }
-        
-        var renderMap = Injector.Get<IRenderMap>();
-        renderMap.Remove(UID);
     }
 }

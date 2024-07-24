@@ -2,7 +2,7 @@
 
 namespace Luna.Core;
 
-public interface IAudioPlayer
+public interface IAudioPlayer : IDisposable
 {
     float Volume { get; set; }
     float Pitch { get; set; }

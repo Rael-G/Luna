@@ -5,7 +5,18 @@ namespace Luna.Core;
 
 public class Sound2D(string path) : Node2D
 {
-    readonly IAudioPlayer Player = Injector.Get<IAudioPlayerFactory>().Create(path);
+    private IAudioPlayer Player = Injector.Get<IAudioPlayerFactory>().Create(path);
+
+    public string Path
+    {
+        get => _path;
+        set
+        {
+            _path = value;
+            Player.Dispose();
+            Player = Injector.Get<IAudioPlayerFactory>().Create(_path);
+        }
+    }
 
     public float Volume 
     { 
@@ -28,6 +39,8 @@ public class Sound2D(string path) : Node2D
         set => Player.Speed = value; 
     }
 
+    private string _path = path;
+
     public void Play()
         => Player.Play();
 
@@ -41,6 +54,12 @@ public class Sound2D(string path) : Node2D
     {
         Player.Position = Transform.Position.ToVector3();
         base.LateUpdate();
+    }
+
+    public override void Dispose(bool disposing)
+    {
+        Player.Dispose();
+        base.Dispose(disposing);
     }
 
 }

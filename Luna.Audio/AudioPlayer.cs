@@ -3,9 +3,15 @@ using Luna.Core;
 
 namespace Luna.Audio;
 
-public class AudioPlayer(string path)  : IAudioPlayer
+public class AudioPlayer  : Disposable, IAudioPlayer
 {
-    private readonly Source _source = AudioManager.Get(path);
+    private readonly Source _source;
+
+    public AudioPlayer(string path)
+    {
+        _source = AudioManager.Get(path);
+        _source.StartUsing();
+    }
 
     public float Volume 
     { 
@@ -47,5 +53,7 @@ public class AudioPlayer(string path)  : IAudioPlayer
 
     public void Stop()
         => _source.Stop();
-    
+
+    public override void Dispose(bool disposing)
+        => _source.StopUsing();
 }
