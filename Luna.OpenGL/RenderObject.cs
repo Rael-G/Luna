@@ -1,16 +1,11 @@
-﻿namespace Luna.OpenGl;
+﻿using Luna.Core;
+
+namespace Luna.OpenGl;
 
 public abstract class RenderObject<TData>() 
-    : IRenderObject
+    : Disposable, IRenderObject
 {
     public abstract void Render();
 
     public abstract void Update(TData data);
-
-    public abstract void Free();
-
-    ~RenderObject()
-    {
-        Free();
-    }
 }

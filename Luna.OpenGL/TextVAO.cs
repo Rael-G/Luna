@@ -1,11 +1,12 @@
 ﻿using System.Numerics;
+using Luna.Core;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGl;
 
 using FontKey = (string Path, Vector2 Size);
 
-internal class TextVAO
+internal class TextVAO : Disposable
 {
     public uint Handle { get; private set; }
 
@@ -64,15 +65,12 @@ internal class TextVAO
         ];
     }
 
-    public void Free()
+    public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+        
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(Vbo);
         FontManager.StopUsing(_fontKey);
-    }
-
-    ~TextVAO()
-    {
-        Free();
     }
 }

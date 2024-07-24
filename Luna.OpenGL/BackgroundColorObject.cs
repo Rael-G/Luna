@@ -18,8 +18,7 @@ internal class BackgroundColorObject(Color data) : RenderObject<Color>
         _color = data;
     }
 
-    public override void Free()
+    public override void Dispose(bool disposing)
     {
-       
     }
 }

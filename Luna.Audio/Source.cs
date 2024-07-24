@@ -1,10 +1,11 @@
 ﻿using System.Numerics;
+using Luna.Core;
 using Luna.Maths;
 using Silk.NET.OpenAL;
 
 namespace Luna.Audio;
 
-public class Source
+public class Source : Disposable
 {
     private static readonly AL _al = AudioContext.Al;
     
@@ -82,14 +83,9 @@ public class Source
         _al.SourcePause(Handle);
     }
 
-    public void Free()
+    public override void Dispose(bool disposing)
     {
         _al.DeleteSource(Handle);
         _al.DeleteBuffer(Buffer);
-    }
-
-    ~Source()
-    {
-        Free();
     }
 }

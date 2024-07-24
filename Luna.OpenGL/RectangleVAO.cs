@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
+using Luna.Core;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGl;
 
-internal class RectangleVAO
+internal class RectangleVAO : Disposable
 {
     public uint Handle { get; private set; }
 
@@ -61,16 +62,12 @@ internal class RectangleVAO
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
     }
     
-    public void Free()
+    public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(_vbo);
         _gl.DeleteBuffer(_ebo);
     }
-
-    ~RectangleVAO()
-    {
-        Free();
-    }
-    
 }

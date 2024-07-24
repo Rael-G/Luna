@@ -1,8 +1,9 @@
-﻿using Silk.NET.OpenAL;
+﻿using Luna.Core;
+using Silk.NET.OpenAL;
 
 namespace Luna.Audio;
 
-public unsafe class AudioContext
+public unsafe class AudioContext : Disposable
 {
     public static AL Al { get => Instance._al; }
 
@@ -29,11 +30,12 @@ public unsafe class AudioContext
         _al = AL.GetApi();
     }
 
-    ~AudioContext()
+    public override void Dispose(bool disposing)
     {
         ALContext.DestroyContext(_context);
         ALContext.CloseDevice(_device);
+
         ALContext.Dispose();
-        ALContext.Dispose();
+        
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace Luna;
 
-public interface IRenderObject
+public interface IRenderObject : IDisposable
 {
     void Render();
-    void Free();
 }

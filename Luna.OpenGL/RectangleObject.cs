@@ -50,16 +50,18 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     {
         if (Data.Size != data.Size) 
         {
-            RectangleVAO.Free();
+            RectangleVAO.Dispose();
             RectangleVAO = new(Data.Size);
         }
 
         Data = data;
     }
 
-    public override void Free()
+    public override void Dispose(bool disposing)
     {
-        RectangleVAO.Free();
-        Program.Free();
+        if (_disposed) return;
+        
+        RectangleVAO.Dispose();
+        Program.Dispose();
     }
 }

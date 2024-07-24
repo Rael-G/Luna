@@ -53,7 +53,7 @@ public static class AudioManager
 
         if (count <= 0)
         {
-            Sources[path].Free();
+            Sources[path].Dispose();
             Counters.Remove(path);
             Sources.Remove(path);
         }

@@ -1,8 +1,9 @@
 using System.Reflection;
+using Luna.Core;
 
 namespace Luna.OpenGl;
 
-internal class Program
+internal class Program : Disposable
 {
     public string Name { get; set; }
     public Shader[] Shaders { get; set; }
@@ -35,13 +36,10 @@ internal class Program
         return Path.Combine(assemblyLocation, "Assets", "shaders", name);
     }
 
-    public void Free()
+    public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+        
         ShaderManager.StopUsing(this);
-    }
-
-    ~Program()
-    {
-        Free();
     }
 }

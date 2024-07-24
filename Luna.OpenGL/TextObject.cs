@@ -81,9 +81,11 @@ internal class TextObject(TextData data) : RenderObject<TextData>
         Text = data;
     }
 
-    public override void Free()
+    public override void Dispose(bool disposing)
     {
-        Program.Free();
-        TextVAO.Free();
+        if (_disposed) return;
+
+        Program.Dispose();
+        TextVAO.Dispose();
     }
 }

@@ -7,14 +7,12 @@ internal class RenderMap : IRenderMap
     public void Add(string id, IRenderObject renderObject)
         => _renderMap.Add(id, renderObject);
     
-
     public void Remove(string id)
     {
-        _renderMap.GetValueOrDefault(id)?.Free();
+        _renderMap.GetValueOrDefault(id)?.Dispose();
         _renderMap.Remove(id);
     }
     
-
     public void Render(string id)
     {
         _renderMap.TryGetValue(id, out IRenderObject? renderObject);
