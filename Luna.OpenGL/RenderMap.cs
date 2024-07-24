@@ -1,4 +1,4 @@
-﻿namespace Luna.OpenGl;
+﻿namespace Luna.OpenGL;
 
 internal class RenderMap : IRenderMap
 {

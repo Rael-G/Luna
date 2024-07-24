@@ -1,6 +1,6 @@
 ﻿using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 internal struct Shader
 {

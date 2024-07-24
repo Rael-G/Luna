@@ -1,6 +1,6 @@
 ﻿using Luna.Core;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 public abstract class RenderObject<TData>() 
     : Disposable, IRenderObject

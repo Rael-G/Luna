@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 public struct Character
 {

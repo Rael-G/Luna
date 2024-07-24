@@ -2,7 +2,7 @@
 using Luna.Core;
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 using FontKey = (string Path, Vector2 Size);
 

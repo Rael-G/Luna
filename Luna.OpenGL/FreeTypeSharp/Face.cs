@@ -2,7 +2,7 @@
 
 using static FreeTypeSharp.FT;
 
-namespace Luna.OpenGl.FreeTypeSharp;
+namespace Luna.OpenGL.FreeTypeSharp;
 
 public unsafe class Face
 {

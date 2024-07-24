@@ -1,4 +1,4 @@
-﻿namespace Luna.OpenGl.FreeTypeSharp;
+﻿namespace Luna.OpenGL.FreeTypeSharp;
 
 public enum LoadFlags
 {

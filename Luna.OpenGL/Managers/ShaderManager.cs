@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 internal static class ShaderManager
 {

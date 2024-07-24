@@ -24,4 +24,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="RenderObjects\" />
+    <Folder Include="Vaos\" />
+  </ItemGroup>
+
 </Project>

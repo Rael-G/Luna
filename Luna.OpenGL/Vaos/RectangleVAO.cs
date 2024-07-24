@@ -2,7 +2,7 @@
 using Luna.Core;
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 internal class RectangleVAO : Disposable
 {

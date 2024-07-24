@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using FreeTypeSharp;
 
-namespace Luna.OpenGl.FreeTypeSharp;
+namespace Luna.OpenGL.FreeTypeSharp;
 
 public unsafe class Glyph
 {

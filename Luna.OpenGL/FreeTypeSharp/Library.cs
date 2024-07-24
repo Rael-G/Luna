@@ -4,7 +4,7 @@ using static FreeTypeSharp.FT;
 // using static FreeTypeSharp.FT_LOAD;
 // using static FreeTypeSharp.FT_Render_Mode_;
 
-namespace Luna.OpenGl.FreeTypeSharp;
+namespace Luna.OpenGL.FreeTypeSharp;
 
 public unsafe class Library
 {

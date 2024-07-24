@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Luna.Core;
-using Luna.OpenGl;
 
 namespace Luna.OpenGL;
 

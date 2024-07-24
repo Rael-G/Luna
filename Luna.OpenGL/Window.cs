@@ -2,7 +2,7 @@
 using Silk.NET.GLFW;
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 internal unsafe class Window : IWindow
 {

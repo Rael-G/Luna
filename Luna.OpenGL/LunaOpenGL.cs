@@ -1,7 +1,6 @@
 ﻿using Luna.Core;
-using Luna.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 public static class LunaOpenGL
 {

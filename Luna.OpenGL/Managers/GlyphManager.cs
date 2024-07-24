@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
-using Luna.OpenGl.FreeTypeSharp;
+using Luna.OpenGL.FreeTypeSharp;
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 using FontKey = (string Path, Vector2 Size);
 

@@ -1,7 +1,7 @@
 using System.Reflection;
 using Luna.Core;
 
-namespace Luna.OpenGl;
+namespace Luna.OpenGL;
 
 internal class Program : Disposable
 {

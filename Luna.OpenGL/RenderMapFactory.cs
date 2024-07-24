@@ -1,4 +1,4 @@
-﻿namespace Luna.OpenGl;
+﻿namespace Luna.OpenGL;
 
 public delegate IRenderObject AddRenderObject(object data);
 
