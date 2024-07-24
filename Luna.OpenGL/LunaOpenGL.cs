@@ -10,7 +10,7 @@ public static class LunaOpenGL
         Injector.AddSingleton<IWindow>(new Window());
         Injector.AddSingleton<IRenderMap>(new RenderMap());
         Injector.AddSingleton<IRenderObjectFactory>(new RenderObjectFactory());
-        Injector.AddSingleton<IUtils>(new Utils());
+        Injector.AddSingleton<IEngineUtils>(new EngineUtils());
 
         RenderObjectFactory.RegisterCallback<RectangleData>((data) => new RectangleObject(data));
         RenderObjectFactory.RegisterCallback<TextData>((data) => new TextObject(data));

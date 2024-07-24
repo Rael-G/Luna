@@ -2,5 +2,5 @@
 
 public interface IRenderObjectFactory
 {
-    IRenderObject CreateRenderObject<TData>(TData data);
+    IRenderObject Create<TData>(TData data);
 }

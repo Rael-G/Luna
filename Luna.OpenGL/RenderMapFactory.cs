@@ -11,7 +11,7 @@ internal class RenderObjectFactory : IRenderObjectFactory
         CreationCallbacks[typeof(TData)] = data => callback((TData)data);
     }
 
-    public IRenderObject CreateRenderObject<TData>(TData data)
+    public IRenderObject Create<TData>(TData data)
     {
         if (data == null) throw new ArgumentNullException(nameof(data));
 

@@ -164,7 +164,7 @@ public class Node : Disposable, IFixed
         var factory = Injector.Get<IRenderObjectFactory>();
         var map = Injector.Get<IRenderMap>();
 
-        var obj = factory.CreateRenderObject(data);
+        var obj = factory.Create(data);
         map.Add(UID, obj);
     }
 

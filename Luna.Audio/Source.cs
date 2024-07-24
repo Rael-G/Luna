@@ -5,12 +5,11 @@ using Silk.NET.OpenAL;
 
 namespace Luna.Audio;
 
-public class Source : Disposable
+public class Source(string path, uint handle, uint buffer) : Disposable
 {
     private static readonly AL _al = AudioContext.Al;
-    
-    public uint Handle;
-    public uint Buffer;
+    public uint Handle = handle;
+    public uint Buffer = buffer;
 
     public float Volume 
     { 
@@ -62,6 +61,7 @@ public class Source : Disposable
         }
     }
 
+    private readonly string _path = path;
     private float _volume;
     private float _pitch;
     private bool _loop;
@@ -81,6 +81,16 @@ public class Source : Disposable
     public void Pause()
     {
         _al.SourcePause(Handle);
+    }
+
+    internal void StartUsing()
+    {
+        AudioManager.StartUsing(_path);
+    }
+
+    internal void StopUsing()
+    {
+        AudioManager.StopUsing(_path);
     }
 
     public override void Dispose(bool disposing)

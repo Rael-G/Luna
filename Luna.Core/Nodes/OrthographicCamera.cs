@@ -1,4 +1,6 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Core;
+using Luna.Maths;
 
 namespace Luna;
 
@@ -11,6 +13,8 @@ public class OrtographicCamera : Node2D, ICamera
     public float Near { get; set; } = -10.0f;
     public float Far { get; set; } = 10.0f;
 
+    public bool IsListener { get; set; }
+
     protected override Node? Parent 
     { 
         get => base.Parent; 
@@ -22,6 +26,13 @@ public class OrtographicCamera : Node2D, ICamera
             else if (Parent is Node3D parent3D)
                 parent3D.Camera = this;
         } 
+    }
+
+    public override void LateUpdate()
+    {
+        if (IsListener)
+            Utils.SetListener(Transform.GlobalPosition.ToVector3(), -Vector3.UnitZ, Vector3.UnitY);
+        base.LateUpdate();
     }
 
     public virtual Matrix Project()

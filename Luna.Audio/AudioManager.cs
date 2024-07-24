@@ -16,15 +16,19 @@ public static class AudioManager
             return source;
 
         uint buffer = _al.GenBuffer();
-        byte[] audioData = LoadWave(path, out var channels, out var bits, out var sampleRate);
-        _al.BufferData(buffer, GetSoundFormat(channels, bits), audioData, sampleRate);
+
+        try
+        {
+            byte[] audioData = LoadWave(path, out var channels, out var bits, out var sampleRate);
+            _al.BufferData(buffer, GetSoundFormat(channels, bits), audioData, sampleRate);
+        }
+        catch(NotSupportedException e)
+        {
+            throw new ResourceException($"Failed to load audio source from path: {path}", e);
+        }
         uint handle = _al.GenSource();
         _al.SetSourceProperty(handle, SourceInteger.Buffer, buffer);
-        return new()
-        {
-            Handle = handle,
-            Buffer = buffer,
-        };
+        return new(path, handle, buffer);
     }
 
     public unsafe static void SetListener(Vector3 position, Vector3 front, Vector3 up)
@@ -59,7 +63,7 @@ public static class AudioManager
         }
     }
 
-    static byte[] LoadWave(string path, out int channels, out int bits, out int rate)
+    private static byte[] LoadWave(string path, out int channels, out int bits, out int rate)
     {
         using var stream = File.OpenRead(path);
         using var reader = new BinaryReader(stream);
@@ -96,7 +100,7 @@ public static class AudioManager
         return reader.ReadBytes(dataSize);
     }
 
-    static BufferFormat GetSoundFormat(int channels, int bits)
+    private static BufferFormat GetSoundFormat(int channels, int bits)
     {
         return (channels, bits) switch
         {
@@ -104,7 +108,7 @@ public static class AudioManager
             (1, 16) => BufferFormat.Mono16,
             (2, 8) => BufferFormat.Stereo8,
             (2, 16) => BufferFormat.Stereo16,
-            _ => throw new NotSupportedException("Formato de som não suportado."),
+            _ => throw new NotSupportedException("Unsuported sound format."),
         };
     }
 }

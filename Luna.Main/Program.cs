@@ -69,7 +69,7 @@ public class Root : Node2D
 
     public override void Update()
     {
-        var utils = Injector.Get<IUtils>();
+        var utils = Injector.Get<IEngineUtils>();
         utils.MeasureTextSize((label.Path, label.Size), "i");
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;

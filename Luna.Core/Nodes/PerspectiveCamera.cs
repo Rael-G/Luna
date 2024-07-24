@@ -1,10 +1,12 @@
 ﻿using System.Numerics;
+using Luna.Core;
 using Luna.Maths;
 
 namespace Luna;
 
 public class PerspectiveCamera : Node3D, ICamera
 {
+    
     protected override Node? Parent 
     { 
         get => base.Parent; 
@@ -39,7 +41,16 @@ public class PerspectiveCamera : Node3D, ICamera
     public float Near { get; set; } = 0.1f;
     public float Far { get; set; } = 1000.0f;
 
+    public bool IsListener { get; set; }
+
     private Vector3? _target;
+
+    public override void LateUpdate()
+    {
+        if (IsListener)
+            Utils.SetListener(Transform.GlobalPosition, (Target - Transform.GlobalPosition).Normalize(), Up);
+        base.LateUpdate();
+    }
 
     public virtual Matrix Project()
     => Transformations.PerspectiveProjection

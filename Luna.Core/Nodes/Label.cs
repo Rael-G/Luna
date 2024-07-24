@@ -52,7 +52,7 @@ public class Label : Node2D
         if (!CenterH && !CenterV)
             return;
             
-        var utils = Injector.Get<IUtils>();
+        var utils = Injector.Get<IEngineUtils>();
         Vector2 origin = Vector2.Zero;
         if (CenterH)
             origin += new Vector2(utils.MeasureTextSize((Path, Size), Text).X, 0f) * Transform.Scale / 2;

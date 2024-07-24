@@ -6,8 +6,7 @@ namespace Luna.OpenGL;
 
 using FontKey = (string Path, Vector2 Size);
 
-
-public class Utils : IUtils
+public class EngineUtils : IEngineUtils
 {
     public Vector2 MeasureTextSize(FontKey font, string text)
     {
@@ -15,7 +14,6 @@ public class Utils : IUtils
         float width = 0.0f;
         float maxHeight = 0.0f;
 
-        var face = FontManager.GetFont(font);
         FontManager.StartUsing(font);
         
         foreach (var c in text)
@@ -29,6 +27,7 @@ public class Utils : IUtils
                 maxHeight = height;
             }
         }
+        
         FontManager.StopUsing(font);
 
         return new Vector2(width, maxHeight);
