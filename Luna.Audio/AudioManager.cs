@@ -30,7 +30,8 @@ public static class AudioManager
         }
         uint handle = _al.GenSource();
         _al.SetSourceProperty(handle, SourceInteger.Buffer, buffer);
-        return new(path, handle, buffer);
+        Sources[path] = new(path, handle, buffer);
+        return Sources[path];
     }
 
     public unsafe static void SetListener(Vector3 position, Vector3 velocity, Vector3 front, Vector3 up)
