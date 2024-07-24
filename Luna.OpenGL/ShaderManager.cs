@@ -25,18 +25,18 @@ internal static class ShaderManager
 
     public static void StartUsing(Program program)
     {
-        if (!Counters.TryGetValue(program.Name, out var count))
-            Counters.Add(program.Name, 1);
+        if (!Counters.TryGetValue(program.Name, out _))
+            Counters.Add(program.Name, 0);
 
         Counters[program.Name]++;
     }
 
     public static void StopUsing(Program program)
     {
-        if (!Counters.TryGetValue(program.Name, out var count))
+        if (!Counters.TryGetValue(program.Name, out _))
             return;
-        
-        count = --Counters[program.Name];
+
+        int count = --Counters[program.Name];
 
         if (count <= 0)
         {
@@ -46,7 +46,7 @@ internal static class ShaderManager
         }
     }
 
-    private static uint GetShader(Program program)
+    public static uint GetShader(Program program)
     {
         if (Shaders.TryGetValue(program.Name, out var id))
             return id;

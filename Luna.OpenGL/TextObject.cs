@@ -80,4 +80,10 @@ internal class TextObject(TextData data) : RenderObject<TextData>
             TextVAO = new(data);
         Text = data;
     }
+
+    public override void Free()
+    {
+        Program.Free();
+        TextVAO.Free();
+    }
 }

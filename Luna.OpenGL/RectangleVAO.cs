@@ -60,12 +60,17 @@ internal class RectangleVAO
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
     }
-
-    ~RectangleVAO()
+    
+    public void Free()
     {
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(_vbo);
         _gl.DeleteBuffer(_ebo);
+    }
+
+    ~RectangleVAO()
+    {
+        Free();
     }
     
 }

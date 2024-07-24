@@ -64,10 +64,15 @@ internal class TextVAO
         ];
     }
 
-    ~TextVAO()
+    public void Free()
     {
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(Vbo);
         FontManager.StopUsing(_fontKey);
+    }
+
+    ~TextVAO()
+    {
+        Free();
     }
 }

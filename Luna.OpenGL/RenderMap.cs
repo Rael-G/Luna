@@ -9,7 +9,10 @@ internal class RenderMap : IRenderMap
     
 
     public void Remove(string id)
-        => _renderMap.Remove(id);
+    {
+        _renderMap.GetValueOrDefault(id)?.Free();
+        _renderMap.Remove(id);
+    }
     
 
     public void Render(string id)

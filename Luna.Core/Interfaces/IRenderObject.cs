@@ -3,4 +3,5 @@
 public interface IRenderObject
 {
     void Render();
+    void Free();
 }

@@ -11,6 +11,7 @@ internal class Program
     {
         Name = name;
         Shaders = shaders;
+        ShaderManager.GetShader(this);
         ShaderManager.StartUsing(this);
     }
 
@@ -34,8 +35,13 @@ internal class Program
         return Path.Combine(assemblyLocation, "Assets", "shaders", name);
     }
 
-    ~Program()
+    public void Free()
     {
         ShaderManager.StopUsing(this);
+    }
+
+    ~Program()
+    {
+        Free();
     }
 }

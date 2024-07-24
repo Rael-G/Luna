@@ -141,6 +141,7 @@ public class Node : IFixed
         Children.Remove(node);
         node.Parent = null;
         Tree.RemoveNode(node.UID);
+        node.Free();
     }
 
     // Alias is opcional, if you want to use this method to find a node, every node on the hierarchy path need to have an alias
@@ -173,9 +174,19 @@ public class Node : IFixed
         map.Update(UID, data);
     }
 
-    ~Node()
+    public virtual void Free()
     {
+        foreach (var child in Children)
+        {
+            child.Free();
+        }
+        
         var renderMap = Injector.Get<IRenderMap>();
         renderMap.Remove(UID);
+    }
+
+    ~Node()
+    {
+        Free();
     }
 }

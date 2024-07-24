@@ -49,8 +49,17 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     public override void Update(RectangleData data)
     {
         if (Data.Size != data.Size) 
+        {
+            RectangleVAO.Free();
             RectangleVAO = new(Data.Size);
+        }
 
         Data = data;
+    }
+
+    public override void Free()
+    {
+        RectangleVAO.Free();
+        Program.Free();
     }
 }

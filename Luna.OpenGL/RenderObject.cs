@@ -6,4 +6,11 @@ public abstract class RenderObject<TData>()
     public abstract void Render();
 
     public abstract void Update(TData data);
+
+    public abstract void Free();
+
+    ~RenderObject()
+    {
+        Free();
+    }
 }

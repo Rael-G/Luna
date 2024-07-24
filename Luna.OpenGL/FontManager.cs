@@ -25,26 +25,23 @@ internal class FontManager
     public static void StartUsing(FontKey fontKey)
     {
         if (!Counters.TryGetValue(fontKey, out _))
-            Counters.Add(fontKey, 1);
+            Counters.Add(fontKey, 0);
 
         Counters[fontKey]++;
     }
 
     public static void StopUsing(FontKey fontKey)
     {
-        int count = 0;
-        try
+        if (!Counters.TryGetValue(fontKey, out _))
+            return;
+
+        int count = --Counters[fontKey];
+
+        if (count <= 0)
         {
-            count = --Counters[fontKey];
-        }
-        finally
-        {
-            if (count <= 0)
-            {
-                Counters.Remove(fontKey);
-                Fonts.Remove(fontKey);
-                GlyphManager.Free(fontKey);
-            }
+            Counters.Remove(fontKey);
+            Fonts.Remove(fontKey);
+            GlyphManager.Free(fontKey);
         }
     }
 
