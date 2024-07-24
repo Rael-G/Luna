@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.OpenGL", "Luna.OpenGL\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.Box2D", "Luna.Box2D\Luna.Box2D.csproj", "{D34E5D47-425B-4700-AD4B-29DEE4C666F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.Audio", "Luna.Audio\Luna.Audio.csproj", "{A0BC123F-EFD9-441D-832A-8FB65B086847}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D34E5D47-425B-4700-AD4B-29DEE4C666F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D34E5D47-425B-4700-AD4B-29DEE4C666F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D34E5D47-425B-4700-AD4B-29DEE4C666F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0BC123F-EFD9-441D-832A-8FB65B086847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0BC123F-EFD9-441D-832A-8FB65B086847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0BC123F-EFD9-441D-832A-8FB65B086847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0BC123F-EFD9-441D-832A-8FB65B086847}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
