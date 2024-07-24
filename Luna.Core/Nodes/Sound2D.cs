@@ -1,64 +1,67 @@
-﻿using System.Numerics;
-using Luna.Maths;
+﻿using Luna.Maths;
 
 namespace Luna.Core;
 
-public class Sound2D(string path) : Node2D
+public class Sound2D : Node2D
 {
-    private IAudioPlayer Player = Injector.Get<IAudioPlayerFactory>().Create(path);
-
     public string Path
     {
         get => _path;
         set
         {
-            _path = value;
-            Player.Dispose();
-            Player = Injector.Get<IAudioPlayerFactory>().Create(_path);
+            _path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), value);
+            _player?.Dispose();
+            _player = Injector.Get<IAudioPlayerFactory>().Create(_path);
         }
     }
 
     public float Volume 
     { 
-        get => Player.Volume; 
-        set => Player.Volume = value; 
+        get => _player.Volume; 
+        set => _player.Volume = value; 
     }
     public float Pitch 
     { 
-        get => Player.Pitch; 
-        set => Player.Pitch = value; 
+        get => _player.Pitch; 
+        set => _player.Pitch = value; 
     }
     public bool Loop 
     { 
-        get => Player.Loop; 
-        set => Player.Loop = value; 
+        get => _player.Loop; 
+        set => _player.Loop = value; 
     }
     public float Speed 
     { 
-        get => Player.Speed; 
-        set => Player.Speed = value; 
+        get => _player.Speed; 
+        set => _player.Speed = value; 
+    }
+    
+    private IAudioPlayer _player = null!;
+    private string _path = string.Empty;
+
+    public Sound2D(string path)
+    {
+        Path = path;
     }
 
-    private string _path = path;
-
     public void Play()
-        => Player.Play();
+        => _player.Play();
 
     public void Pause()
-        => Player.Pause();
+        => _player.Pause();
 
     public void Stop()
-        => Player.Stop();
+        => _player.Stop();
 
     public override void LateUpdate()
     {
-        Player.Position = Transform.Position.ToVector3();
+        _player.Position = Transform.Position.ToVector3();
         base.LateUpdate();
     }
 
     public override void Dispose(bool disposing)
     {
-        Player.Dispose();
+        _player.Dispose();
         base.Dispose(disposing);
     }
 

@@ -7,11 +7,26 @@ public class Label : Node2D
 {
     public string Text { get; set; } = string.Empty;
     public Vector2 Size { get; set; } = new Vector2(48f, 48f);
-    public string Path { get; set; } = string.Empty;
     public Color Color { get; set; } = Colors.White;
     public bool FlipV { get; set; } = false;
     public bool CenterH { get; set; }
     public bool CenterV { get; set; }
+
+    public string Path
+    {
+        get => _path;
+        set
+        {
+            _path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), value);
+        }
+    }
+
+    private string _path = string.Empty;
+
+    public Label(string path)
+    {
+        Path = path;
+    }
 
     public override void Awake()
     {

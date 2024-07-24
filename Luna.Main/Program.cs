@@ -51,18 +51,16 @@ public class Root : Node2D
 
         rect.Transform.Position = new Vector2{ X = 400, Y = 297 };
 
-        label = new Label
+        label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
             Text = "Hello, World!",
-            Path = Directory.GetCurrentDirectory() + "/Assets/fonts/OpenSans-Regular.ttf",
             FlipV = true,
             CenterH = true,
             CenterV = true
-
         };
         label.Transform.Position = new Vector2{ X = 400, Y = 300 };
         
-        var sound = new Sound2D(Directory.GetCurrentDirectory() + "/Assets/audio/music/Death.wav");
+        var sound = new Sound2D("Assets/audio/music/Death.wav");
         sound.Transform.Position = new Vector2(0, 0);
         AddChild(rect, label, sound);
         sound.Play();
