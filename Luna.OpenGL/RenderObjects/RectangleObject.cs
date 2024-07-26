@@ -2,66 +2,38 @@
 
 namespace Luna.OpenGL;
 
-internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
+internal class RectangleObject(RectangleData data) : PolygonObject<RectangleData>(ToPolygonData(data))
 {
-    private const string ProgramName = "RectangleShader.bin";
-    private const string VertexName = "RectangleVertexShader.glsl";
-    private const string FragmentName = "RectangleFragmentShader.glsl";
-
-    private RectangleData Data = data;
-
-    private RectangleVAO RectangleVAO = new(data.Size);
-
-    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
-
-    private readonly Program Program = new
-    (
-        ProgramName,
-        [
-            new()
-            {
-                Name = VertexName,
-                Path = Program.DefaultShaderPath(VertexName),
-                ShaderType = ShaderType.VertexShader
-            },
-            new()
-            {
-                Name = FragmentName,
-                Path = Program.DefaultShaderPath(FragmentName),
-                ShaderType = ShaderType.FragmentShader
-            }
-        ]
-    );
-
-    public override void Render()
-    {
-        Program.Use();
-        Program.UniformMat4("transform", Data.Transform.Transpose());
-        Program.UniformVec4("color", Data.Color.ToMatrix());
-        _gl.BindVertexArray(RectangleVAO.Handle);
-        ReadOnlySpan<int> _ = new();
-        _gl.DrawElements(PrimitiveType.Triangles, RectangleVAO.Size, DrawElementsType.UnsignedInt, _);
-        _gl.BindVertexArray(0);
-
-        GlErrorUtils.CheckError();
-    }
+    private static readonly uint[] _indices = 
+    [
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
+    ];
 
     public override void Update(RectangleData data)
     {
-        if (Data.Size != data.Size) 
-        {
-            RectangleVAO.Dispose();
-            RectangleVAO = new(Data.Size);
-        }
-
-        Data = data;
+        Update(ToPolygonData(data));
     }
 
-    public override void Dispose(bool disposing)
+    private static PolygonData ToPolygonData(RectangleData data)
     {
-        if (_disposed) return;
-        
-        RectangleVAO.Dispose();
-        Program.Dispose();
+        float[] vertices =
+        [
+            0.0f, 0.0f, 0.0f,  // Bottom left
+            0.0f, data.Size.Y, 0.0f,  // Top left
+            data.Size.X, data.Size.Y, 0.0f,   //Top right
+            data.Size.X, 0.0f, 0.0f,    // Bottom right
+        ];
+
+        return new PolygonData()
+        {
+            Vertices = vertices,
+            Indices = _indices,
+            Color = data.Color,
+            Transform = data.Transform,
+            PrimitiveType = PrimitiveType.Triangles
+        };
     }
+
+    
 }

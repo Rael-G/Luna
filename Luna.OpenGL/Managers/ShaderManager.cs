@@ -93,7 +93,7 @@ internal static class ShaderManager
             }
             
             var source = File.ReadAllText(shader.Path);
-            var shaderId =_gl.CreateShader(shader.ShaderType);
+            var shaderId =_gl.CreateShader((ShaderType)shader.ShaderType);
             _gl.ShaderSource(shaderId, source);
             _gl.CompileShader(shaderId);
 

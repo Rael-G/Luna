@@ -7,6 +7,18 @@ public static class Vector3Extensions
     public static Matrix ToMatrix(this Vector3 Vector)
         => new(3, 1, [Vector.X , Vector.Y, Vector.Z]);
 
+    public static Matrix ToMatrix(this Vector3[] vectors)
+    {
+        var matrix = new Matrix(3, vectors.Length);
+        for (int i = 0; i < vectors.Length; i++)
+        {
+            matrix[i, 0] = vectors[i].X;
+            matrix[i, 1] = vectors[i].Y;
+            matrix[i, 2] = vectors[i].Z;
+        }
+        return matrix;
+    }
+
     public static Vector3? ToVector3(this Matrix matrix)
     {
         try

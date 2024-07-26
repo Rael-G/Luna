@@ -2,7 +2,7 @@
 using Luna;
 using Luna.Audio;
 using Luna.Core;
-using Luna.OpenGl;
+using Luna.OpenGL;
 
 internal class Program
 {
@@ -43,13 +43,21 @@ public class Root : Node2D
             Listener = new()
         };
         AddChild(camera);
-        var rect = new Rectangle
+        var ellipse = new Ellipse
         {
-            Size = new(400, 300),
-            Color = Colors.Red
+            Radius = new(300, 300),
+            Color = Colors.Red,
+            Segments = 3,
         };
 
-        rect.Transform.Position = new Vector2{ X = 400, Y = 297 };
+        ellipse.Transform.Position = new Vector2{ X = 400, Y = 300 };
+
+        var rect = new Rectangle(){
+            Size = new(400, 300),
+            Color = Colors.Red,
+            Center = true,
+        };
+        rect.Transform.Position = Window.VirtualCenter;
 
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
@@ -62,8 +70,7 @@ public class Root : Node2D
         
         var sound = new Sound2D("Assets/audio/music/Death.wav");
         sound.Transform.Position = new Vector2(0, 0);
-        AddChild(rect, label, sound);
-        sound.Play();
+        AddChild(label, rect, sound);
 
         base.Start();
     }

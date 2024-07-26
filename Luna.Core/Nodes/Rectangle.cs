@@ -16,7 +16,7 @@ public class Rectangle : Node2D
         (
             new RectangleData
             { 
-                Size = Size, Transform = TransformMatrix, Color = Color 
+                Size = Size, Transform = TransformMatrix, Color = Color
             }
         );
 
@@ -35,7 +35,7 @@ public class Rectangle : Node2D
          (
             new RectangleData
             { 
-                Size = Size, Transform = TransformMatrix, Color = Color 
+                Size = Size, Transform = TransformMatrix, Color = Color
             }
          );
         base.LateUpdate();
@@ -44,6 +44,6 @@ public class Rectangle : Node2D
     private void CenterRect()
     {
         if (Center)
-            Transform.Origin = Size * Transform.Scale / 2;
+            Transform.Origin = Size * Transform.Scale / 2f;
     }
 }

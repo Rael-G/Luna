@@ -10,6 +10,18 @@ public static class Vector2Extensions
     public static Matrix ToMatrix(this Vector2 vector)
         => new(3, 1, [vector.X , vector.Y , 0.0f] );
 
+    public static Matrix ToMatrix(this Vector2[] vectors)
+    {
+        var matrix = new Matrix(3, vectors.Length);
+        for (int i = 0; i < vectors.Length; i++)
+        {
+            matrix[i, 0] = vectors[i].X;
+            matrix[i, 1] = vectors[i].Y;
+            matrix[i, 2] = 0f;
+        }
+        return matrix;
+    }
+
     public static Vector2? ToVector2(this Matrix matrix)
     {
         try

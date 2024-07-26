@@ -1,8 +1,8 @@
-﻿using Silk.NET.OpenGL;
+﻿using Luna.Core;
 
-namespace Luna.OpenGL;
+namespace Luna;
 
-internal struct Shader
+public struct Shader
 {
     public string Name { get; set; }
     public string Path { get; set; }

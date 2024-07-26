@@ -16,19 +16,18 @@ internal class TextObject(TextData data) : RenderObject<TextData>
 
     private readonly Program Program = new
     (
-        ProgramName,
         [
             new()
             {
                 Name = VertexName,
                 Path = Program.DefaultShaderPath(VertexName),
-                ShaderType = ShaderType.VertexShader
+                ShaderType = Core.ShaderType.VertexShader
             },
             new()
             {
                 Name = FragmentName,
                 Path = Program.DefaultShaderPath(FragmentName),
-                ShaderType = ShaderType.FragmentShader
+                ShaderType = Core.ShaderType.FragmentShader
             }
         ]
     );

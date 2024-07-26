@@ -8,9 +8,13 @@ internal class Program : Disposable
     public string Name { get; set; }
     public Shader[] Shaders { get; set; }
 
-    public Program(string name, Shader[] shaders)
+    public Program(Shader[] shaders)
     {
-        Name = name;
+        string name = string.Empty;
+        foreach(var shader in shaders)
+            name += Path.GetFileNameWithoutExtension(shader.Name);
+        
+        Name = name + ".bin";
         Shaders = shaders;
         ShaderManager.GetShader(this);
         ShaderManager.StartUsing(this);
