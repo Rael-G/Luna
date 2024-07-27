@@ -4,9 +4,9 @@ namespace Luna.Core;
 
 public class Ellipse : Node2D
 {
-    public Vector2 Radius { get; set; }
+    public Vector2 Radius { get; set; } = Vector2.One;
 
-    public int Segments { get; set; }
+    public int Segments { get; set; } = 10;
 
     public Color Color { get; set; }
 
