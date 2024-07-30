@@ -3,7 +3,7 @@
 public static class Tree
 {
     // Is registered by host
-    public static Node Root { get; internal set; } = new();
+    public static Node Root { get; internal set; } = null!;
 
     private static readonly Dictionary<string, Node> _nodes = [];
 

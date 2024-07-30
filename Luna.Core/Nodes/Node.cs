@@ -2,7 +2,7 @@
 
 namespace Luna;
 
-public class Node : Disposable, IFixed
+public class Node : Disposable
 {
     public string UID { get; }
 
@@ -19,7 +19,6 @@ public class Node : Disposable, IFixed
 
     private List<Node> Children { get; }
 
-
     public Node()
     {
         UID = Guid.NewGuid().ToString();
@@ -32,8 +31,14 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void Config()
     {
+        
+    }
+
+    internal void InternalConfig()
+    {
+        Config();
         foreach (var child in Children)
-            child.Config();
+            child.InternalConfig();
     }
 
     /// <summary>
@@ -41,11 +46,15 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void Awake()
     {
-        if (_awake)    return;
 
-        _awake = true;
+    }
+
+    internal void InternalAwake()
+    {
+        if (_awake) return;
+        Awake();
         foreach (var child in Children)
-            child.Awake();
+            child.InternalAwake();
     }
 
     /// <summary>
@@ -53,11 +62,15 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void Start()
     {
-        if (_started)  return;
 
-        _started = true;
+    }
+
+    internal void InternalStart()
+    {
+        if (_awake) return;
+        Start();
         foreach (var child in Children)
-            child.Start();
+            child.InternalStart();
     }
 
     /// <summary>
@@ -65,10 +78,16 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void EarlyUpdate()
     {   
+
+    }
+
+    internal void InternalEarlyUpdate()
+    {   
         if (Paused)  return;
 
+        EarlyUpdate();
         foreach (var child in Children)
-            child.EarlyUpdate();
+            child.InternalEarlyUpdate();
     }
 
     /// <summary>
@@ -76,10 +95,16 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void Update()
     {
+
+    }
+
+    internal void InternalUpdate()
+    {   
         if (Paused)  return;
 
+        Update();
         foreach (var child in Children)
-            child.Update();
+            child.InternalUpdate();
     }
 
     /// <summary>
@@ -87,24 +112,36 @@ public class Node : Disposable, IFixed
     /// </summary>
     public virtual void LateUpdate()
     {
+
+    }
+
+    internal void InternalLateUpdate()
+    {   
         if (Paused)  return;
 
+        LateUpdate();
         foreach (var child in Children)
-            child.LateUpdate();
+            child.InternalLateUpdate();
     }
 
     public virtual void FixedUpdate()
     {
+
+    }
+
+    internal void InternalFixedUpdate()
+    {   
         if (Paused)  return;
 
+        FixedUpdate();
         foreach (var child in Children)
-            child.FixedUpdate();
+            child.InternalFixedUpdate();
     }
 
     /// <summary>
     ///  Performs drawing operations.
     /// </summary>
-    public virtual void Render()
+    internal virtual void Render()
     {
         if (Invisible)  return;
 

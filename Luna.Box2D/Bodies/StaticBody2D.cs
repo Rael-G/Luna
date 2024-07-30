@@ -3,7 +3,7 @@
 namespace Luna.Box2D;
 
 public class StaticBody2D
-    : CollisionBody2D, IFixed
+    : CollisionBody2D
 {
     public StaticBody2D()
     {

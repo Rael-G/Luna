@@ -10,25 +10,25 @@ public class Host(Node root)
     {
         Tree.Root = Root;
         Time.StartTimer();
-        Root.Config();
+        Root.InternalConfig();
 
         Window.EngineWindow.Init();
 
         Injector.Get<IWindow>().SetKeyCallback((key, action, mods) 
             => Root.Input(new KeyboardEvent(key, action, mods)));
 
-       Root.Awake();
-       Root.Start();
+       Root.InternalAwake();
+       Root.InternalStart();
 
-       Physics.Add(Root);
+       Physics.Root = Root;
 
         while (Window.Running)
         {
             Time.NextFrame();
             Time.SetDeltaTime();
-            Root.EarlyUpdate();
-            Root.Update();
-            Root.LateUpdate();
+            Root.InternalEarlyUpdate();
+            Root.InternalUpdate();
+            Root.InternalLateUpdate();
             Physics.FixedUpdate();
 
             Window.EngineWindow.BeginRender();

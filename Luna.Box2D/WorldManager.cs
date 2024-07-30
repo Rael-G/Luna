@@ -4,7 +4,7 @@ namespace Luna.Box2D;
 
 using Iteration = (int Velocity, int Position);
 
-public class WorldManager : IFixed
+public class WorldManager : Node
 {
     public static float PixelsPerMeter { get; set; } = 1;
     public static int VelocityIterations { get; set; } = 8;
@@ -17,18 +17,12 @@ public class WorldManager : IFixed
 
     private static ContactListener _contactListener = new();
 
-    private WorldManager()
+    public WorldManager()
     {
     }
 
     public static World GetWorld(int worldIndex)
     {
-        if (_instance is null)
-        {
-            _instance = new();
-            Physics.Add(_instance);
-        }
-
         if (Worlds.TryGetValue(worldIndex, out var world))
             return world;
 
