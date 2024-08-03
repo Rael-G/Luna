@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-using Luna.Core;
-using Luna.Maths;
+﻿using Luna.Maths;
 
 namespace Luna;
 
@@ -15,6 +13,13 @@ public class OrtographicCamera : Node2D, ICamera
 
     public Listener? Listener { get; set; }
 
+    public virtual Matrix Projection 
+        => Transformations.OrthographicProjection(Left, Right, Bottom, Top, Near, Far);
+    
+
+    public virtual Matrix View 
+        => Transformations.TranslationMatrix(-Transform.GlobalPosition.ToVector3());
+    
     protected override Node? Parent 
     { 
         get => base.Parent; 
@@ -26,14 +31,6 @@ public class OrtographicCamera : Node2D, ICamera
             else if (Parent is Node3D parent3D)
                 parent3D.Camera = this;
         } 
-    }
-
-    public virtual Matrix Project()
-    {
-        var proj = Transformations.OrthographicProjection
-            (Left, Right, Bottom, Top, Near, Far);
-        var view = Transformations.TranslationMatrix(-Transform.GlobalPosition.ToVector3());
-        return proj * view;
     }
 
     public override void LateUpdate()

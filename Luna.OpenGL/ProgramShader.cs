@@ -1,14 +1,13 @@
 using System.Reflection;
-using Luna.Core;
 
 namespace Luna.OpenGL;
 
-internal class Program : Disposable
+internal class ProgramShader : Disposable
 {
-    public string Name { get; set; }
-    public Shader[] Shaders { get; set; }
+    public string Name { get; }
+    public ShaderSource[] Shaders { get; set; }
 
-    public Program(Shader[] shaders)
+    public ProgramShader(ShaderSource[] shaders)
     {
         string name = string.Empty;
         foreach(var shader in shaders)
@@ -25,14 +24,20 @@ internal class Program : Disposable
         ShaderManager.UseProgram(this);
     }
 
-    public void UniformMat4(string name, float[] value)
-        => ShaderManager.UniformMat4(this, name, value);
+    public void SetMat4(string name, float[] mat4)
+        => ShaderManager.SetMat4(this, name, mat4);
     
-    public void UniformVec4(string name, float[] value)
-        => ShaderManager.UniformVec4(this, name, value);
+    public void SetVec4(string name, float[] vec4)
+        => ShaderManager.SetVec4(this, name, vec4);
 
-    public void UniformVec3(string name, float[] vec3)
-        => ShaderManager.UniformVec3(this, name, vec3);
+    public void SetVec3(string name, float[] vec3)
+        => ShaderManager.SetVec3(this, name, vec3);
+
+    public void Set(string name, int value)
+        => ShaderManager.Set(this, name, value);
+    
+    public void Set(string name, float value)
+        => ShaderManager.Set(this, name, value);
 
     public static string DefaultShaderPath(string name)
     {

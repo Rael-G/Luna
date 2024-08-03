@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using Luna;
 using Luna.Audio;
-using Luna.Core;
 using Luna.OpenGL;
 
 internal class Program
@@ -21,6 +20,7 @@ internal class Program
 public class Root : Node2D
 {
     Label label;
+    Rectangle rect;
     public override void Config()
     {
         Window.Title = "Hello Rectangle!";
@@ -47,13 +47,13 @@ public class Root : Node2D
         {
             Radius = new(300, 300),
             Color = Colors.Red,
-            Segments = 3,
+            Segments = 10,
         };
 
         ellipse.Transform.Position = new Vector2{ X = 400, Y = 300 };
 
-        var rect = new Rectangle(){
-            Size = new(400, 300),
+        rect = new Rectangle(){
+            Size = new(400, 400),
             Color = Colors.Red,
             Center = true,
         };
@@ -70,14 +70,13 @@ public class Root : Node2D
         
         var sound = new Sound2D("Assets/audio/music/Death.wav");
         sound.Transform.Position = new Vector2(0, 0);
-        AddChild(label, rect, sound);
+        AddChild(ellipse);
 
         base.Start();
     }
 
     public override void Update()
     {
-        
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
 

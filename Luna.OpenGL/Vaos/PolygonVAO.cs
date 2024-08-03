@@ -1,7 +1,4 @@
-﻿using System.Numerics;
-using Luna.Core;
-using Luna.Maths;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
@@ -15,14 +12,20 @@ internal class PolygonVAO : Disposable
     private uint _vbo;
     private uint _ebo;
 
+    private VerticesInfo _verticesInfo;
+    private BufferUsageARB _bufferUsage;
+
     private readonly GL _gl = Window.GL ?? throw new WindowException("Window.GL is null.");
 
-    public PolygonVAO(float[] vertices, uint[] indices)
+    public PolygonVAO(float[] vertices, uint[] indices, BufferUsageARB bufferUsage, VerticesInfo verticesInfo)
     {
         _vertices = vertices;
         _indices = indices;
+        _verticesInfo = verticesInfo;
+        _bufferUsage = bufferUsage;
 
         Generate();
+        GlErrorUtils.CheckError("PolygonVAO");
     }
 
     private unsafe void Generate()
@@ -32,14 +35,19 @@ internal class PolygonVAO : Disposable
 
         _vbo = _gl.GenBuffer();
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
-        _gl.BufferData<float>(BufferTargetARB.ArrayBuffer, (nuint)(_vertices.Length * sizeof(float)), _vertices, BufferUsageARB.StaticDraw);
+        _gl.BufferData<float>(BufferTargetARB.ArrayBuffer, (nuint)(_vertices.Length * sizeof(float)), _vertices, _bufferUsage);
 
         _ebo = _gl.GenBuffer();
         _gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
-        _gl.BufferData<uint>(BufferTargetARB.ElementArrayBuffer, (nuint)(_indices.Length * sizeof(uint)), _indices, BufferUsageARB.StaticDraw);
+        _gl.BufferData<uint>(BufferTargetARB.ElementArrayBuffer, (nuint)(_indices.Length * sizeof(uint)), _indices, _bufferUsage);
 
-        _gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), null);
-        _gl.EnableVertexAttribArray(0);
+        var pointer = 0;
+        for (uint i = 0; i < _verticesInfo.Size; i++)
+        {
+            _gl.VertexAttribPointer(i, _verticesInfo.Lengths[i], VertexAttribPointerType.Float, false, _verticesInfo.Stride * sizeof(float), pointer * sizeof(float));
+            pointer += _verticesInfo.Lengths[i];
+            _gl.EnableVertexAttribArray(i);
+        }
 
         GlErrorUtils.CheckVao(Handle);
         GlErrorUtils.CheckVbo(_vbo);

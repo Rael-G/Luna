@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Luna.Core;
+namespace Luna;
 
 using FontKey = (string Path, Vector2 Size);
 

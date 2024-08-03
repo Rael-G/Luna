@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Ellipse : Node2D
 {
@@ -10,13 +10,15 @@ public class Ellipse : Node2D
 
     public Color Color { get; set; }
 
+    IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
+
     public override void Awake()
     {
         CreateRenderObject
         (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, Transform = TransformMatrix, Color = Color 
+                Radius = Radius, Segments = Segments, ModelViewProjection = ModelViewProjection, Color = Color, Material = Material
             }
         );
 
@@ -29,7 +31,7 @@ public class Ellipse : Node2D
          (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, Transform = TransformMatrix, Color = Color 
+                Radius = Radius, Segments = Segments, ModelViewProjection = ModelViewProjection, Color = Color, Material = Material
             }
          );
         base.LateUpdate();

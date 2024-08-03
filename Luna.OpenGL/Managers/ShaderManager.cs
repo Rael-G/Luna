@@ -19,11 +19,12 @@ internal static class ShaderManager
         }
     }
 
-    public static void UseProgram(Program program)
-        => _gl.UseProgram(GetShader(program));
-    
+    public static void UseProgram(ProgramShader program)
+    {
+        _gl.UseProgram(GetShader(program));
+    }
 
-    public static void StartUsing(Program program)
+    public static void StartUsing(ProgramShader program)
     {
         if (!Counters.TryGetValue(program.Name, out _))
             Counters.Add(program.Name, 0);
@@ -31,7 +32,7 @@ internal static class ShaderManager
         Counters[program.Name]++;
     }
 
-    public static void StopUsing(Program program)
+    public static void StopUsing(ProgramShader program)
     {
         if (!Counters.TryGetValue(program.Name, out _))
             return;
@@ -46,7 +47,7 @@ internal static class ShaderManager
         }
     }
 
-    public static uint GetShader(Program program)
+    public static uint GetShader(ProgramShader program)
     {
         if (Shaders.TryGetValue(program.Name, out var id))
             return id;
@@ -54,7 +55,7 @@ internal static class ShaderManager
         return GetFromBinary(program);
     }
 
-    private static uint GetFromBinary(Program program)
+    private static uint GetFromBinary(ProgramShader program)
     {
         var filePath = Path.Combine(BinaryPath, program.Name);
         if (!File.Exists(filePath))
@@ -79,7 +80,7 @@ internal static class ShaderManager
         return id;
     }
 
-    private static uint GetFromSource(Program program)
+    private static uint GetFromSource(ProgramShader program)
     {
         var programId = _gl.CreateProgram();
         var shaderIds = new List<uint>();
@@ -93,7 +94,7 @@ internal static class ShaderManager
             }
             
             var source = File.ReadAllText(shader.Path);
-            var shaderId =_gl.CreateShader((ShaderType)shader.ShaderType);
+            var shaderId =_gl.CreateShader((Silk.NET.OpenGL.ShaderType)shader.ShaderType);
             _gl.ShaderSource(shaderId, source);
             _gl.CompileShader(shaderId);
 
@@ -127,7 +128,7 @@ internal static class ShaderManager
         return programId;
     }
 
-    private static void SaveBinary(Program program, uint programId)
+    private static void SaveBinary(ProgramShader program, uint programId)
     {
         _gl.GetProgram(programId, ProgramPropertyARB.ProgramBinaryLength, out var buffSize);
         byte[] binary = new byte[buffSize];
@@ -142,24 +143,38 @@ internal static class ShaderManager
         binaryWriter.Write(binary);
     }
 
-    public static void UniformMat4(Program program, string name, float[] mat4)
+    public static void SetMat4(ProgramShader program, string name, float[] mat4)
     {
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.UniformMatrix4(loc, false, mat4);
     }
 
-    public static void UniformVec4(Program program, string name, float[] vec4)
+    public static void SetVec4(ProgramShader program, string name, float[] vec4)
     {
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform4(loc, vec4);
     }
 
-    public static void UniformVec3(Program program, string name, float[] vec3)
+    public static void SetVec3(ProgramShader program, string name, float[] vec3)
     {
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform3(loc, vec3);
+    }
+
+    public static void Set(ProgramShader program, string name, int value)
+    {
+        var programId = GetShader(program);
+        var loc = _gl.GetUniformLocation(programId, name);
+        _gl.Uniform1(loc, value);
+    }
+
+    public static void Set(ProgramShader program, string name, float value)
+    {
+        var programId = GetShader(program);
+        var loc = _gl.GetUniformLocation(programId, name);
+        _gl.Uniform1(loc, value);
     }
 }

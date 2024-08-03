@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -26,6 +25,7 @@ internal class TextVAO : Disposable
         _fontKey = data.FontKey;
         FontManager.StartUsing(data.FontKey);
         Generate();
+        GlErrorUtils.CheckError("TextVAO");
     }
 
     public void Generate()

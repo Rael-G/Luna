@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 
 namespace Luna;
 
@@ -34,7 +33,7 @@ public class Label : Node2D
         (
             new TextData
             {
-                Text = Text, Path = Path, Color = Color, Transform = TransformMatrix, 
+                Text = Text, Path = Path, Color = Color, Transform = ModelViewProjection.Projection * ModelViewProjection.View * ModelViewProjection.Model, 
                 Size = Size, FlipV = FlipV
             }
         );
@@ -54,7 +53,7 @@ public class Label : Node2D
         (
             new TextData
             {
-                Text = Text, Path = Path, Color = Color, Transform = TransformMatrix, 
+                Text = Text, Path = Path, Color = Color, Transform = ModelViewProjection.Projection * ModelViewProjection.View * ModelViewProjection.Model, 
                 Size = Size, FlipV = FlipV
             }
         );

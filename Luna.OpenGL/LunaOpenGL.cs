@@ -1,6 +1,4 @@
-﻿using Luna.Core;
-
-namespace Luna.OpenGL;
+﻿namespace Luna.OpenGL;
 
 public static class LunaOpenGL
 {
@@ -10,6 +8,8 @@ public static class LunaOpenGL
         Injector.AddSingleton<IRenderMap>(new RenderMap());
         Injector.AddSingleton<IRenderObjectFactory>(new RenderObjectFactory());
         Injector.AddSingleton<IEngineUtils>(new EngineUtils());
+        
+        Injector.AddTransient<IStandardMaterial>(() => new StandardMaterial());
 
         RenderObjectFactory.RegisterCallback<RectangleData>((data) => new RectangleObject(data));
         RenderObjectFactory.RegisterCallback<TextData>((data) => new TextObject(data));

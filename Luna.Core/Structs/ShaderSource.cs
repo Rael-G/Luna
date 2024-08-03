@@ -1,8 +1,6 @@
-﻿using Luna.Core;
+﻿namespace Luna;
 
-namespace Luna;
-
-public struct Shader
+public struct ShaderSource
 {
     public string Name { get; set; }
     public string Path { get; set; }

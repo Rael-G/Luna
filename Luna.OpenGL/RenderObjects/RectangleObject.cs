@@ -19,19 +19,28 @@ internal class RectangleObject(RectangleData data) : PolygonObject<RectangleData
     {
         float[] vertices =
         [
-            0.0f, 0.0f, 0.0f,  // Bottom left
-            0.0f, data.Size.Y, 0.0f,  // Top left
-            data.Size.X, data.Size.Y, 0.0f,   //Top right
-            data.Size.X, 0.0f, 0.0f,    // Bottom right
+            // Vertices                            // Normals           //Texture Coords
+            0.0f,           0.0f,           0.0f,   0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // Bottom left
+            0.0f,           data.Size.Y,    0.0f,   0.0f, 0.0f, 1.0f,    0.0f, 1.0f, // Top left
+            data.Size.X,    data.Size.Y,    0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 1.0f, //Top right
+            data.Size.X,    0.0f,           0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 0.0f, // Bottom right
         ];
+
+        data.Material.Color = data.Color;
+        data.Material.ModelViewProjection = data.ModelViewProjection;
 
         return new PolygonData()
         {
             Vertices = vertices,
             Indices = _indices,
-            Color = data.Color,
-            Transform = data.Transform,
-            PrimitiveType = PrimitiveType.Triangles
+            PrimitiveType = PrimitiveType.Triangles,
+            BufferUsage = BufferUsageARB.StaticDraw,
+            VerticeInfo = new()
+            {
+                Size = 3,
+                Lengths = [3, 3, 2],
+            },
+            Material = data.Material
         };
     }
 

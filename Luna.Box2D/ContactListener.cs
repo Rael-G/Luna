@@ -1,7 +1,6 @@
 ﻿using Box2DSharp.Collision.Collider;
 using Box2DSharp.Dynamics;
 using Box2DSharp.Dynamics.Contacts;
-using Luna.Core;
 
 namespace Luna.Box2D;
 

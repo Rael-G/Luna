@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -12,18 +11,33 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
     }
 
     private static PolygonData ToPolygonData(EllipseData data)
-        => new()
+    {
+        data.Material.Color = data.Color;
+        data.Material.ModelViewProjection = data.ModelViewProjection;
+        
+        return new()
         {
             Vertices = GenerateVertices(data.Radius, data.Segments),
             Indices = GenerateIndices(data.Segments),
-            Color = data.Color,
-            Transform = data.Transform,
-            PrimitiveType = PrimitiveType.TriangleFan
+            PrimitiveType = PrimitiveType.TriangleFan,
+            BufferUsage = BufferUsageARB.StaticDraw,
+            VerticeInfo = new()
+            {
+                Size = 3,
+                Lengths = [3, 3, 2],
+            },
+            Material = data.Material
         };
+    }
 
     private static float[] GenerateVertices(Vector2 radius, int segments)
     {
-        List<float> vertices = [0.0f, 0.0f, 0.0f];
+        List<float> vertices = 
+        [
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f
+        ];
 
         float angleStep = 2.0f * MathF.PI / segments;
 
@@ -33,9 +47,9 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
             float x = radius.X * MathF.Cos(angle);
             float y = radius.Y * MathF.Sin(angle);
 
-            vertices.Add(x);
-            vertices.Add(y);
-            vertices.Add(0.0f);
+            vertices.Add(x, y, 0.0f);
+            vertices.Add(0.0f, 0.0f, 1.0f);
+            vertices.Add(x / radius.X * 0.5f + 0.5f, y / radius.Y * 0.5f + 0.5f);
         }
 
         return [.. vertices];
@@ -54,4 +68,5 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
 
         return [.. indices];
     }
+
 }

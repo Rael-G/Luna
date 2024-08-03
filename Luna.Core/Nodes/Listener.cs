@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Listener
 {

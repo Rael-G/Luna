@@ -56,7 +56,7 @@ public static class GlyphManager
         var fontCache = Glyphs[font];
         foreach (var character in fontCache.Values)
         {
-            Window.GL?.DeleteTexture(character.TextureID);
+            _gl.DeleteTexture(character.TextureID);
         }
     }
 

@@ -1,5 +1,4 @@
-﻿using Luna.Core;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 

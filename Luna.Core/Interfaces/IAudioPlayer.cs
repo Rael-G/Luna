@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Luna.Core;
+namespace Luna;
 
 public interface IAudioPlayer : IDisposable
 {

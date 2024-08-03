@@ -4,7 +4,6 @@ namespace Luna.OpenGL;
 
 internal class TextObject(TextData data) : RenderObject<TextData>
 {
-    private const string ProgramName = "FontShader.bin";
     private const string VertexName = "FontVertexShader.glsl";
     private const string FragmentName = "FontFragmentShader.glsl";
 
@@ -14,20 +13,20 @@ internal class TextObject(TextData data) : RenderObject<TextData>
 
     private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
-    private readonly Program Program = new
+    private readonly ProgramShader Program = new
     (
         [
             new()
             {
                 Name = VertexName,
-                Path = Program.DefaultShaderPath(VertexName),
-                ShaderType = Core.ShaderType.VertexShader
+                Path = ProgramShader.DefaultShaderPath(VertexName),
+                ShaderType = ShaderType.VertexShader
             },
             new()
             {
                 Name = FragmentName,
-                Path = Program.DefaultShaderPath(FragmentName),
-                ShaderType = Core.ShaderType.FragmentShader
+                Path = ProgramShader.DefaultShaderPath(FragmentName),
+                ShaderType = ShaderType.FragmentShader
             }
         ]
     );
@@ -35,8 +34,8 @@ internal class TextObject(TextData data) : RenderObject<TextData>
     public override void Render()
     {
         Program.Use();
-        Program.UniformVec3("textColor", Text.Color.ToMatrix());
-        Program.UniformMat4("transform", Text.Transform.Transpose());
+        Program.SetVec4("textColor", Text.Color.ToMatrix());
+        Program.SetMat4("transform", Text.Transform.Transpose());
 
         _gl.ActiveTexture(TextureUnit.Texture0);
         _gl.BindVertexArray(TextVAO.Handle);
@@ -71,6 +70,7 @@ internal class TextObject(TextData data) : RenderObject<TextData>
 
         _gl.BindVertexArray(0);
         _gl.BindTexture(TextureTarget.Texture2D, 0);
+        GlErrorUtils.CheckError("TextObject");
     }
 
     public override void Update(TextData data)

@@ -1,6 +1,4 @@
-﻿using Luna.Core;
-
-namespace Luna.Audio;
+﻿namespace Luna.Audio;
 
 public class AudioPlayerFactory : IAudioPlayerFactory
 {

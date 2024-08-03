@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 using Luna.Maths;
 
 namespace Luna;
@@ -51,9 +50,10 @@ public class PerspectiveCamera : Node3D, ICamera
         base.LateUpdate();
     }
 
-    public virtual Matrix Project()
-    => Transformations.PerspectiveProjection
-        (Fov, Window.AspectRatio, Near, Far) *
-        Transformations.LookAtMatrix(Transform.GlobalPosition, Target, Up);
+    public virtual Matrix Projection
+        => Transformations.PerspectiveProjection(Fov, Window.AspectRatio, Near, Far);
+
+    public virtual Matrix View 
+        => Transformations.LookAtMatrix(Transform.GlobalPosition, Target, Up);
 }
 

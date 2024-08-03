@@ -6,6 +6,8 @@ using Iteration = (int Velocity, int Position);
 
 public class WorldManager : Node
 {
+    public static WorldManager Instance => _instance?? new();
+    
     public static float PixelsPerMeter { get; set; } = 1;
     public static int VelocityIterations { get; set; } = 8;
     public static int PositionIterations { get; set; } = 3;
@@ -17,7 +19,7 @@ public class WorldManager : Node
 
     private static ContactListener _contactListener = new();
 
-    public WorldManager()
+    private WorldManager()
     {
     }
 

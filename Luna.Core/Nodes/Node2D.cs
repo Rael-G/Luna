@@ -6,13 +6,14 @@ public class Node2D : Node
 {
     public virtual Transform2D Transform { get; }
 
-    public Matrix TransformMatrix
+    public ModelViewProjection ModelViewProjection
     {
-        get 
+        get => new()
         {
-            var ViewProj = Camera?.Project()?? Matrix.Identity(4);
-            return ViewProj * Transform.ModelMatrix(); 
-        }
+            Projection = Camera?.Projection?? Matrix.Identity(4),
+            View = Camera?.View?? Matrix.Identity(4),
+            Model = Transform.ModelMatrix()
+        };
     }
 
     protected override Node? Parent 

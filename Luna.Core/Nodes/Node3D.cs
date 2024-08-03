@@ -6,13 +6,14 @@ public class Node3D : Node
 {
     public Transform3D Transform { get; set; }
 
-    public Matrix TransformMatrix
+    public ModelViewProjection MatrixMVP
     {
-        get 
+        get => new()
         {
-            var ViewProj = Camera?.Project()?? Matrix.Identity(4);
-            return ViewProj * Transform.ModelMatrix(); 
-        }
+            Projection = Camera?.Projection?? Matrix.Identity(4),
+            View = Camera?.View?? Matrix.Identity(4),
+            Model = Transform.ModelMatrix()
+        };
     }
 
     public virtual ICamera? Camera 

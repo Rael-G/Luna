@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 using Luna.Maths;
 using Silk.NET.OpenAL;
 

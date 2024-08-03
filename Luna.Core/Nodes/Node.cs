@@ -1,6 +1,4 @@
-﻿using Luna.Core;
-
-namespace Luna;
+﻿namespace Luna;
 
 public class Node : Disposable
 {
@@ -14,7 +12,7 @@ public class Node : Disposable
 
     protected virtual Node? Parent { get; set;}
 
-    private bool _awake;
+    private bool _awakened;
     private bool _started;
 
     private List<Node> Children { get; }
@@ -51,10 +49,11 @@ public class Node : Disposable
 
     internal void InternalAwake()
     {
-        if (_awake) return;
+        if (_awakened) return;
         Awake();
         foreach (var child in Children)
             child.InternalAwake();
+        _awakened = true;
     }
 
     /// <summary>
@@ -67,10 +66,11 @@ public class Node : Disposable
 
     internal void InternalStart()
     {
-        if (_awake) return;
+        if (_started) return;
         Start();
         foreach (var child in Children)
             child.InternalStart();
+        _started = true;
     }
 
     /// <summary>
@@ -165,10 +165,14 @@ public class Node : Disposable
             if (Children.FirstOrDefault(c => c == node) != null) 
                 continue;
 
+            node.Parent?.RemoveChild(node);
+
             node.Parent = this;
             Children.Add(node);
-            if (Window.Running && _awake)   node.Awake();
-            if (Window.Running && _started) node.Start();
+            if (Window.Running && _awakened)   
+                node.Awake();
+            if (Window.Running && _started) 
+                node.Start();
             Tree.AddNode(node);
         }
     }

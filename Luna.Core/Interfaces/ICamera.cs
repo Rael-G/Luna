@@ -4,7 +4,9 @@ namespace Luna;
 
 public interface ICamera
 {
-    public abstract Matrix Project();
+    public abstract Matrix Projection { get; }
+    public abstract Matrix View { get; }
+
 }
 
 

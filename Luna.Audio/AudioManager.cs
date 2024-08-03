@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Core;
 using Luna.Maths;
 using Silk.NET.OpenAL;
 
@@ -44,7 +43,7 @@ public static class AudioManager
         }
     }
 
-    public static void SetDistanceModel(Core.DistanceModel distanceModel)
+    public static void SetDistanceModel(DistanceModel distanceModel)
     {
         _al.DistanceModel((Silk.NET.OpenAL.DistanceModel)distanceModel);
     }

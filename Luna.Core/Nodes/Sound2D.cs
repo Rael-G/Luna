@@ -1,6 +1,6 @@
 ﻿using Luna.Maths;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Sound2D : Node2D
 {

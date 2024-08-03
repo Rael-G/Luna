@@ -11,6 +11,7 @@ internal class BackgroundColorObject(Color data) : RenderObject<Color>
     public override void Render()
     {
         _gl.ClearColor(_color);
+        GlErrorUtils.CheckError("Background");
     }
 
     public override void Update(Color data)

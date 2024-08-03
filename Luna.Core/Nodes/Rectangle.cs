@@ -9,6 +9,8 @@ public class Rectangle : Node2D
     public Color Color { get; set; }
 
     public bool Center { get; set; }
+    
+    IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
 
     public override void Awake()
     {
@@ -16,7 +18,7 @@ public class Rectangle : Node2D
         (
             new RectangleData
             { 
-                Size = Size, Transform = TransformMatrix, Color = Color
+                Size = Size, Color = Color, ModelViewProjection = ModelViewProjection, Material = Material
             }
         );
 
@@ -35,7 +37,7 @@ public class Rectangle : Node2D
          (
             new RectangleData
             { 
-                Size = Size, Transform = TransformMatrix, Color = Color
+                Size = Size, Color = Color, ModelViewProjection = ModelViewProjection, Material = Material
             }
          );
         base.LateUpdate();

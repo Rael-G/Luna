@@ -1,6 +1,4 @@
-﻿using Luna.Core;
-
-namespace Luna;
+﻿namespace Luna;
 
 public class Host(Node root)
 {

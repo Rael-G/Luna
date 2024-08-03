@@ -1,5 +1,4 @@
-﻿using Luna.Core;
-using Silk.NET.OpenAL;
+﻿using Silk.NET.OpenAL;
 
 namespace Luna.Audio;
 
