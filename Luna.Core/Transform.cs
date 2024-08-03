@@ -3,16 +3,16 @@ using Luna.Maths;
 
 namespace Luna;
 
-public class Transform3D
+public class Transform
 {
-    public Transform3D()
+    public Transform()
     {
         Position = Vector3.Zero;
         Rotation = Vector3.Zero;
         Scale = new(1.0f, 1.0f, 1.0f);
     }
 
-    public Transform3D(Vector3 position, Vector3 rotation, Vector3 scale)
+    public Transform(Vector3 position, Vector3 rotation, Vector3 scale)
     {
         Position = position;
         Rotation = rotation;
@@ -25,8 +25,8 @@ public class Transform3D
     { 
         get 
         {
-            if (Parent is null) return Position;
-            return Parent.GlobalPosition + Position;
+            if (Parent is null) return Position - Origin;
+            return Parent.GlobalPosition + Position - Origin;
         }
     }
 
@@ -44,9 +44,9 @@ public class Transform3D
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
     }
 
-    public Vector3 RotationAxis { get; set; }
+    public Vector3 Origin { get; set; }
 
-    internal Transform3D? Parent { get; set; }
+    internal Transform? Parent { get; set; }
 
     public Vector3 RotationDegrees 
     { 
@@ -61,11 +61,11 @@ public class Transform3D
 
     internal Matrix ModelMatrix()
         =>  Transformations.TranslationMatrix(GlobalPosition) *
-            Transformations.TranslationMatrix(RotationAxis) *
+            Transformations.TranslationMatrix(Origin) *
             Transformations.RotationMatrix(GlobalRotation.X, Vector3.UnitX) *
             Transformations.RotationMatrix(GlobalRotation.Y, Vector3.UnitY) *
             Transformations.RotationMatrix(GlobalRotation.Z, Vector3.UnitZ) *
-            Transformations.TranslationMatrix(-RotationAxis) *
+            Transformations.TranslationMatrix(-Origin) *
             Transformations.ScaleMatrix(GlobalScale);
 
 }

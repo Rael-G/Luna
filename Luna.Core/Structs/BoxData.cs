@@ -2,8 +2,8 @@
 
 namespace Luna;
 
-public struct RectangleData
+public struct BoxData
 {
-    public Vector2 Size { get; set; }
+    public Vector3 Size { get; set; }
     public IMaterial Material { get; set; }
 }

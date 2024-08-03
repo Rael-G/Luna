@@ -5,7 +5,7 @@ namespace Luna.Maths;
 public static class Vector3Extensions
 {
     public static Matrix ToMatrix(this Vector3 Vector)
-        => new(3, 1, [Vector.X , Vector.Y, Vector.Z]);
+        => new(4, 1, [Vector.X , Vector.Y, Vector.Z, 1.0f]);
 
     public static Matrix ToMatrix(this Vector3[] vectors)
     {
@@ -30,6 +30,10 @@ public static class Vector3Extensions
             return null;
         }
     }
+
+    public static Vector2 ToVector2(this Vector3 vector)
+        => new(vector.X, vector.Y);
+    
 
     public static Vector3 Normalize(this Vector3 vector)
         => Vector3.Normalize(vector);

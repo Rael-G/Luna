@@ -1,6 +1,7 @@
 ﻿using Box2DSharp.Collision.Collider;
 using Box2DSharp.Dynamics;
 using Box2DSharp.Dynamics.Contacts;
+using Luna.Maths;
 
 namespace Luna.Box2D;
 
@@ -30,14 +31,14 @@ public class DynamicBody2D
 
     public override void Start()
     {
-        Body.SetTransform(Transform.Position.ToMeters(), Transform.Rotation);
+        Body.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
         base.Start();
     }
 
     public override void FixedUpdate()
     {
-        Transform.Position = Body!.GetPosition().ToPixels();
-        Transform.Rotation = Body.GetAngle();
+        Transform.Position = Body!.GetPosition().ToPixels().ToVector3();
+        Transform.Rotation = new (Transform.Rotation.X, Transform.Rotation.Y, Body.GetAngle());
 
         base.FixedUpdate();
     }

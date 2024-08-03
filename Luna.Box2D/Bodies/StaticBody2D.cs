@@ -1,4 +1,5 @@
 ﻿using Box2DSharp.Dynamics;
+using Luna.Maths;
 
 namespace Luna.Box2D;
 
@@ -15,7 +16,7 @@ public class StaticBody2D
 
     public override void FixedUpdate()
     {
-        Body.SetTransform(Transform.Position.ToMeters(), Transform.Rotation);
+        Body.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
         base.FixedUpdate();
     }
 }

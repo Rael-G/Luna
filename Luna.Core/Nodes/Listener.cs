@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Maths;
 
 namespace Luna;
 
@@ -29,12 +28,12 @@ public class Listener
     private float _volume;
     private DistanceModel _distanceModel = DistanceModel.None;
 
-    public void UpdateListener(Transform2D transform)
+    public void UpdateListener(Transform transform)
     {
-        Utils.SetListener(transform.GlobalPosition.ToVector3(), Velocity, -Vector3.UnitZ, Vector3.UnitY);
+        Utils.SetListener(transform.GlobalPosition, Velocity, -Vector3.UnitZ, Vector3.UnitY);
     }
 
-    public void UpdateListener(Transform3D transform, Vector3 front, Vector3 up)
+    public void UpdateListener(Transform transform, Vector3 front, Vector3 up)
     {
         Utils.SetListener(transform.GlobalPosition, Velocity, front, up);
     }

@@ -1,8 +1,9 @@
 ﻿using System.Numerics;
+using Luna.Maths;
 
 namespace Luna;
 
-public class Rectangle : Node2D
+public class Rectangle : Node
 {
     public Vector2 Size { get; set; }
 
@@ -51,6 +52,6 @@ public class Rectangle : Node2D
     private void CenterRect()
     {
         if (Center)
-            Transform.Origin = Size * Transform.Scale / 2f;
+            Transform.Origin = Size.ToVector3() * Transform.Scale / 2f;
     }
 }

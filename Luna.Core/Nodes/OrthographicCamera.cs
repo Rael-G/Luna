@@ -2,7 +2,7 @@
 
 namespace Luna;
 
-public class OrtographicCamera : Node2D, ICamera
+public class OrtographicCamera : Node, ICamera
 {
     public float Left { get; set; } = 0.0f;
     public float Right { get; set; } = 1.0f;
@@ -18,7 +18,7 @@ public class OrtographicCamera : Node2D, ICamera
     
 
     public virtual Matrix View 
-        => Transformations.TranslationMatrix(-Transform.GlobalPosition.ToVector3());
+        => Transformations.TranslationMatrix(-Transform.GlobalPosition);
     
     protected override Node? Parent 
     { 
@@ -26,10 +26,8 @@ public class OrtographicCamera : Node2D, ICamera
         set
         {
             base.Parent = value;
-            if (Parent is Node2D parent2D)
-                parent2D.Camera = this;
-            else if (Parent is Node3D parent3D)
-                parent3D.Camera = this;
+            if (Parent is not null)
+                Parent.Camera = this;
         } 
     }
 

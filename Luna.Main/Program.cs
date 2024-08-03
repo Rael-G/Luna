@@ -17,7 +17,7 @@ internal class Program
     }
 }
 
-public class Root : Node2D
+public class Root : Node
 {
     Label label;
     Rectangle rect;
@@ -54,7 +54,7 @@ public class Root : Node2D
             Segments = 10,
         };
 
-        ellipse.Transform.Position = new Vector2{ X = 400, Y = 300 };
+        ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
         ellipse.Material.Diffuse = texture2D;
         
 
@@ -72,10 +72,10 @@ public class Root : Node2D
             CenterH = true,
             CenterV = true
         };
-        label.Transform.Position = new Vector2{ X = 400, Y = 300 };
+        label.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
         
-        var sound = new Sound2D("Assets/audio/music/Death.wav");
-        sound.Transform.Position = new Vector2(0, 0);
+        var sound = new Sound("Assets/audio/music/Death.wav");
+        sound.Transform.Position = Vector3.Zero;
         AddChild(ellipse);
 
         base.Start();

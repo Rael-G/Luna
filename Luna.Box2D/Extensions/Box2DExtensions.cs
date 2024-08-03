@@ -1,10 +1,15 @@
 ﻿using System.Numerics;
-using Box2DSharp.Collision.Shapes;
 
 namespace Luna.Box2D;
 
 public static class Box2DExtensions
 {
+    public static Vector3 ToPixels(this Vector3 sizeInMeters)
+        => sizeInMeters * WorldManager.PixelsPerMeter;
+
+    public static Vector3 ToMeters(this Vector3 sizeInPixels)
+        => sizeInPixels / WorldManager.PixelsPerMeter;
+
     public static Vector2 ToPixels(this Vector2 sizeInMeters)
         => sizeInMeters * WorldManager.PixelsPerMeter;
 

@@ -1,6 +1,6 @@
 ﻿namespace Luna;
 
-public class Sound3D : Node3D
+public class Sound : Node
 {
     public string Path
     {
@@ -8,7 +8,7 @@ public class Sound3D : Node3D
         set
         {
             _path = System.IO.Path.Combine(Directory.GetCurrentDirectory(), value);
-            _player.Dispose();
+            _player?.Dispose();
             _player = Injector.Get<IAudioPlayerFactory>().Create(_path);
         }
     }
@@ -34,13 +34,12 @@ public class Sound3D : Node3D
         set => _player.Speed = value; 
     }
     
-    private IAudioPlayer _player;
+    private IAudioPlayer _player = null!;
     private string _path = string.Empty;
 
-    public Sound3D(string path)
+    public Sound(string path)
     {
         Path = path;
-        _player = Injector.Get<IAudioPlayerFactory>().Create(Path);
     }
 
     public void Play()
@@ -63,4 +62,5 @@ public class Sound3D : Node3D
         _player.Dispose();
         base.Dispose(disposing);
     }
+
 }

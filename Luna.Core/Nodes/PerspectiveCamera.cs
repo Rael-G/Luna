@@ -3,7 +3,7 @@ using Luna.Maths;
 
 namespace Luna;
 
-public class PerspectiveCamera : Node3D, ICamera
+public class PerspectiveCamera : Node, ICamera
 {
     
     protected override Node? Parent 
@@ -12,8 +12,8 @@ public class PerspectiveCamera : Node3D, ICamera
         set
         {
             base.Parent = value;
-            if (Parent is Node3D parent3D)
-                parent3D.Camera = this;
+            if (Parent is not null)
+                Parent.Camera = this;
         } 
     }
 

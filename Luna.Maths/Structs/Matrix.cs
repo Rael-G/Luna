@@ -121,7 +121,7 @@ public class Matrix : IEnumerable<float>
     public static Matrix operator *(Matrix a, Matrix b)
     {
         if (a.Columns != b.Rows)
-            throw new InvalidOperationException("Matrix multiplication requires the number of columns in the first matrix to be equal to the number of rows in the second matrix.");
+            throw new InvalidOperationException($"Matrix multiplication requires the number of columns in the first matrix to be equal to the number of rows in the second matrix. Left.Columns = {a.Columns}, Right.Rows = {b.Rows}");
 
         var matrix = new Matrix(a.Rows, b.Columns);
 

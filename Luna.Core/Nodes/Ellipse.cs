@@ -2,7 +2,7 @@
 
 namespace Luna;
 
-public class Ellipse : Node2D
+public class Ellipse : Node
 {
     public Vector2 Radius { get; set; } = Vector2.One;
 

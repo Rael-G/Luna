@@ -1,10 +1,8 @@
-﻿using Box2DSharp.Collision.Collider;
-using Box2DSharp.Dynamics;
-using Box2DSharp.Dynamics.Contacts;
+﻿using Box2DSharp.Dynamics;
 
 namespace Luna.Box2D;
 
-public abstract class CollisionBody2D : Node2D
+public abstract class CollisionBody2D : Node
 {
     // Changes after awake doest affect the body
     public int WorldIndex { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Luna;
 
-public class Label : Node2D
+public class Label : Node
 {
     public string Text { get; set; } = string.Empty;
     public Vector2 Size { get; set; } = new Vector2(48f, 48f);
@@ -67,11 +67,11 @@ public class Label : Node2D
             return;
             
         var utils = Injector.Get<IEngineUtils>();
-        Vector2 origin = Vector2.Zero;
+        Vector3 origin = Vector3.Zero;
         if (CenterH)
-            origin += new Vector2(utils.MeasureTextSize((Path, Size), Text).X, 0f) * Transform.Scale / 2;
+            origin += new Vector3(utils.MeasureTextSize((Path, Size), Text).X, 0f, 0f) * Transform.Scale / 2;
         if (CenterV)
-            origin += new Vector2(0f, utils.MeasureTextSize((Path, Size), Text).Y) * Transform.Scale / 2;
+            origin += new Vector3(0f, utils.MeasureTextSize((Path, Size), Text).Y, 0f) * Transform.Scale / 2;
 
         Transform.Origin = origin;
     }

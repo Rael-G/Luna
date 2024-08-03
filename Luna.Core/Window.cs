@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Luna.Maths;
 
 namespace Luna;
 
@@ -14,7 +15,7 @@ public static class Window
 
     public static Vector2 VirtualSize { get; set; } = Size;
 
-    public static Vector2 VirtualCenter { get => VirtualSize / 2; }
+    public static Vector3 VirtualCenter { get => (VirtualSize / 2).ToVector3(); }
 
     public static Vector2 VirtualScale { get => VirtualSize / Size; }
 

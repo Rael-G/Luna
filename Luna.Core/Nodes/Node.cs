@@ -1,4 +1,6 @@
-﻿namespace Luna;
+﻿using Luna.Maths;
+
+namespace Luna;
 
 public class Node : Disposable
 {
@@ -10,18 +12,55 @@ public class Node : Disposable
 
     public bool Invisible { get; set; }
 
-    protected virtual Node? Parent { get; set;}
+    public virtual Transform Transform { get; }
 
+    protected virtual Node? Parent 
+    { 
+        get => _parent;
+        set 
+        {
+            _parent = value;
+            Transform.Parent = _parent?.Transform;
+        }
+    }
+
+    internal virtual ICamera? Camera 
+    { 
+        get
+        {
+            if (_camera is not null)
+                return _camera;
+
+            return _parent?.Camera;
+        }
+        set
+        {
+            _camera = value;
+        } 
+    }
+
+    public ModelViewProjection ModelViewProjection
+    {
+        get => new()
+        {
+            Projection = Camera?.Projection?? Matrix.Identity(4),
+            View = Camera?.View?? Matrix.Identity(4),
+            Model = Transform.ModelMatrix()
+        };
+    }
+
+    private List<Node> _children;
     private bool _awakened;
     private bool _started;
-
-    private List<Node> Children { get; }
+    private Node? _parent;
+    private ICamera? _camera;
 
     public Node()
     {
         UID = Guid.NewGuid().ToString();
-        Children = [];
+        _children = [];
         Alias = GetType().Name;
+        Transform = new();
     }
 
     /// <summary>
@@ -35,7 +74,7 @@ public class Node : Disposable
     internal void InternalConfig()
     {
         Config();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalConfig();
     }
 
@@ -51,7 +90,7 @@ public class Node : Disposable
     {
         if (_awakened) return;
         Awake();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalAwake();
         _awakened = true;
     }
@@ -68,7 +107,7 @@ public class Node : Disposable
     {
         if (_started) return;
         Start();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalStart();
         _started = true;
     }
@@ -86,7 +125,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         EarlyUpdate();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalEarlyUpdate();
     }
 
@@ -103,7 +142,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         Update();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalUpdate();
     }
 
@@ -120,7 +159,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         LateUpdate();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalLateUpdate();
     }
 
@@ -134,7 +173,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         FixedUpdate();
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.InternalFixedUpdate();
     }
 
@@ -148,13 +187,13 @@ public class Node : Disposable
         var map = Injector.Get<IRenderMap>();
         map.Render(UID);
 
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.Render();
     }
 
     public virtual void Input(InputEvent inputEvent)
     {
-        foreach (var child in Children)
+        foreach (var child in _children)
             child.Input(inputEvent);
     }
 
@@ -162,13 +201,13 @@ public class Node : Disposable
     {
         foreach (var node in nodes)
         {
-            if (Children.FirstOrDefault(c => c == node) != null) 
+            if (_children.FirstOrDefault(c => c == node) != null) 
                 continue;
 
             node.Parent?.RemoveChild(node);
 
             node.Parent = this;
-            Children.Add(node);
+            _children.Add(node);
             if (Window.Running && _awakened)   
                 node.Awake();
             if (Window.Running && _started) 
@@ -179,7 +218,7 @@ public class Node : Disposable
 
     public virtual void RemoveChild(Node node)
     {
-        Children.Remove(node);
+        _children.Remove(node);
         node.Parent = null;
         Tree.RemoveNode(node.UID);
         node.Dispose();
@@ -194,7 +233,7 @@ public class Node : Disposable
         for (int i = 0; i < aliases.Length; i++)
         {
             if (node is null) return null;
-            node = node?.Children.Find(n => n.Alias == aliases[i]);
+            node = node?._children.Find(n => n.Alias == aliases[i]);
         }
 
         return node as T;
@@ -220,7 +259,7 @@ public class Node : Disposable
         var renderMap = Injector.Get<IRenderMap>();
         renderMap.Remove(UID);
 
-        foreach (var child in Children)
+        foreach (var child in _children)
         {
             child.Dispose();
         }
