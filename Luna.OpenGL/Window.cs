@@ -103,6 +103,9 @@ internal unsafe class Window : IWindow
 
         Glfw?.SwapInterval(Vsync? 1 : 0);
         Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, DisableCursor);
+
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); 
     }
 
     public void Close()

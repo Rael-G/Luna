@@ -25,10 +25,7 @@ internal class RectangleObject(RectangleData data) : PolygonObject<RectangleData
             data.Size.X,    data.Size.Y,    0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 1.0f, //Top right
             data.Size.X,    0.0f,           0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 0.0f, // Bottom right
         ];
-
-        data.Material.Color = data.Color;
-        data.Material.ModelViewProjection = data.ModelViewProjection;
-
+        
         return new PolygonData()
         {
             Vertices = vertices,

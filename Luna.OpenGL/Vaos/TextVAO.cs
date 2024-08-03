@@ -35,10 +35,7 @@ internal class TextVAO : Disposable
         {
             Characters.Add((char)c, GlyphManager.GetGlyph(_fontKey, (char)c));
         }
-
-        _gl.Enable(EnableCap.Blend);
-        _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);  
-
+        
         Handle = _gl.GenVertexArray();
         Vbo = _gl.GenBuffer();
         _gl.BindVertexArray(Handle);

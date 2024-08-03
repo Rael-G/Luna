@@ -8,17 +8,19 @@ public class Ellipse : Node2D
 
     public int Segments { get; set; } = 10;
 
-    public Color Color { get; set; }
+    public Color Color { get; set; } = Colors.White;
 
-    IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
+    public IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
 
     public override void Awake()
     {
+        Material.Color = Color;
+        Material.ModelViewProjection = ModelViewProjection;
         CreateRenderObject
         (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, ModelViewProjection = ModelViewProjection, Color = Color, Material = Material
+                Radius = Radius, Segments = Segments, Material = Material
             }
         );
 
@@ -27,11 +29,13 @@ public class Ellipse : Node2D
 
     public override void LateUpdate()
     {
+        Material.Color = Color;
+        Material.ModelViewProjection = ModelViewProjection;
         UpdateRenderObject
          (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, ModelViewProjection = ModelViewProjection, Color = Color, Material = Material
+                Radius = Radius, Segments = Segments, Material = Material
             }
          );
         base.LateUpdate();

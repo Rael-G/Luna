@@ -6,19 +6,22 @@ public class Rectangle : Node2D
 {
     public Vector2 Size { get; set; }
 
-    public Color Color { get; set; }
+    public Color Color { get; set; } = Colors.White;
 
     public bool Center { get; set; }
     
-    IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
+    public IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
 
     public override void Awake()
     {
+        Material.Color = Color;
+        Material.ModelViewProjection = ModelViewProjection;
         CreateRenderObject
         (
+            
             new RectangleData
             { 
-                Size = Size, Color = Color, ModelViewProjection = ModelViewProjection, Material = Material
+                Size = Size, Material = Material
             }
         );
 
@@ -33,13 +36,15 @@ public class Rectangle : Node2D
 
     public override void LateUpdate()
     {
+        Material.Color = Color;
+        Material.ModelViewProjection = ModelViewProjection;
         UpdateRenderObject
          (
             new RectangleData
             { 
-                Size = Size, Color = Color, ModelViewProjection = ModelViewProjection, Material = Material
+                Size = Size, Material = Material
             }
-         );
+        );
         base.LateUpdate();
     }
 

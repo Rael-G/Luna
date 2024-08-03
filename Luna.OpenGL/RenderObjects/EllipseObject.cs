@@ -12,9 +12,6 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
 
     private static PolygonData ToPolygonData(EllipseData data)
     {
-        data.Material.Color = data.Color;
-        data.Material.ModelViewProjection = data.ModelViewProjection;
-        
         return new()
         {
             Vertices = GenerateVertices(data.Radius, data.Segments),

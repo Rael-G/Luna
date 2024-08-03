@@ -35,6 +35,11 @@ public class Root : Node2D
 
     public override void Start()
     {
+        var texture2D = new Texture2D()
+        {
+            Path = "Assets/images/Hamburger.png",
+            TextureFilter = TextureFilter.Nearest
+        };
         var camera = new OrtographicCamera(){
             Left = 0.0f,
             Right = Window.Size.X,
@@ -46,18 +51,19 @@ public class Root : Node2D
         var ellipse = new Ellipse
         {
             Radius = new(300, 300),
-            Color = Colors.Red,
             Segments = 10,
         };
 
         ellipse.Transform.Position = new Vector2{ X = 400, Y = 300 };
+        ellipse.Material.Diffuse = texture2D;
+        
 
         rect = new Rectangle(){
             Size = new(400, 400),
-            Color = Colors.Red,
             Center = true,
         };
         rect.Transform.Position = Window.VirtualCenter;
+        rect.Material.Diffuse = texture2D;
 
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
