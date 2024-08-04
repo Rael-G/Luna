@@ -6,11 +6,12 @@ namespace Luna.OpenGL;
 
 public class Material : Disposable, IMaterial
 {
-    public Dictionary<string, Texture> Textures { get; private set; } = [];
     public Dictionary<string, float> FloatProperties { get; private set; } = [];
     public Dictionary<string, Vector3> Vector3Properties { get; private set; } = [];
     public Dictionary<string, Color> ColorProperties { get; private set; } = [];
     public Dictionary<string, Matrix> MatricesProperties { get; private set; } = [];
+
+    private Dictionary<string, Texture> Textures { get; set; } = [];
 
     private ProgramShader Shader { get; set; }
 
@@ -39,6 +40,12 @@ public class Material : Disposable, IMaterial
     {
         Shader = new(shaders);
         ModelViewProjection = _modelViewProjection;
+    }
+
+    public void Set(string key, Texture texture)
+    {
+        Textures.GetValueOrDefault(key)?.Dispose();
+        Textures[key] = texture;
     }
 
     public void Bind()

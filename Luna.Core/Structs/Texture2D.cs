@@ -10,6 +10,7 @@ public struct Texture2D
     public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
     public TextureWrap TextureWrap { get; set; } = TextureWrap.Repeat;
     public int MipmapLevel { get; set; }
+    public bool FlipV { get; set; }
 
     public override readonly int GetHashCode()
     {

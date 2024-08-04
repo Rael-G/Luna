@@ -22,6 +22,8 @@ public class Texture : Disposable
 
     public InternalFormat InternalFormat { get; }
 
+    public bool FlipV { get; }
+
     public TextureFilter TextureFilter
     {
         get => _textureFilter;
@@ -63,12 +65,13 @@ public class Texture : Disposable
 
     private string _hash;
 
-    private Texture(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash)
+    private Texture(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash)
     {
         Path = path;
-        MipmapLevel = mipmaps;
         _textureFilter = textureFilter;
         _textureWrap = textureWrap;
+        MipmapLevel = mipmaps;
+        FlipV = flipV;
         PixelFormat = pixelFormat;
         InternalFormat = internalFormal;
         TextureTarget = textureTarget;
@@ -77,21 +80,21 @@ public class Texture : Disposable
         GlErrorUtils.CheckError("Texture");
     }
 
-    public static Texture Load(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash = "")
+    public static Texture Load(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash = "")
     {
         var texture = TextureManager.GetTexture(hash);
         TextureManager.StartUsing(hash);
         if (texture is not null)
             return texture;
         
-        texture = new(path, textureFilter, textureWrap, mipmaps, pixelFormat, internalFormal, textureTarget, hash);
+        texture = new(path, textureFilter, textureWrap, mipmaps, flipV, pixelFormat, internalFormal, textureTarget, hash);
         TextureManager.Cache(hash, texture);
         return texture;
     }
 
     public static Texture Load(Texture2D texture2D)
         => Load(texture2D.Path, texture2D.TextureFilter, texture2D.TextureWrap, 
-            texture2D.MipmapLevel, PixelFormat.Rgba, InternalFormat.Rgba, TextureTarget.Texture2D, texture2D.GetHashCode().ToString());
+            texture2D.MipmapLevel, texture2D.FlipV, PixelFormat.Rgba, InternalFormat.Rgba, TextureTarget.Texture2D, texture2D.GetHashCode().ToString());
 
     public void Bind(TextureUnit unit = TextureUnit.Texture0)
     {
@@ -106,6 +109,7 @@ public class Texture : Disposable
         using var memoryStream = new MemoryStream();
 
         stream.CopyTo(memoryStream);
+        Stbi.SetFlipVerticallyOnLoad(FlipV);
         using var image = Stbi.LoadFromMemory(memoryStream, 0);
 
         Size = new Vector2(image.Width, image.Height);

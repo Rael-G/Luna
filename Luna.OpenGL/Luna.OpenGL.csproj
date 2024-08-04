@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Enums\" />
+    <Folder Include="Materials\" />
   </ItemGroup>
 
 </Project>

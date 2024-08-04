@@ -29,7 +29,7 @@ public class StandardMaterial : Material, IStandardMaterial
         set
         {
             _diffuse = value;
-            Textures["material.diffuseMap"] = Texture.Load(_diffuse);
+            Set("material.diffuseMap", Texture.Load(_diffuse));
         } 
     }
 
@@ -39,7 +39,7 @@ public class StandardMaterial : Material, IStandardMaterial
         set 
         {
             _specullar = value;
-            Textures["material.specularMap"] = Texture.Load(_specullar);
+            Set("material.specularMap", Texture.Load(_specullar));
         }
     }
     

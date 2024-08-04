@@ -40,7 +40,8 @@ public class Root : Node
         var texture = new Texture2D()
         {
             Path = "Assets/images/Hamburger.png",
-            TextureFilter = TextureFilter.Nearest
+            TextureFilter = TextureFilter.Nearest,
+            FlipV = true
         };
         var camera2D = new OrtographicCamera(){
             Left = 0.0f,
@@ -60,15 +61,15 @@ public class Root : Node
         };
 
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
-        // ellipse.Material.Diffuse = texture;
-        // ellipse.Material.Specular = texture;
+        ellipse.Material.Diffuse = texture;
+        ellipse.Material.Specular = texture;
 
         rect = new Rectangle(){
             Size = new(400, 400),
             Center = true,
         };
         rect.Transform.Position = Window.VirtualCenter;
-        // rect.Material.Diffuse = texture;
+        rect.Material.Diffuse = texture;
 
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
@@ -98,9 +99,9 @@ public class Root : Node
 
     public override void Update()
     {
-        // box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
-        // box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
-        // box.Transform.Rotation += Vector3.UnitZ * Time.DeltaTime;
+        box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
+        box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
+        box.Transform.Rotation += Vector3.UnitZ * Time.DeltaTime;
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
