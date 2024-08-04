@@ -34,7 +34,7 @@ public class Transform
 
     public Vector3 GlobalRotation 
     { 
-        get => Parent?.GlobalRotation.CombineRotation(Rotation)?? Rotation;
+        get => Parent?.GlobalRotation + Rotation?? Rotation;
     }
 
     public Vector3 Scale { get; set; }
@@ -62,10 +62,9 @@ public class Transform
     internal Matrix ModelMatrix()
         =>  Transformations.TranslationMatrix(GlobalPosition) *
             Transformations.TranslationMatrix(Origin) *
-            Transformations.RotationMatrix(GlobalRotation.X, Vector3.UnitX) *
-            Transformations.RotationMatrix(GlobalRotation.Y, Vector3.UnitY) *
-            Transformations.RotationMatrix(GlobalRotation.Z, Vector3.UnitZ) *
+            GlobalRotation.ToQuaternion().ToMatrix() *
             Transformations.TranslationMatrix(-Origin) *
             Transformations.ScaleMatrix(GlobalScale);
+
 
 }

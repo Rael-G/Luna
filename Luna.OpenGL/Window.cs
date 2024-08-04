@@ -105,7 +105,8 @@ internal unsafe class Window : IWindow
         Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, DisableCursor);
 
         GL.Enable(EnableCap.Blend);
-        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); 
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        GL.Enable(EnableCap.DepthTest);
     }
 
     public void Close()

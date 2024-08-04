@@ -15,5 +15,7 @@ public static class LunaOpenGL
         RenderObjectFactory.RegisterCallback<TextData>((data) => new TextObject(data));
         RenderObjectFactory.RegisterCallback<Color>((data) => new BackgroundColorObject(data));
         RenderObjectFactory.RegisterCallback<EllipseData>((data) => new EllipseObject(data));
+        RenderObjectFactory.RegisterCallback<BoxData>((data) => new BoxObject(data));
+
     }
 }

@@ -73,9 +73,8 @@ public class StandardMaterial : Material, IStandardMaterial
         Shininess = _shininess;
 
         //Temporary until i create a light system
-        Vector3Properties["light.position"] = new(400.0f, 300.0f, 1.0f);
-        //Vector3Properties["light.ambient"] = new(0.2f, 0.2f, 0.2f);
-        Vector3Properties["light.ambient"] = new(1f, 1f, 1f);
+        Vector3Properties["light.position"] = new(400.0f, 300.0f, 1000.0f);
+        Vector3Properties["light.ambient"] = new(0.2f, 0.2f, 0.2f);
         Vector3Properties["light.diffuse"] = new(1f, 1f, 1f);
         Vector3Properties["light.specular"] = new(1.0f, 1.0f, 1.0f);
     }

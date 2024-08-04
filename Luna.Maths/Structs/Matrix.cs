@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Numerics;
 
 namespace Luna.Maths;
 
@@ -230,6 +231,53 @@ public class Matrix : IEnumerable<float>
 
         return matrix;
     }
+
+    public Quaternion ToQuaternion()
+    {
+    if (Rows < 3 || Columns < 3)
+        throw new InvalidOperationException("ToQuaternion requires a 3x3 or 4x4 matrix.");
+
+    float trace = this[0, 0] + this[1, 1] + this[2, 2];
+    float w, x, y, z;
+
+    if (trace > 0)
+    {
+        float s = 0.5f / MathF.Sqrt(trace + 1.0f);
+        w = 0.25f / s;
+        x = (this[2, 1] - this[1, 2]) * s;
+        y = (this[0, 2] - this[2, 0]) * s;
+        z = (this[1, 0] - this[0, 1]) * s;
+    }
+    else
+    {
+        if (this[0, 0] > this[1, 1] && this[0, 0] > this[2, 2])
+        {
+            float s = 2.0f * MathF.Sqrt(1.0f + this[0, 0] - this[1, 1] - this[2, 2]);
+            w = (this[2, 1] - this[1, 2]) / s;
+            x = 0.25f * s;
+            y = (this[0, 1] + this[1, 0]) / s;
+            z = (this[0, 2] + this[2, 0]) / s;
+        }
+        else if (this[1, 1] > this[2, 2])
+        {
+            float s = 2.0f * MathF.Sqrt(1.0f + this[1, 1] - this[0, 0] - this[2, 2]);
+            w = (this[0, 2] - this[2, 0]) / s;
+            x = (this[0, 1] + this[1, 0]) / s;
+            y = 0.25f * s;
+            z = (this[1, 2] + this[2, 1]) / s;
+        }
+        else
+        {
+            float s = 2.0f * MathF.Sqrt(1.0f + this[2, 2] - this[0, 0] - this[1, 1]);
+            w = (this[1, 0] - this[0, 1]) / s;
+            x = (this[0, 2] + this[2, 0]) / s;
+            y = (this[1, 2] + this[2, 1]) / s;
+            z = 0.25f * s;
+        }
+    }
+
+    return new Quaternion(x, y, z, w);
+}
 
     public float DistanceTo(Matrix to)
         => (to - this).Length;

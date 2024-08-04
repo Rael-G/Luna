@@ -34,6 +34,8 @@ public static class Vector3Extensions
     public static Vector2 ToVector2(this Vector3 vector)
         => new(vector.X, vector.Y);
     
+    public static Quaternion ToQuaternion(this Vector3 vector)
+        => Quaternion.Normalize(Quaternion.CreateFromYawPitchRoll(vector.Y, vector.X, vector.Z));
 
     public static Vector3 Normalize(this Vector3 vector)
         => Vector3.Normalize(vector);
@@ -51,19 +53,10 @@ public static class Vector3Extensions
         => (float)Math.Atan2(vector.Cross(other).Length(), vector.Dot(other));
 
     public static Vector3 Rotate(this Vector3 vector, float angle, Vector3 axis)
-        => (Vector3)(Transformations.RotationMatrix(angle, axis) * vector.ToMatrix()).ToVector3()!;
-
+        => (Vector3)(Transformations.RotationMatrix(angle, axis) * Vector3.UnitX.ToMatrix() + vector.ToMatrix()).ToVector3()!;
+    
     public static Vector3 RotateTo(this Vector3 vector, Vector3 other)
         => vector.Rotate(vector.AngleTo(other), vector.Cross(other).Normalize());
-
-    public static Vector3 CombineRotation(this Vector3 vector, Vector3 other)
-    {
-        var rotationX = Transformations.RotationMatrix(other.X, Vector3.UnitX);
-        var rotationY = Transformations.RotationMatrix(other.Y, Vector3.UnitY);
-        var rotationZ = Transformations.RotationMatrix(other.Z, Vector3.UnitZ);
-
-        return (Vector3)(rotationX * rotationY * rotationZ * vector.ToMatrix()).ToVector3()!;
-    }
 
     public static Vector3 Scale(this Vector3 vector, Vector3 other)
         => (Vector3)(other.ToMatrix().Diagonal() * vector.ToMatrix()).ToVector3()!;
