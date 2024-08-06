@@ -5,7 +5,8 @@ public static class LunaOpenGL
     public static void AddServices()
     {
         Injector.AddSingleton<IWindow>(new Window());
-        Injector.AddSingleton<IRenderMap>(new RenderMap());
+        Injector.AddSingleton<IRenderer>(new Renderer());
+        Injector.AddSingleton<ILightEmitter>(new LightEmitter());
         Injector.AddSingleton<IRenderObjectFactory>(new RenderObjectFactory());
         Injector.AddSingleton<IEngineUtils>(new EngineUtils());
         

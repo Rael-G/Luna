@@ -2,6 +2,7 @@
 using Luna;
 using Luna.Audio;
 using Luna.Core;
+using Luna.Maths;
 using Luna.OpenGL;
 
 internal class Program
@@ -23,6 +24,7 @@ public class Root : Node
     Label label;
     Rectangle rect;
     Box box;
+    Light<DirectionalLight> light;
     public override void Config()
     {
         Window.Title = "Hello Rectangle!";
@@ -69,7 +71,7 @@ public class Root : Node
             Center = true,
         };
         rect.Transform.Position = Window.VirtualCenter;
-        rect.Material.Diffuse = texture;
+        //rect.Material.Diffuse = texture;
 
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
@@ -85,15 +87,22 @@ public class Root : Node
 
         box = new Box()
         {
-            Color = Colors.Beige,
+            Color = Colors.White,
             Center = true
         };
-        box.Transform.Position = new Vector3(0f, 0f, -10f);
+        box.Transform.Position = new Vector3(0f, 0f, -2f);
         box.Material.Diffuse = texture;
         box.Material.Specular = texture;
         camera3D.Target = box.Transform.Position;
-        AddChild(camera3D, box);
+        
+        light = new Light<DirectionalLight>();
+        light.LightSource.Ambient = new Vector3(1f, 1f, 1f);
+        light.LightSource.Specular = Vector3.Zero;
+        light.LightSource.Diffuse = Vector3.Zero;
+        light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
+        box.Material.IsAffectedByLight = false;
 
+        AddChild(camera3D, box);
         base.Start();
     }
 
@@ -102,6 +111,7 @@ public class Root : Node
         box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
         box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
         box.Transform.Rotation += Vector3.UnitZ * Time.DeltaTime;
+
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;

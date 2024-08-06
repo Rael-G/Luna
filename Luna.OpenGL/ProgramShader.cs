@@ -35,6 +35,9 @@ internal class ProgramShader : Disposable
 
     public void Set(string name, int value)
         => ShaderManager.Set(this, name, value);
+
+    public void Set(string name, bool value)
+        => ShaderManager.Set(this, name, value);
     
     public void Set(string name, float value)
         => ShaderManager.Set(this, name, value);
@@ -50,5 +53,7 @@ internal class ProgramShader : Disposable
         if (_disposed) return;
         
         ShaderManager.StopUsing(this);
+
+        base.Dispose(disposing);
     }
 }

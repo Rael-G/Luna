@@ -37,8 +37,17 @@ public static class Vector3Extensions
     public static Quaternion ToQuaternion(this Vector3 vector)
         => Quaternion.Normalize(Quaternion.CreateFromYawPitchRoll(vector.Y, vector.X, vector.Z));
 
+    public static Vector3 ToVector3(this Quaternion quaternion)
+        => new (quaternion.X, quaternion.Y, quaternion.Z);
+
     public static Vector3 Normalize(this Vector3 vector)
-        => Vector3.Normalize(vector);
+    {
+        if (vector == Vector3.Zero)
+            return Vector3.Zero;
+
+        var result = Vector3.Normalize(vector);
+        return result;
+    }
     
     public static float Dot(this Vector3 vector, Vector3 other)
         => Vector3.Dot(vector, other);
@@ -53,10 +62,44 @@ public static class Vector3Extensions
         => (float)Math.Atan2(vector.Cross(other).Length(), vector.Dot(other));
 
     public static Vector3 Rotate(this Vector3 vector, float angle, Vector3 axis)
-        => (Vector3)(Transformations.RotationMatrix(angle, axis) * Vector3.UnitX.ToMatrix() + vector.ToMatrix()).ToVector3()!;
+    {
+        axis = axis.Normalize();
+        var rotation = Quaternion.Normalize(Quaternion.CreateFromAxisAngle(axis, angle));
+        var result = (rotation * new Quaternion(vector, 0) * Quaternion.Conjugate(rotation)).ToVector3();
+        return result;
+    }
     
     public static Vector3 RotateTo(this Vector3 vector, Vector3 other)
-        => vector.Rotate(vector.AngleTo(other), vector.Cross(other).Normalize());
+    {
+        Vector3 cross = vector.Cross(other);
+
+        if (cross.LengthSquared() < 1e-6)
+        {
+            float dot = vector.Dot(other);
+
+            if (dot > 0)
+                return vector;
+            else
+            {
+                var axis = vector.Cross(Vector3.UnitX).Normalize();
+                if (axis.LengthSquared() < 1e-6)
+                    axis = vector.Cross(Vector3.UnitY).Normalize();
+        
+                return vector.Rotate((float)Math.PI, axis);
+            }
+        }
+
+        return vector.Rotate(vector.AngleTo(other), cross.Normalize());
+    }
+
+    public static Vector3 LookTo(this Vector3 rotation, Vector3 position, Vector3 otherPosition)
+    {
+        var direction = (otherPosition - position).Normalize();
+        if (direction.LengthSquared() < 1e-6)
+            return rotation;
+
+        return rotation.RotateTo(direction);
+    }
 
     public static Vector3 Scale(this Vector3 vector, Vector3 other)
         => (Vector3)(other.ToMatrix().Diagonal() * vector.ToMatrix()).ToVector3()!;
@@ -90,4 +133,21 @@ public static class Vector3Extensions
     
     public static Vector3 ToDegrees(this Vector3 from)
         => new(from.X.ToDegrees(), from.Y.ToDegrees(), from.Z.ToDegrees());
+
+    public static Matrix Translation(this Vector3 vector)
+        => Transformations.TranslationMatrix(vector);
+
+    public static Matrix Scale(this Vector3 vector)
+        => Transformations.ScaleMatrix(vector);
+
+    public static Vector3 Transform(this Vector3 vector, Matrix matrix)
+    {
+        if (matrix.Rows != 4 || matrix.Columns != 4)
+            throw new InvalidOperationException("This operation requires a 4x4 matrix.");
+
+        return (Vector3)(matrix * vector.ToMatrix()).ToVector3()!;
+    }
+
+    public static Vector3 Transform(this Vector3 vector, Quaternion quaternion)
+        => Vector3.Transform(vector, quaternion);
 }

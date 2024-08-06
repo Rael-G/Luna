@@ -29,7 +29,7 @@ public class StandardMaterial : Material, IStandardMaterial
         set
         {
             _diffuse = value;
-            Set("material.diffuseMap", Texture.Load(_diffuse));
+            Set("material.diffuse", Texture.Load(_diffuse));
         } 
     }
 
@@ -39,7 +39,7 @@ public class StandardMaterial : Material, IStandardMaterial
         set 
         {
             _specullar = value;
-            Set("material.specularMap", Texture.Load(_specullar));
+            Set("material.specular", Texture.Load(_specullar));
         }
     }
     
@@ -59,10 +59,21 @@ public class StandardMaterial : Material, IStandardMaterial
         }
     }
 
+    public bool IsAffectedByLight 
+    { 
+        get => _isAffectedByLight;
+        set
+        {
+            _isAffectedByLight = value;
+            BoolProperties["isAffectedByLight"] = _isAffectedByLight;
+        }
+    }
+
     private Texture2D _diffuse = new(){ Path = DefaultTexturePath };
     private Texture2D _specullar = new(){ Path = DefaultTexturePath };
     private Color _color = Colors.White;
     private float _shininess = 32;
+    private bool _isAffectedByLight = true;
 
     public StandardMaterial() 
         : base(Shaders)
@@ -71,11 +82,6 @@ public class StandardMaterial : Material, IStandardMaterial
         Specular = _specullar;
         Color = _color;
         Shininess = _shininess;
-
-        //Temporary until i create a light system
-        Vector3Properties["light.position"] = new(400.0f, 300.0f, 1000.0f);
-        Vector3Properties["light.ambient"] = new(0.2f, 0.2f, 0.2f);
-        Vector3Properties["light.diffuse"] = new(1f, 1f, 1f);
-        Vector3Properties["light.specular"] = new(1.0f, 1.0f, 1.0f);
+        IsAffectedByLight = _isAffectedByLight;
     }
 }

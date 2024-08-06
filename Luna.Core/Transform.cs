@@ -48,23 +48,33 @@ public class Transform
 
     internal Transform? Parent { get; set; }
 
-    public Vector3 RotationDegrees 
+    public Vector3 EulerAngles 
     { 
         get => Rotation.ToDegrees(); 
         set => Rotation = value.ToRadians(); 
     }
 
-    public Vector3 GlobalRotationDegrees 
+    public Vector3 GlobalEulerAngles 
     { 
         get => GlobalRotation.ToDegrees();
     }
 
-    internal Matrix ModelMatrix()
-        =>  Transformations.TranslationMatrix(GlobalPosition) *
-            Transformations.TranslationMatrix(Origin) *
-            GlobalRotation.ToQuaternion().ToMatrix() *
-            Transformations.TranslationMatrix(-Origin) *
-            Transformations.ScaleMatrix(GlobalScale);
+    public Quaternion Quaternion 
+    { 
+        get => Rotation.ToQuaternion(); 
+        set => Rotation = value.ToVector3(); 
+    }
 
+    public Quaternion GlobalQuaternion 
+    { 
+        get => GlobalRotation.ToQuaternion();
+    }
+
+    internal Matrix ModelMatrix()
+        =>  GlobalPosition.Translation() *
+            Origin.Translation() *
+            GlobalQuaternion.ToMatrix() *
+            (-Origin).Translation() *
+            GlobalScale.Scale();
 
 }

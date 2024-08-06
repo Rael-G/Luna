@@ -86,5 +86,7 @@ internal class TextObject(TextData data) : RenderObject<TextData>
 
         Program.Dispose();
         TextVAO.Dispose();
+
+        base.Dispose(disposing);
     }
 }

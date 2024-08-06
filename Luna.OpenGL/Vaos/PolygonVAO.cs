@@ -65,5 +65,7 @@ internal class PolygonVAO : Disposable
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(_vbo);
         _gl.DeleteBuffer(_ebo);
+
+        base.Dispose(disposing);
     }
 }

@@ -10,7 +10,10 @@ public abstract class Disposable : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public abstract void Dispose(bool disposing);
+    public virtual void Dispose(bool disposing)
+    {
+        _disposed = true;
+    }
 
     ~Disposable()
     {

@@ -126,8 +126,15 @@ public class Texture : Disposable
 
     public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+        
         if (TextureManager.StopUsing(_hash) <= 0)
+        {
+            TextureManager.Delete(_hash);
             _gl.DeleteTexture(Handle);
+        }
+
+        base.Dispose(disposing);
     }
 
     public override int GetHashCode()

@@ -69,5 +69,7 @@ internal class TextVAO : Disposable
         _gl.DeleteVertexArray(Handle);
         _gl.DeleteBuffer(Vbo);
         FontManager.StopUsing(_fontKey);
+
+        base.Dispose(disposing);
     }
 }

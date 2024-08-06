@@ -32,10 +32,13 @@ public unsafe class AudioContext : Disposable
 
     public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+        
         ALContext.DestroyContext(_context);
         ALContext.CloseDevice(_device);
 
         ALContext.Dispose();
         
+        base.Dispose(disposing);
     }
 }

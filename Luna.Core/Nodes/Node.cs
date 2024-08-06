@@ -184,7 +184,7 @@ public class Node : Disposable
     {
         if (Invisible)  return;
 
-        var map = Injector.Get<IRenderMap>();
+        var map = Injector.Get<IRenderer>();
         map.Render(UID);
 
         foreach (var child in _children)
@@ -242,7 +242,7 @@ public class Node : Disposable
     protected internal void CreateRenderObject<TData>(TData data)
     {
         var factory = Injector.Get<IRenderObjectFactory>();
-        var map = Injector.Get<IRenderMap>();
+        var map = Injector.Get<IRenderer>();
 
         var obj = factory.Create(data);
         map.Add(UID, obj);
@@ -250,18 +250,22 @@ public class Node : Disposable
 
     protected internal void UpdateRenderObject<TData>(TData data)
     {
-        var map = Injector.Get<IRenderMap>();
+        var map = Injector.Get<IRenderer>();
         map.Update(UID, data);
     }
 
     public override void Dispose(bool disposing)
     {
-        var renderMap = Injector.Get<IRenderMap>();
+        if (_disposed) return;
+
+        var renderMap = Injector.Get<IRenderer>();
         renderMap.Remove(UID);
 
         foreach (var child in _children)
         {
             child.Dispose();
         }
+
+        base.Dispose(disposing);
     }
 }

@@ -177,4 +177,11 @@ internal static class ShaderManager
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform1(loc, value);
     }
+
+    public static void Set(ProgramShader program, string name, bool value)
+    {
+        var programId = GetShader(program);
+        var loc = _gl.GetUniformLocation(programId, name);
+        _gl.Uniform1(loc, value? 1 : 0);
+    }
 }

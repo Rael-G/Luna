@@ -127,7 +127,11 @@ public class Source(string path, uint handle, uint buffer) : Disposable
 
     public override void Dispose(bool disposing)
     {
+        if (_disposed) return;
+
         _al.DeleteSource(Handle);
         _al.DeleteBuffer(Buffer);
+
+        base.Dispose(disposing);
     }
 }

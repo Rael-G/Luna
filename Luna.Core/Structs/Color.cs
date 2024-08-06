@@ -1,4 +1,5 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
 namespace Luna;
 
@@ -73,6 +74,8 @@ public struct Color
         A = color.A / 255.0f
     };
 
+    public readonly Vector3 RGB()
+        => new(R, G, B);
 
     public readonly Color Lerp(Color other, float weight)
         => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;

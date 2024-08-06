@@ -42,5 +42,7 @@ internal abstract class PolygonObject<TData> : RenderObject<TData>
 
         _polygonVAO.Dispose();
         _polygonData.Material.Dispose();
+
+        base.Dispose(disposing);
     }
 }

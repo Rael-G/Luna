@@ -72,5 +72,11 @@ public class AudioPlayer  : Disposable, IAudioPlayer
         => _source.Stop();
 
     public override void Dispose(bool disposing)
-        => _source.StopUsing();
+    {
+        if (_disposed) return;
+
+        _source.StopUsing();
+        
+        base.Dispose(disposing);
+    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Luna;
 
-public interface IRenderMap
+public interface IRenderer
 {
     void Add(string id, IRenderObject renderObject);
     void Remove(string id);
