@@ -8,7 +8,7 @@ public interface IWindow
     bool Running { get; set; }
     Vector2 Size { get; set; }
     bool Vsync { get; set; }
-    bool DisableCursor { get; set; }
+    bool CursorHidden { get; set; }
 
     void Init();
     void Close();

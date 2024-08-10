@@ -23,5 +23,5 @@ public static class Window
 
     public static bool Vsync { get => EngineWindow.Vsync; set => EngineWindow.Vsync = value; }
 
-    public static bool DisableCursor { get => EngineWindow.DisableCursor; set => EngineWindow.DisableCursor = value; }
+    public static bool DisableCursor { get => EngineWindow.CursorHidden; set => EngineWindow.CursorHidden = value; }
 }

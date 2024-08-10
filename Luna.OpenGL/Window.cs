@@ -42,13 +42,14 @@ internal unsafe class Window : IWindow
         }
     }
 
-    public bool DisableCursor
+    public bool CursorHidden
     {
-        get => _disableCursor;
+        get => _cursorHidden;
         set 
         {
-            _disableCursor = value;
-            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, value);   
+            _cursorHidden = value;
+            var mode = _cursorHidden? CursorModeValue.CursorHidden : CursorModeValue.CursorNormal;
+            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, mode);   
         } 
     }
     
@@ -66,7 +67,7 @@ internal unsafe class Window : IWindow
     private Vector2 _windowSize = new(800, 600);
     private bool _running;
     private bool _vsync;
-    private bool _disableCursor;
+    private bool _cursorHidden;
 
     public void Init()
     {
@@ -101,8 +102,8 @@ internal unsafe class Window : IWindow
 
         Running = true;
 
-        Glfw?.SwapInterval(Vsync? 1 : 0);
-        Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, DisableCursor);
+        Vsync = _vsync;
+        CursorHidden = _cursorHidden;
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
