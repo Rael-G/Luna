@@ -180,15 +180,15 @@ public class Node : Disposable
     /// <summary>
     ///  Performs drawing operations.
     /// </summary>
-    internal virtual void Render()
+    internal virtual void Draw()
     {
         if (Invisible)  return;
 
         var map = Injector.Get<IRenderer>();
-        map.Render(UID);
+        map.Draw(UID);
 
         foreach (var child in _children)
-            child.Render();
+            child.Draw();
     }
 
     public virtual void Input(InputEvent inputEvent)

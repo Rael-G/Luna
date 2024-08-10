@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Luna.Core;
+namespace Luna;
 
 public class Box : Node
 {

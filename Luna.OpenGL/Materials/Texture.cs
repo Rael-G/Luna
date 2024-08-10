@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Luna.OpenGL.Enums;
 using Silk.NET.OpenGL;
 using StbiSharp;
 
@@ -16,11 +17,9 @@ public class Texture : Disposable
 
     public int MipmapLevel { get; }
 
+    ImageType ImageType { get; }
+
     public TextureTarget TextureTarget { get; }
-
-    public PixelFormat PixelFormat { get; }
-
-    public InternalFormat InternalFormat { get; }
 
     public bool FlipV { get; }
 
@@ -65,36 +64,35 @@ public class Texture : Disposable
 
     private string _hash;
 
-    private Texture(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash)
+    private Texture(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, TextureTarget textureTarget, string hash, ImageType imageType)
     {
         Path = path;
         _textureFilter = textureFilter;
         _textureWrap = textureWrap;
         MipmapLevel = mipmaps;
         FlipV = flipV;
-        PixelFormat = pixelFormat;
-        InternalFormat = internalFormal;
+        ImageType = imageType;
         TextureTarget = textureTarget;
         LoadTexture();
         _hash = string.IsNullOrEmpty(hash)? GetHashCode().ToString() : hash;
         GlErrorUtils.CheckError("Texture");
     }
 
-    public static Texture Load(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, PixelFormat pixelFormat, InternalFormat internalFormal, TextureTarget textureTarget, string hash = "")
+    public static Texture Load(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, TextureTarget textureTarget, string hash = "", ImageType imageType = ImageType.Standard)
     {
         var texture = TextureManager.GetTexture(hash);
         TextureManager.StartUsing(hash);
         if (texture is not null)
             return texture;
         
-        texture = new(path, textureFilter, textureWrap, mipmaps, flipV, pixelFormat, internalFormal, textureTarget, hash);
+        texture = new(path, textureFilter, textureWrap, mipmaps, flipV, textureTarget, hash, imageType);
         TextureManager.Cache(hash, texture);
         return texture;
     }
 
     public static Texture Load(Texture2D texture2D)
         => Load(texture2D.Path, texture2D.TextureFilter, texture2D.TextureWrap, 
-            texture2D.MipmapLevel, texture2D.FlipV, PixelFormat.Rgba, InternalFormat.Rgba, TextureTarget.Texture2D, texture2D.GetHashCode().ToString());
+            texture2D.MipmapLevel, texture2D.FlipV, TextureTarget.Texture2D, texture2D.GetHashCode().ToString());
 
     public void Bind(TextureUnit unit = TextureUnit.Texture0)
     {
@@ -113,12 +111,14 @@ public class Texture : Disposable
         using var image = Stbi.LoadFromMemory(memoryStream, 0);
 
         Size = new Vector2(image.Width, image.Height);
+        var (pFmt, iFmt) = GetFormat(image.NumChannels);
 
         Handle = _gl.GenTexture();
         _gl.BindTexture(TextureTarget, Handle);
 
-        _gl.TexImage2D(TextureTarget, MipmapLevel, InternalFormat, (uint)image.Width,
-            (uint)image.Height, 0, PixelFormat, PixelType.UnsignedByte, image.Data);
+        _gl.PixelStore(GLEnum.UnpackAlignment, 1);
+        _gl.TexImage2D(TextureTarget, MipmapLevel, iFmt, (uint)image.Width,
+            (uint)image.Height, 0, pFmt, PixelType.UnsignedByte, image.Data);
 
         TextureFilter = _textureFilter;
         TextureWrap = _textureWrap;
@@ -139,6 +139,52 @@ public class Texture : Disposable
 
     public override int GetHashCode()
     {
-        return (Path + MipmapLevel + TextureFilter + TextureWrap + TextureTarget + PixelFormat + InternalFormat).GetHashCode();
+        return (Path + MipmapLevel + TextureFilter + TextureWrap + TextureTarget + ImageType).GetHashCode();
+    }
+
+    private (PixelFormat, InternalFormat) GetFormat(int numChannels)
+    {
+        PixelFormat pFmt;
+        InternalFormat iFmt;
+
+        switch (ImageType)
+        {
+            case ImageType.HDR:
+                pFmt = PixelFormat.Rgba;
+                iFmt = InternalFormat.Rgba16f; // Use a higher precision format for HDR
+                break;
+
+            case ImageType.DepthMap:
+                pFmt = PixelFormat.DepthComponent;
+                iFmt = InternalFormat.DepthComponent24; // 24-bit depth map
+                break;
+
+            case ImageType.Cubemap:
+                pFmt = PixelFormat.Rgba;
+                iFmt = InternalFormat.Rgba8;
+                break;
+
+            default:
+                pFmt = numChannels switch
+                {
+                    1 => PixelFormat.Red,        // Monochrome
+                    2 => PixelFormat.RG,         // Two-channel (e.g., RG format)
+                    3 => PixelFormat.Rgb,        // RGB
+                    4 => PixelFormat.Rgba,       // RGBA
+                    _ => throw new ArgumentException("Unsupported number of channels")
+                };
+
+                iFmt = numChannels switch
+                {
+                    1 => InternalFormat.R8,      // 8-bit Red channel
+                    2 => InternalFormat.RG8,     // 8-bit RG
+                    3 => InternalFormat.Rgb8,    // 8-bit RGB
+                    4 => InternalFormat.Rgba8,   // 8-bit RGBA
+                    _ => throw new ArgumentException("Unsupported number of channels")
+                };
+                break;
+        }
+        
+        return (pFmt, iFmt);
     }
 }

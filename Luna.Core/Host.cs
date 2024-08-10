@@ -30,7 +30,7 @@ public class Host(Node root)
             Physics.FixedUpdate();
 
             Window.EngineWindow.BeginRender();
-            Root.Render();
+            Root.Draw();
             Window.EngineWindow.EndRender();
         }
 

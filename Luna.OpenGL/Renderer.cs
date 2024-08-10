@@ -13,10 +13,10 @@ internal class Renderer : IRenderer
         _renderer.Remove(id);
     }
     
-    public void Render(string id)
+    public void Draw(string id)
     {
         _renderer.TryGetValue(id, out IRenderObject? renderObject);
-        renderObject?.Render();
+        renderObject?.Draw();
     }
 
     public void Update<TData>(string id, TData tData)

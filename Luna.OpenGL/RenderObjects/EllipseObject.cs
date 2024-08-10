@@ -3,37 +3,44 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPolygonData(data))
+internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
 {
+    private Mesh _mesh = new (GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments), data.Material, BufferUsageARB.StaticDraw, PrimitiveType.TriangleFan);
+    private EllipseData _ellipseData = data;
+
+    public override void Draw()
+        => _mesh.Draw();
+    
+
     public override void Update(EllipseData data)
     {
-        Update(ToPolygonData(data));
-    }
-
-    private static PolygonData ToPolygonData(EllipseData data)
-    {
-        return new()
+        if (data.Radius != _ellipseData.Radius || data.Segments != _ellipseData.Segments || data.Material != _ellipseData.Material)
         {
-            Vertices = GenerateVertices(data.Radius, data.Segments),
-            Indices = GenerateIndices(data.Segments),
-            PrimitiveType = PrimitiveType.TriangleFan,
-            BufferUsage = BufferUsageARB.StaticDraw,
-            VerticeInfo = new()
-            {
-                Size = 3,
-                Lengths = [3, 3, 2],
-            },
-            Material = data.Material
-        };
+            _mesh.Dispose();
+            _mesh = new Mesh(GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments), data.Material, BufferUsageARB.StaticDraw, PrimitiveType.TriangleFan);
+        }
+        _ellipseData = data;
     }
 
-    private static float[] GenerateVertices(Vector2 radius, int segments)
+    public override void Dispose(bool disposing)
     {
-        List<float> vertices = 
+        if (_disposed) return;
+
+        _mesh.Dispose();
+
+        base.Dispose(disposing);
+    }
+
+    private static Vertex[] GenerateVertices(Vector2 radius, int segments)
+    {
+        List<Vertex> vertices =
         [
-            0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f,
-            0.5f, 0.5f
+            new Vertex
+            {
+                Position = new Vector3(0.0f, 0.0f, 0.0f),
+                Normal = new Vector3(0.0f, 0.0f, 1.0f),
+                TexCoords = new Vector2(0.5f, 0.5f)
+            }
         ];
 
         float angleStep = 2.0f * MathF.PI / segments;
@@ -44,9 +51,13 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
             float x = radius.X * MathF.Cos(angle);
             float y = radius.Y * MathF.Sin(angle);
 
-            vertices.Add(x, y, 0.0f);
-            vertices.Add(0.0f, 0.0f, 1.0f);
-            vertices.Add(x / radius.X * 0.5f + 0.5f, y / radius.Y * 0.5f + 0.5f);
+            vertices.Add(new Vertex
+            {
+                Position = new Vector3(x, y, 0.0f),
+                Normal = new Vector3(0.0f, 0.0f, 1.0f),
+                TexCoords = new Vector2(x / radius.X * 0.5f + 0.5f,
+                                        y / radius.Y * 0.5f + 0.5f)
+            });
         }
 
         return [.. vertices];
@@ -65,5 +76,5 @@ internal class EllipseObject(EllipseData data) : PolygonObject<EllipseData>(ToPo
 
         return [.. indices];
     }
-
 }
+

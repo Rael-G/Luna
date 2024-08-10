@@ -2,5 +2,5 @@
 
 public interface IRenderObject : IDisposable
 {
-    void Render();
+    void Draw();
 }

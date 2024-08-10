@@ -2,7 +2,7 @@
 
 namespace Luna.OpenGL;
 
-internal class RectangleObject(RectangleData data) : PolygonObject<RectangleData>(ToPolygonData(data))
+internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 {
     private static readonly uint[] _indices = 
     [
@@ -10,36 +10,59 @@ internal class RectangleObject(RectangleData data) : PolygonObject<RectangleData
         1, 2, 3    // second triangle
     ];
 
+    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+    private RectangleData _rectangleData = data;
+
+    public override void Draw()
+    {
+        _mesh.Draw();
+    }
+
     public override void Update(RectangleData data)
     {
-        Update(ToPolygonData(data));
-    }
-
-    private static PolygonData ToPolygonData(RectangleData data)
-    {
-        float[] vertices =
-        [
-            // Vertices                            // Normals           //Texture Coords
-            0.0f,           0.0f,           0.0f,   0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // Bottom left
-            0.0f,           data.Size.Y,    0.0f,   0.0f, 0.0f, 1.0f,    0.0f, 1.0f, // Top left
-            data.Size.X,    data.Size.Y,    0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 1.0f, //Top right
-            data.Size.X,    0.0f,           0.0f,   0.0f, 0.0f, 1.0f,    1.0f, 0.0f, // Bottom right
-        ];
-        
-        return new PolygonData()
+        if (data.Size != _rectangleData.Size || data.Material != _rectangleData.Material)
         {
-            Vertices = vertices,
-            Indices = _indices,
-            PrimitiveType = PrimitiveType.Triangles,
-            BufferUsage = BufferUsageARB.StaticDraw,
-            VerticeInfo = new()
-            {
-                Size = 3,
-                Lengths = [3, 3, 2],
-            },
-            Material = data.Material
-        };
+            _mesh.Dispose();
+            _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+        }
+        _rectangleData = data;
     }
 
-    
+    public override void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+
+        _mesh.Dispose();
+
+        base.Dispose(disposing);
+    }
+
+    private static Vertex[] GetVertices(float width, float height)
+        => 
+        [
+            new Vertex  // Bottom left
+            {
+                Position = new (0.0f, 0.0f, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (0.0f, 0.0f)
+            },
+            new Vertex  // Top left
+            {
+                Position = new (0.0f, height, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (0.0f, 1.0f)
+            },
+            new Vertex // Top right
+            {
+                Position = new (width, height, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (1.0f, 1.0f)
+            },
+            new Vertex // Bottom right
+            {
+                Position = new (width, 0.0f, 0.0f), 
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }
+        ];
 }

@@ -3,10 +3,10 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-internal class BoxObject(BoxData boxData) : PolygonObject<BoxData>(ToPolygonData(boxData))
+internal class BoxObject(BoxData data) : RenderObject<BoxData>
 {
     private static readonly uint[] _indices =
-    {
+    [
         // Front face
         0, 1, 2, 0, 2, 3,
         // Back face
@@ -19,71 +19,208 @@ internal class BoxObject(BoxData boxData) : PolygonObject<BoxData>(ToPolygonData
         16, 17, 18, 16, 18, 19,
         // Top face
         20, 21, 22, 20, 22, 23,
-    };
+    ];
 
+    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+    private BoxData _boxData = data;
+
+    public override void Draw()
+        => _mesh.Draw();
+    
     public override void Update(BoxData data)
     {
-        Update(ToPolygonData(data));
+        if (data.Size != _boxData.Size || data.Material != _boxData.Material)
+        {
+            _mesh.Dispose();
+            _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+        }
+        _boxData = data;
     }
 
-    private static PolygonData ToPolygonData(BoxData data)
+    public override void Dispose(bool disposing)
     {
-        float width = data.Size.X;
-        float height = data.Size.Y;
-        float depth = data.Size.Z;
+        if (_disposed) return;
 
-        float[] vertices =
-        {
-            // Positions             // Normals          // Texture Coords
+        _mesh.Dispose();
+
+        base.Dispose(disposing);
+    }
+
+    private static Vertex[] GetVertices(float width, float height, float depth)
+        =>
+        [
             // Front face
-            0.0f, 0.0f, 0.0f,        0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom left
-            width, 0.0f, 0.0f,       0.0f, 0.0f, 1.0f,   1.0f, 0.0f, // Bottom right
-            width, height, 0.0f,     0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // Top right
-            0.0f, height, 0.0f,      0.0f, 0.0f, 1.0f,   0.0f, 1.0f, // Top left
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (width, 0.0f, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (width, height, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (0.0f, height, 0.0f),
+                Normal = new (0.0f, 0.0f, 1.0f),
+                TexCoords = new (0.0f, 1.0f)
+            }, // Top left
 
             // Back face
-            0.0f, 0.0f, -depth,      0.0f, 0.0f, -1.0f,  0.0f, 0.0f, // Bottom left
-            width, 0.0f, -depth,     0.0f, 0.0f, -1.0f,  1.0f, 0.0f, // Bottom right
-            width, height, -depth,   0.0f, 0.0f, -1.0f,  1.0f, 1.0f, // Top right
-            0.0f, height, -depth,    0.0f, 0.0f, -1.0f,  0.0f, 1.0f, // Top left
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, -depth),
+                Normal = new (0.0f, 0.0f, -1.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (width, 0.0f, -depth),
+                Normal = new (0.0f, 0.0f, -1.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (width, height, -depth),
+                Normal = new (0.0f, 0.0f, -1.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (0.0f, height, -depth),
+                Normal = new (0.0f, 0.0f, -1.0f),
+                TexCoords = new (0.0f, 1.0f)
+            }, // Top left
 
             // Left Face
-            0.0f, 0.0f, -depth,      -1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // Bottom left
-            0.0f, 0.0f, 0.0f,        -1.0f, 0.0f, 0.0f,  1.0f, 0.0f, // Bottom right
-            0.0f, height, 0.0f,      -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, // Top right
-            0.0f, height, -depth,    -1.0f, 0.0f, 0.0f,  0.0f, 1.0f, // Top left
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, -depth),
+                Normal = new (-1.0f, 0.0f, 0.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, 0.0f),
+                Normal = new (-1.0f, 0.0f, 0.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (0.0f, height, 0.0f),
+                Normal = new (-1.0f, 0.0f, 0.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (0.0f, height, -depth),
+                Normal = new (-1.0f, 0.0f, 0.0f),
+                TexCoords = new (0.0f, 1.0f)
+            }, // Top left
 
             // Right face
-            width, 0.0f, 0.0f,       1.0f, 0.0f, 0.0f,   0.0f, 0.0f, // Bottom left
-            width, 0.0f, -depth,     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, // Bottom right
-            width, height, -depth,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top right
-            width, height, 0.0f,     1.0f, 0.0f, 0.0f,   0.0f, 1.0f, // Top left
+            new Vertex()
+            {
+                Position = new (width, 0.0f, 0.0f),
+                Normal = new (1.0f, 0.0f, 0.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (width, 0.0f, -depth),
+                Normal = new (1.0f, 0.0f, 0.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (width, height, -depth),
+                Normal = new (1.0f, 0.0f, 0.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (width, height, 0.0f),
+                Normal = new (1.0f, 0.0f, 0.0f),
+                TexCoords = new (0.0f, 1.0f)
+            }, // Top left
 
             // Bottom face
-            0.0f, 0.0f, -depth,      0.0f, -1.0f, 0.0f,  0.0f, 0.0f, // Bottom left
-            width, 0.0f, -depth,     0.0f, -1.0f, 0.0f,  1.0f, 0.0f, // Bottom right
-            width, 0.0f, 0.0f,       0.0f, -1.0f, 0.0f,  1.0f, 1.0f, // Top right
-            0.0f, 0.0f, 0.0f,        0.0f, -1.0f, 0.0f,  0.0f, 1.0f, // Top left
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, -depth),
+                Normal = new (0.0f, -1.0f, 0.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (width, 0.0f, -depth),
+                Normal = new (0.0f, -1.0f, 0.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (width, 0.0f, 0.0f),
+                Normal = new (0.0f, -1.0f, 0.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (0.0f, 0.0f, 0.0f),
+                Normal = new (0.0f, -1.0f, 0.0f),
+                TexCoords = new (0.0f, 1.0f)
+            }, // Top left
 
             // Top face
-            0.0f, height, 0.0f,      0.0f, 1.0f, 0.0f,   0.0f, 0.0f, // Bottom left
-            width, height, 0.0f,     0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom right
-            width, height, -depth,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f, // Top right
-            0.0f, height, -depth,    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, // Top left
-        };
-
-        return new PolygonData()
-        {
-            Vertices = vertices,
-            Indices = _indices,
-            PrimitiveType = PrimitiveType.Triangles,
-            BufferUsage = BufferUsageARB.StaticDraw,
-            VerticeInfo = new()
+            new Vertex()
             {
-                Size = 3,
-                Lengths = [3, 3, 2],
-            },
-            Material = data.Material
-        };
-    }
+                Position = new (0.0f, height, 0.0f),
+                Normal = new (0.0f, 1.0f, 0.0f),
+                TexCoords = new (0.0f, 0.0f)
+            }, // Bottom left
+
+            new Vertex()
+            {
+                Position = new (width, height, 0.0f),
+                Normal = new (0.0f, 1.0f, 0.0f),
+                TexCoords = new (1.0f, 0.0f)
+            }, // Bottom right
+
+            new Vertex()
+            {
+                Position = new (width, height, -depth),
+                Normal = new (0.0f, 1.0f, 0.0f),
+                TexCoords = new (1.0f, 1.0f)
+            }, // Top right
+
+            new Vertex()
+            {
+                Position = new (0.0f, height, -depth),
+                Normal = new (0.0f, 1.0f, 0.0f),
+                TexCoords = new (0.0f, 1.0f)
+            } // Top left
+        ];
 }

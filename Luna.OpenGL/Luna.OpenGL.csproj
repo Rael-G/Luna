@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FreeTypeSharp" Version="3.0.0" />
+    <PackageReference Include="Silk.NET.Assimp" Version="2.21.0" />
     <PackageReference Include="Silk.NET.GLFW" Version="2.21.0" PrivateAssets="true" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" PrivateAssets="true" />
     <PackageReference Include="StbiSharp" Version="1.2.1" />
@@ -26,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
     <Folder Include="Materials\" />
   </ItemGroup>
 

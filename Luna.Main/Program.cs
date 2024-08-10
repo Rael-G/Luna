@@ -2,7 +2,6 @@
 using Luna;
 using Luna.Audio;
 using Luna.Core;
-using Luna.Maths;
 using Luna.OpenGL;
 
 internal class Program
@@ -24,6 +23,7 @@ public class Root : Node
     Label label;
     Rectangle rect;
     Box box;
+    Model model;
     Light<DirectionalLight> light;
     public override void Config()
     {
@@ -63,8 +63,8 @@ public class Root : Node
         };
 
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
-        ellipse.Material.Diffuse = texture;
-        ellipse.Material.Specular = texture;
+        ellipse.Material.DiffuseMaps = [ texture ];
+        ellipse.Material.SpecularMaps = [ texture ];
 
         rect = new Rectangle(){
             Size = new(400, 400),
@@ -91,27 +91,30 @@ public class Root : Node
             Center = true
         };
         box.Transform.Position = new Vector3(0f, 0f, -2f);
-        box.Material.Diffuse = texture;
-        box.Material.Specular = texture;
+        box.Material.DiffuseMaps = [ texture ];
+        box.Material.SpecularMaps = [ texture ];
         camera3D.Target = box.Transform.Position;
         
         light = new Light<DirectionalLight>();
-        light.LightSource.Ambient = new Vector3(1f, 1f, 1f);
-        light.LightSource.Specular = Vector3.Zero;
-        light.LightSource.Diffuse = Vector3.Zero;
+        light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
+        light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
+        light.LightSource.Diffuse = Vector3.One;
         light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
         box.Material.IsAffectedByLight = false;
 
-        AddChild(camera3D, box);
+        model = new Model()
+        {
+            Path = "Assets/models/backpack/backpack.obj"
+        };
+        model.Transform.Position = new Vector3(0f, 0f, -5);
+        AddChild(camera3D, model, light);
         base.Start();
     }
 
     public override void Update()
     {
-        box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
+        model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
         box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
-        box.Transform.Rotation += Vector3.UnitZ * Time.DeltaTime;
-
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;

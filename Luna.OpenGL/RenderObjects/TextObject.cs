@@ -31,7 +31,7 @@ internal class TextObject(TextData data) : RenderObject<TextData>
         ]
     );
 
-    public override void Render()
+    public override void Draw()
     {
         Program.Use();
         Program.SetVec4("textColor", Text.Color.ToMatrix());
