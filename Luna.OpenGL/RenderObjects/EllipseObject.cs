@@ -5,11 +5,14 @@ namespace Luna.OpenGL;
 
 internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
 {
-    private Mesh _mesh = new (GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments), data.Material, BufferUsageARB.StaticDraw, PrimitiveType.TriangleFan);
+    private Mesh _mesh = new (GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments));
     private EllipseData _ellipseData = data;
 
     public override void Draw()
-        => _mesh.Draw();
+    {
+        _mesh.BindMaterial(_ellipseData.Material);
+        _mesh.Draw(PrimitiveType.TriangleFan);
+    }
     
 
     public override void Update(EllipseData data)
@@ -17,7 +20,7 @@ internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
         if (data.Radius != _ellipseData.Radius || data.Segments != _ellipseData.Segments || data.Material != _ellipseData.Material)
         {
             _mesh.Dispose();
-            _mesh = new Mesh(GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments), data.Material, BufferUsageARB.StaticDraw, PrimitiveType.TriangleFan);
+            _mesh = new Mesh(GenerateVertices(data.Radius, data.Segments), GenerateIndices(data.Segments));
         }
         _ellipseData = data;
     }

@@ -10,7 +10,7 @@ public static class Time
 
     public static float FixedDeltaTime => Physics.TimeStep;
 
-    public static int FrameRate { get; set; } = 60;
+    public static int FrameRate { get; set; } = int.MaxValue;
 
     private static readonly Stopwatch _stopwatch = new();
 

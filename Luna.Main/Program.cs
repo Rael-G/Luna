@@ -76,11 +76,11 @@ public class Root : Node
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
             Text = "Hello, World!",
-            FlipV = true,
+            FlipV = false,
             CenterH = true,
             CenterV = true
         };
-        label.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
+        label.Transform.Position = new Vector3{ X = 0, Y = 0, Z = -500 };
         
         var sound = new Sound("Assets/audio/music/Death.wav");
         sound.Transform.Position = Vector3.Zero;
@@ -115,6 +115,7 @@ public class Root : Node
     {
         model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
         box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
+        label.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;

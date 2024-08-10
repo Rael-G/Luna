@@ -14,6 +14,12 @@ internal static class GlErrorUtils
         return error != GLEnum.NoError;
     }
 
+    public static void Check(uint handle, GLEnum type)
+    {
+        if (!CheckStatus(type, handle))
+            Console.WriteLine($"A binded {type} is diferent from the expected.");
+    }
+
     public static bool CheckProgramLink(uint programId)
     {
         _gl.GetProgram(programId, ProgramPropertyARB.LinkStatus, out int success);
@@ -40,24 +46,6 @@ internal static class GlErrorUtils
             }
 
             return true;
-    }
-
-    public static void CheckVao(uint vao)
-    {
-        if (!CheckStatus(GLEnum.VertexArrayBinding, vao))
-            Console.WriteLine("A binded vertex array object is diferent from the expected.");
-    }
-
-    public static void CheckVbo(uint vbo)
-    {
-        if (!CheckStatus(GLEnum.ArrayBufferBinding, vbo))
-            Console.WriteLine("A binded array buffer is diferent from the expected.");
-    }
-
-    public static void CheckEbo(uint ebo)
-    {
-        if (!CheckStatus(GLEnum.ElementArrayBufferBinding, ebo))
-            Console.WriteLine("A binded element array buffer is diferent from the expected.");
     }
 
     private static bool CheckStatus(GLEnum pname, uint expected) 

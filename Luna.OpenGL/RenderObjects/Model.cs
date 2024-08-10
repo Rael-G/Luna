@@ -8,7 +8,10 @@ internal class Model(ModelData data) : RenderObject<ModelData>
     public override void Draw()
     {
         foreach (var mesh in _meshes)
-            mesh.Draw();
+        {
+            mesh.BindMaterial(_modelData.Material);
+            mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
+        }
     }
 
     public override void Update(ModelData data)

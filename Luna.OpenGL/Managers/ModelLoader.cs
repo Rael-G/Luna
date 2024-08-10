@@ -40,7 +40,6 @@ public static unsafe class ModelLoader
     {
         List<Vertex> vertices = [];
         List<uint> indices = [];
-        var material = modelData.Material;
 
         for (int i = 0; i < aiMesh->MNumVertices; i++)
         {
@@ -61,17 +60,17 @@ public static unsafe class ModelLoader
                 indices.Add(aiFace.MIndices[j]);
         }
 
+        Texture2D[]? diffuseMaps = null;
+        Texture2D[]? specularMaps = null;
+
         if (aiMesh->MMaterialIndex >= 0)
         {
             var aiMaterial = aiScene->MMaterials[aiMesh->MMaterialIndex];
-            Texture2D[] diffuseMaps = ProcessTextures(aiMaterial, TextureType.Diffuse, modelData, directory);
-            Texture2D[] specularMaps = ProcessTextures(aiMaterial, TextureType.Specular, modelData, directory);
-
-            material.DiffuseMaps = diffuseMaps;
-            material.SpecularMaps = specularMaps;
+            diffuseMaps = ProcessTextures(aiMaterial, TextureType.Diffuse, modelData, directory);
+            specularMaps = ProcessTextures(aiMaterial, TextureType.Specular, modelData, directory);
         }
 
-        return new Mesh([.. vertices], [.. indices], material, Silk.NET.OpenGL.BufferUsageARB.StaticDraw, Silk.NET.OpenGL.PrimitiveType.Triangles);
+        return new Mesh([.. vertices], [.. indices], diffuseMaps, specularMaps);
     }
 
     private static Texture2D[] ProcessTextures(Silk.NET.Assimp.Material* aiMaterial, TextureType type, ModelData modelData, string directory)

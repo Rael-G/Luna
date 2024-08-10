@@ -10,12 +10,13 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
         1, 2, 3    // second triangle
     ];
 
-    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);
     private RectangleData _rectangleData = data;
 
     public override void Draw()
     {
-        _mesh.Draw();
+        _mesh.BindMaterial(_rectangleData.Material);
+        _mesh.Draw(PrimitiveType.Triangles);
     }
 
     public override void Update(RectangleData data)
@@ -23,7 +24,7 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
         if (data.Size != _rectangleData.Size || data.Material != _rectangleData.Material)
         {
             _mesh.Dispose();
-            _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+            _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);
         }
         _rectangleData = data;
     }

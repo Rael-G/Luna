@@ -21,18 +21,22 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
         20, 21, 22, 20, 22, 23,
     ];
 
-    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices);
     private BoxData _boxData = data;
 
     public override void Draw()
-        => _mesh.Draw();
+    {
+        _mesh.BindMaterial(_boxData.Material);
+        _mesh.Draw(PrimitiveType.Triangles);
+
+    }
     
     public override void Update(BoxData data)
     {
         if (data.Size != _boxData.Size || data.Material != _boxData.Material)
         {
             _mesh.Dispose();
-            _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices, data.Material, BufferUsageARB.StaticDraw, PrimitiveType.Triangles);
+            _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices);
         }
         _boxData = data;
     }
