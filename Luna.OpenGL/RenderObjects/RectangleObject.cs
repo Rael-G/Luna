@@ -6,8 +6,8 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 {
     private static readonly uint[] _indices = 
     [
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
+        0, 1, 2,   // first triangle
+        2, 3, 0    // second triangle
     ];
 
     private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);
@@ -47,11 +47,11 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
                 Normal = new (0.0f, 0.0f, 1.0f),
                 TexCoords = new (0.0f, 0.0f)
             },
-            new Vertex  // Top left
+            new Vertex // Bottom right
             {
-                Position = new (0.0f, height, 0.0f),
+                Position = new (width, 0.0f, 0.0f), 
                 Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (0.0f, 1.0f)
+                TexCoords = new (1.0f, 0.0f)
             },
             new Vertex // Top right
             {
@@ -59,11 +59,11 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
                 Normal = new (0.0f, 0.0f, 1.0f),
                 TexCoords = new (1.0f, 1.0f)
             },
-            new Vertex // Bottom right
+            new Vertex  // Top left
             {
-                Position = new (width, 0.0f, 0.0f), 
+                Position = new (0.0f, height, 0.0f),
                 Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (1.0f, 0.0f)
+                TexCoords = new (0.0f, 1.0f)
             }
         ];
 }

@@ -14,6 +14,8 @@ public class Node : Disposable
 
     public virtual Transform Transform { get; }
 
+    protected List<Node> Children { get; set; }
+
     protected virtual Node? Parent 
     { 
         get => _parent;
@@ -49,7 +51,6 @@ public class Node : Disposable
         };
     }
 
-    private List<Node> _children;
     private bool _awakened;
     private bool _started;
     private Node? _parent;
@@ -58,7 +59,7 @@ public class Node : Disposable
     public Node()
     {
         UID = Guid.NewGuid().ToString();
-        _children = [];
+        Children = [];
         Alias = GetType().Name;
         Transform = new();
     }
@@ -74,7 +75,7 @@ public class Node : Disposable
     internal void InternalConfig()
     {
         Config();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalConfig();
     }
 
@@ -90,7 +91,7 @@ public class Node : Disposable
     {
         if (_awakened) return;
         Awake();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalAwake();
         _awakened = true;
     }
@@ -107,7 +108,7 @@ public class Node : Disposable
     {
         if (_started) return;
         Start();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalStart();
         _started = true;
     }
@@ -125,7 +126,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         EarlyUpdate();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalEarlyUpdate();
     }
 
@@ -142,7 +143,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         Update();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalUpdate();
     }
 
@@ -159,7 +160,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         LateUpdate();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalLateUpdate();
     }
 
@@ -173,7 +174,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         FixedUpdate();
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.InternalFixedUpdate();
     }
 
@@ -187,13 +188,13 @@ public class Node : Disposable
         var map = Injector.Get<IRenderer>();
         map.Draw(UID);
 
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.Draw();
     }
 
     public virtual void Input(InputEvent inputEvent)
     {
-        foreach (var child in _children)
+        foreach (var child in Children)
             child.Input(inputEvent);
     }
 
@@ -201,24 +202,24 @@ public class Node : Disposable
     {
         foreach (var node in nodes)
         {
-            if (_children.FirstOrDefault(c => c == node) != null) 
+            if (Children.FirstOrDefault(c => c == node) != null) 
                 continue;
 
             node.Parent?.RemoveChild(node);
 
             node.Parent = this;
-            _children.Add(node);
+            Children.Add(node);
             if (Window.Running && _awakened)   
-                node.Awake();
+                node.InternalAwake();
             if (Window.Running && _started) 
-                node.Start();
+                node.InternalStart();
             Tree.AddNode(node);
         }
     }
 
     public virtual void RemoveChild(Node node)
     {
-        _children.Remove(node);
+        Children.Remove(node);
         node.Parent = null;
         Tree.RemoveNode(node.UID);
         node.Dispose();
@@ -233,7 +234,7 @@ public class Node : Disposable
         for (int i = 0; i < aliases.Length; i++)
         {
             if (node is null) return null;
-            node = node?._children.Find(n => n.Alias == aliases[i]);
+            node = node?.Children.Find(n => n.Alias == aliases[i]);
         }
 
         return node as T;
@@ -261,7 +262,7 @@ public class Node : Disposable
         var renderMap = Injector.Get<IRenderer>();
         renderMap.Remove(UID);
 
-        foreach (var child in _children)
+        foreach (var child in Children)
         {
             child.Dispose();
         }

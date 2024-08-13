@@ -17,6 +17,7 @@ public class VertexArrayObject<TVertexType, TIndexType> : Disposable
             Bind();
             vbo.Bind();
             ebo?.Bind();
+            GlErrorUtils.CheckError("VertexArrayObject");
         }
 
         public void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint stride, int pointer)
@@ -32,11 +33,13 @@ public class VertexArrayObject<TVertexType, TIndexType> : Disposable
         public void Bind()
         {
             _gl.BindVertexArray(_handle);
+            GlErrorUtils.CheckError("VertexArrayObject Bind");
         }
 
         public void Unbind()
         {
             _gl.BindVertexArray(0);
+            GlErrorUtils.CheckError("VertexArrayObject Unbind");
         }
 
         public override void Dispose(bool disposing)
@@ -44,6 +47,7 @@ public class VertexArrayObject<TVertexType, TIndexType> : Disposable
             if (_disposed)  return;
 
             _gl.DeleteVertexArray(_handle);
+            GlErrorUtils.CheckError("VertexArrayObject Dispose");
 
             base.Dispose(disposing);
         }

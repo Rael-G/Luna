@@ -17,7 +17,7 @@ public class Texture : Disposable
 
     public int MipmapLevel { get; }
 
-    ImageType ImageType { get; }
+    public ImageType ImageType { get; }
 
     public TextureTarget TextureTarget { get; }
 
@@ -73,9 +73,7 @@ public class Texture : Disposable
         FlipV = flipV;
         ImageType = imageType;
         TextureTarget = textureTarget;
-        LoadTexture();
         _hash = string.IsNullOrEmpty(hash)? GetHashCode().ToString() : hash;
-        GlErrorUtils.CheckError("Texture");
     }
 
     public static Texture Load(string path, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, bool flipV, TextureTarget textureTarget, string hash = "", ImageType imageType = ImageType.Standard)
@@ -86,7 +84,18 @@ public class Texture : Disposable
             return texture;
         
         texture = new(path, textureFilter, textureWrap, mipmaps, flipV, textureTarget, hash, imageType);
+        texture.LoadTexture();
         TextureManager.Cache(hash, texture);
+        GlErrorUtils.CheckError("Texture Load");
+        return texture;
+    }
+
+    public static Texture Load(uint width, uint height, TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, TextureTarget textureTarget, ImageType imageType = ImageType.Standard)
+    {
+        var texture = new Texture("", textureFilter, textureWrap, mipmaps, false, textureTarget, "", imageType);
+        var (pFmt, iFmt) = texture.GetFormat();
+        texture.CreateTexture(width, height, new ReadOnlySpan<byte>(), pFmt, iFmt);
+        GlErrorUtils.CheckError("Texture Load");
         return texture;
     }
 
@@ -100,6 +109,12 @@ public class Texture : Disposable
         _gl.BindTexture(TextureTarget, Handle);
         GlErrorUtils.CheckError("Texture Bind");
     }
+    public void Unbind(TextureUnit unit = TextureUnit.Texture0)
+    {
+        _gl.ActiveTexture(unit);
+        _gl.BindTexture(TextureTarget, 0);
+        GlErrorUtils.CheckError("Texture Unbind");
+    }
 
     private void LoadTexture()
     {
@@ -109,19 +124,24 @@ public class Texture : Disposable
         stream.CopyTo(memoryStream);
         Stbi.SetFlipVerticallyOnLoad(FlipV);
         using var image = Stbi.LoadFromMemory(memoryStream, 0);
-
-        Size = new Vector2(image.Width, image.Height);
         var (pFmt, iFmt) = GetFormat(image.NumChannels);
+        CreateTexture((uint)image.Width, (uint)image.Height, image.Data, pFmt, iFmt);
+    }
 
+    private void CreateTexture(uint width, uint height, ReadOnlySpan<byte> data, PixelFormat pixelFormat, InternalFormat internalFormat)
+    {
         Handle = _gl.GenTexture();
         _gl.BindTexture(TextureTarget, Handle);
 
-        _gl.PixelStore(GLEnum.UnpackAlignment, 1);
-        _gl.TexImage2D(TextureTarget, MipmapLevel, iFmt, (uint)image.Width,
-            (uint)image.Height, 0, pFmt, PixelType.UnsignedByte, image.Data);
-
         TextureFilter = _textureFilter;
         TextureWrap = _textureWrap;
+        Size = new Vector2(width, height);
+
+        _gl.PixelStore(GLEnum.UnpackAlignment, 1);
+        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, width,
+            height, 0, pixelFormat, PixelType.UnsignedByte, data);
+        _gl.GenerateMipmap(TextureTarget);
+        GlErrorUtils.CheckError("Texture CreateTexture");
     }
 
     public override void Dispose(bool disposing)
@@ -142,30 +162,40 @@ public class Texture : Disposable
         return (Path + MipmapLevel + TextureFilter + TextureWrap + TextureTarget + ImageType).GetHashCode();
     }
 
-    private (PixelFormat, InternalFormat) GetFormat(int numChannels)
+    private (PixelFormat, InternalFormat) GetFormat(int numChannels = 3)
     {
-        PixelFormat pFmt;
-        InternalFormat iFmt;
+        PixelFormat pixelFormat;
+        InternalFormat internalFormat;
 
         switch (ImageType)
         {
             case ImageType.HDR:
-                pFmt = PixelFormat.Rgba;
-                iFmt = InternalFormat.Rgba16f; // Use a higher precision format for HDR
+                pixelFormat = PixelFormat.Rgba;
+                internalFormat = InternalFormat.Rgba16f; // Use a higher precision format for HDR
                 break;
 
             case ImageType.DepthMap:
-                pFmt = PixelFormat.DepthComponent;
-                iFmt = InternalFormat.DepthComponent24; // 24-bit depth map
+                pixelFormat = PixelFormat.DepthComponent;
+                internalFormat = InternalFormat.DepthComponent; // 24-bit depth map
+                break;
+            
+            case ImageType.StencilMap:
+                pixelFormat = PixelFormat.StencilIndex;
+                internalFormat = InternalFormat.StencilIndex;
+                break;
+
+            case ImageType.DepthStencilMap:
+                pixelFormat = PixelFormat.DepthStencil;
+                internalFormat = InternalFormat.Depth24Stencil8;
                 break;
 
             case ImageType.Cubemap:
-                pFmt = PixelFormat.Rgba;
-                iFmt = InternalFormat.Rgba8;
+                pixelFormat = PixelFormat.Rgba;
+                internalFormat = InternalFormat.Rgba8;
                 break;
 
             default:
-                pFmt = numChannels switch
+                pixelFormat = numChannels switch
                 {
                     1 => PixelFormat.Red,        // Monochrome
                     2 => PixelFormat.RG,         // Two-channel (e.g., RG format)
@@ -174,7 +204,7 @@ public class Texture : Disposable
                     _ => throw new ArgumentException("Unsupported number of channels")
                 };
 
-                iFmt = numChannels switch
+                internalFormat = numChannels switch
                 {
                     1 => InternalFormat.R8,      // 8-bit Red channel
                     2 => InternalFormat.RG8,     // 8-bit RG
@@ -185,6 +215,6 @@ public class Texture : Disposable
                 break;
         }
         
-        return (pFmt, iFmt);
+        return (pixelFormat, internalFormat);
     }
 }

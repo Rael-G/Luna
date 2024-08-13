@@ -8,17 +8,17 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
     private static readonly uint[] _indices =
     [
         // Front face
-        0, 1, 2, 0, 2, 3,
+        0, 1, 2, 2, 3, 0,
         // Back face
-        4, 5, 6, 4, 6, 7,
+        4, 6, 5, 6, 4, 7,
         // Left Face
-        8, 9, 10, 8, 10, 11,
+        10, 11, 8, 8, 9, 10,
         // Right face
-        12, 13, 14, 12, 14, 15,
+        15, 13, 14, 13, 15, 12,
         // Bottom face
-        16, 17, 18, 16, 18, 19,
+        18, 19, 16, 16, 17, 18,
         // Top face
-        20, 21, 22, 20, 22, 23,
+        23, 21, 22, 21, 23, 20,
     ];
 
     private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices);
@@ -28,7 +28,6 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
     {
         _mesh.BindMaterial(_boxData.Material);
         _mesh.Draw(PrimitiveType.Triangles);
-
     }
     
     public override void Update(BoxData data)

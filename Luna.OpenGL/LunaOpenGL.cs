@@ -38,6 +38,7 @@ public static class LunaOpenGL
         RenderObjectFactory.RegisterCallback<EllipseData>((data) => new EllipseObject(data));
         RenderObjectFactory.RegisterCallback<BoxData>((data) => new BoxObject(data));
         RenderObjectFactory.RegisterCallback<ModelData>((data) => new Model(data));
+        RenderObjectFactory.RegisterCallback<PostProcessorData>((data) => new PostProcessor(data));
 
     }
 }

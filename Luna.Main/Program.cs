@@ -29,6 +29,7 @@ public class Root : Node
     {
         Window.Title = "Hello Rectangle!";
         Window.Size = new(800, 600);
+        Window.Flags |= WindowFlags.BackFaceCulling;
         base.Config();
     }
 
@@ -39,11 +40,30 @@ public class Root : Node
 
     public override void Start()
     {
+        var postProcessor = new Luna.PostProcessor()
+        {
+            Shaders =
+            [
+                new ShaderSource
+                {
+                    Name = "ScreenShaderVertex",
+                    Path = "Assets/shaders/ScreenVertexShader.glsl",
+                    ShaderType = ShaderType.VertexShader
+                },
+                new ShaderSource
+                {
+                    Name = "ScreenShaderFragment",
+                    Path = "Assets/shaders/ScreenFragmentShader.glsl",
+                    ShaderType = ShaderType.FragmentShader
+                }
+            ],
+        };
+
         var texture = new Texture2D()
         {
             Path = "Assets/images/Hamburger.png",
             TextureFilter = TextureFilter.Nearest,
-            FlipV = true
+            FlipV = false
         };
         var camera2D = new OrtographicCamera(){
             Left = 0.0f,
@@ -65,13 +85,21 @@ public class Root : Node
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
         ellipse.Material.DiffuseMaps = [ texture ];
         ellipse.Material.SpecularMaps = [ texture ];
+        ellipse.Transform.EulerAngles += new Vector3(0, 180, 0);
+
 
         rect = new Rectangle(){
             Size = new(400, 400),
             Center = true,
+            Color = Colors.Red
         };
         rect.Transform.Position = Window.VirtualCenter;
-        //rect.Material.Diffuse = texture;
+        rect.Transform.Position = new Vector3(0, 0, -500);
+
+        rect.Transform.EulerAngles += new Vector3(0, 180, 0);
+        rect.Material.DiffuseMaps = [texture];
+        rect.Material.IsAffectedByLight = false;
+
 
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
@@ -107,14 +135,16 @@ public class Root : Node
             Path = "Assets/models/backpack/backpack.obj"
         };
         model.Transform.Position = new Vector3(0f, 0f, -5);
-        AddChild(camera3D, model, light);
+        
+        postProcessor.AddChild(camera3D, box, light);
+        AddChild(postProcessor);
         base.Start();
     }
 
     public override void Update()
     {
         model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
-        box.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
+        box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
         label.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
 
         if (Keyboard.KeyDown(Keys.Escape))

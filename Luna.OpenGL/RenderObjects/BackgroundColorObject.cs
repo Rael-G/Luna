@@ -4,13 +4,11 @@ namespace Luna.OpenGL;
 
 internal class BackgroundColorObject(Color data) : RenderObject<Color>
 {
-    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
-
     private Color _color = data;
 
     public override void Draw()
     {
-        _gl.ClearColor(_color);
+        GL.ClearColor(_color);
         GlErrorUtils.CheckError("Background");
     }
 

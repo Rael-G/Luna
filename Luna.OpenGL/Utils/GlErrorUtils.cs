@@ -48,6 +48,14 @@ internal static class GlErrorUtils
             return true;
     }
 
+    public static bool CheckFrameBuffer(FramebufferTarget fboType)
+    {
+        var complete = _gl.CheckFramebufferStatus(fboType) == GLEnum.FramebufferComplete;
+        if (!complete)
+            Console.WriteLine("Framebuffer is not complete");
+
+        return complete;
+    }
     private static bool CheckStatus(GLEnum pname, uint expected) 
     {
         _gl.GetInteger(pname, out int data);
