@@ -4,11 +4,10 @@ namespace Luna;
 
 public interface IWindow
 {
+    WindowFlags Flags { get; set; }
     string Title { get; set;}
     bool Running { get; set; }
     Vector2 Size { get; set; }
-    bool Vsync { get; set; }
-    bool CursorHidden { get; set; }
 
     void Init();
     void Close();

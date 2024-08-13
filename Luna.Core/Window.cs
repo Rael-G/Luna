@@ -5,6 +5,8 @@ namespace Luna;
 
 public static class Window
 {
+    public static WindowFlags Flags { get => EngineWindow.Flags; set => EngineWindow.Flags = value; }
+
     public static readonly IWindow EngineWindow = Injector.Get<IWindow>();
     
     public static string Title { get => EngineWindow.Title; set => EngineWindow.Title = value; }
@@ -21,7 +23,4 @@ public static class Window
 
     public static float AspectRatio { get => Size.X / Size.Y; }
 
-    public static bool Vsync { get => EngineWindow.Vsync; set => EngineWindow.Vsync = value; }
-
-    public static bool DisableCursor { get => EngineWindow.CursorHidden; set => EngineWindow.CursorHidden = value; }
 }

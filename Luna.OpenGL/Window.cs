@@ -6,6 +6,18 @@ namespace Luna.OpenGL;
 
 internal unsafe class Window : IWindow
 {
+    public WindowFlags Flags
+    {
+        get => _flags;
+        set
+        {
+            _flags = value;
+            Vsync = _flags.HasFlag(WindowFlags.Vsync);
+            CursorHidden = _flags.HasFlag(WindowFlags.CursorHidden);
+            BackFaceCulling = _flags.HasFlag(WindowFlags.BackFaceCulling);
+        }
+    }
+
     public string Title 
     { 
         get => _title;
@@ -32,27 +44,34 @@ internal unsafe class Window : IWindow
         }
     }
 
-    public bool Vsync 
+    private static bool Vsync 
     {
-        get => _vsync;
         set 
         {
-            _vsync = value;
-            Glfw?.SwapInterval(_vsync? 1 : 0);
+            Glfw?.SwapInterval(value? 1 : 0);
         }
     }
 
-    public bool CursorHidden
+    private static bool CursorHidden
     {
-        get => _cursorHidden;
         set 
         {
-            _cursorHidden = value;
-            var mode = _cursorHidden? CursorModeValue.CursorHidden : CursorModeValue.CursorNormal;
+            var mode = value? CursorModeValue.CursorHidden : CursorModeValue.CursorNormal;
             Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, mode);   
         } 
     }
-    
+
+    private static bool BackFaceCulling
+    {
+        set 
+        {
+            if (value)
+                GL?.Enable(EnableCap.CullFace);
+            else
+                GL?.Disable(EnableCap.CullFace);
+        } 
+    }
+
 #pragma warning disable CA2211 // Non-constant fields should not be visible
     public static Glfw? Glfw;
     public static GL? GL;
@@ -63,11 +82,10 @@ internal unsafe class Window : IWindow
     private MouseCursorPosCallback? _mouseCursorPosCallback;
     private ScrollCallback? _scrollCallback;
 
+    private WindowFlags _flags;
     private string _title = string.Empty;
     private Vector2 _windowSize = new(800, 600);
     private bool _running;
-    private bool _vsync;
-    private bool _cursorHidden;
 
     public void Init()
     {
@@ -102,8 +120,7 @@ internal unsafe class Window : IWindow
 
         Running = true;
 
-        Vsync = _vsync;
-        CursorHidden = _cursorHidden;
+        Flags = _flags;
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
