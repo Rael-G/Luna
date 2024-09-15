@@ -136,8 +136,8 @@ public class Root : Node
         };
         model.Transform.Position = new Vector3(0f, 0f, -5);
         
-        postProcessor.AddChild(camera3D, box, light);
-        AddChild(postProcessor);
+        //postProcessor.AddChild(camera3D, box, light);
+        AddChild(camera3D, box, light);
         base.Start();
     }
 

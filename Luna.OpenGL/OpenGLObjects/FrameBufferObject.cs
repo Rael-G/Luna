@@ -1,4 +1,5 @@
 using Luna.OpenGL.Enums;
+using Luna.OpenGL.Materials;
 using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 
@@ -31,7 +32,7 @@ public class FrameBufferObject : Disposable
         GlErrorUtils.CheckError("FrameBufferObject Unbind");
     }
 
-    public void AttachTexture2D(Texture texture)
+    public void AttachTexture2D(GlTexture2D texture)
     {
         Bind();
         var attachment = AttachmentType(texture.ImageType);

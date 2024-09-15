@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Luna.Maths;
+using Luna.OpenGL.Materials;
 
 namespace Luna.OpenGL;
 
@@ -14,7 +15,7 @@ public class StandardMaterial : Material, IStandardMaterial
         {
             _diffuse = value;
             for(int i = 0; i < _diffuse.Length; i++)
-                Set("material.diffuse" + i, Texture.Load(_diffuse[i]));
+                Set("material.diffuse" + i, GlTexture2D.Load(_diffuse[i]));
         } 
     }
 
@@ -25,7 +26,7 @@ public class StandardMaterial : Material, IStandardMaterial
         {
             _specullar = value;
             for(int i = 0; i < _specullar.Length; i++)
-                Set("material.specular" + i , Texture.Load(_specullar[i]));
+                Set("material.specular" + i , GlTexture2D.Load(_specullar[i]));
         }
     }
     

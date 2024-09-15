@@ -2,10 +2,10 @@
 
 public class TextureManager
 {   
-    private static readonly Dictionary<string, Texture> Textures = [];
+    private static readonly Dictionary<string, TextureBase> Textures = [];
     private static readonly Dictionary<string, int> Counters = [];
 
-    public static Texture? GetTexture(string hash)
+    public static TextureBase? GetTexture(string hash)
     {
         if (Textures.TryGetValue(hash, out var texture))
             return texture;
@@ -29,7 +29,7 @@ public class TextureManager
         return --Counters[hash];
     }
 
-    public static void Cache(string hash, Texture texture)
+    public static void Cache(string hash, TextureBase texture)
     {
         Textures[hash] = texture;
     }

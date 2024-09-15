@@ -1,3 +1,4 @@
+using Luna.OpenGL.Materials;
 using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 
@@ -13,7 +14,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
     private readonly Material _material;
 
-    private readonly Texture _texture;
+    private readonly GlTexture2D _texture;
     private readonly RenderBufferObject _rbo;
     private readonly Mesh _mesh;
 
@@ -22,7 +23,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
         _material = new(data.Shaders);
         var width = (uint)Injector.Get<IWindow>().Size.X;
         var height = (uint)Injector.Get<IWindow>().Size.Y;
-        _texture = Texture.Load(width, height, TextureFilter.Bilinear, TextureWrap.Clamp, 0, TextureTarget.Texture2D);
+        _texture = GlTexture2D.Load(width, height, TextureFilter.Bilinear, TextureWrap.Clamp, 0, TextureTarget.Texture2D);
         _rbo = new(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
 
         FBO.AttachTexture2D(_texture);
