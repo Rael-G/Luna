@@ -7,7 +7,7 @@ public static unsafe class ModelLoader
 {
     private static readonly Assimp _assimp = Assimp.GetApi();
     
-    public static List<Mesh> LoadMeshes(ModelData modelData)
+    public static List<ModelMesh> LoadMeshes(ModelData modelData)
     {
         var aiScene = _assimp.ImportFile(modelData.Path, (uint)PostProcessPreset.TargetRealTimeMaximumQuality);
 
@@ -19,9 +19,9 @@ public static unsafe class ModelLoader
         return ProcessNode(aiScene->MRootNode, aiScene, modelData, directory);
     }
 
-    private static List<Mesh> ProcessNode(Silk.NET.Assimp.Node* aiNode, Scene* aiScene, ModelData modelData, string directory)
+    private static List<ModelMesh> ProcessNode(Silk.NET.Assimp.Node* aiNode, Scene* aiScene, ModelData modelData, string directory)
     {
-        List<Mesh> meshes = [];
+        List<ModelMesh> meshes = [];
         for (int i = 0; i < aiNode->MNumMeshes; i++)
         {
             var aiMesh = aiScene->MMeshes[aiNode->MMeshes[i]];
@@ -36,7 +36,7 @@ public static unsafe class ModelLoader
         return meshes;
     }
 
-    private static Mesh ProcessMesh(Silk.NET.Assimp.Mesh* aiMesh, Scene* aiScene, ModelData modelData, string directory)
+    private static ModelMesh ProcessMesh(Silk.NET.Assimp.Mesh* aiMesh, Scene* aiScene, ModelData modelData, string directory)
     {
         List<Vertex> vertices = [];
         List<uint> indices = [];
@@ -70,7 +70,7 @@ public static unsafe class ModelLoader
             specularMaps = ProcessTextures(aiMaterial, TextureType.Specular, modelData, directory);
         }
 
-        return new Mesh([.. vertices], [.. indices], diffuseMaps, specularMaps);
+        return new ModelMesh([.. vertices], [.. indices], diffuseMaps, specularMaps);
     }
 
     private static Texture2D[] ProcessTextures(Silk.NET.Assimp.Material* aiMaterial, TextureType type, ModelData modelData, string directory)

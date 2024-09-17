@@ -3,6 +3,7 @@
 struct Material {
     sampler2D diffuse0;
     sampler2D specular0;
+    //samplerCube cubemap0;
     vec4 color;
     float shininess;
 };
@@ -91,7 +92,10 @@ vec4 Light(vec3 normal, vec3 viewPos, vec3 fragPos, vec2 texCoord)
         result += CalcPointLight(pointLights[i], norm, fragPos, viewDir, texCoord);    
     
     for (int i = 0; i < spotLightLength; i++)
-        result += CalcSpotLight(spotLights[i], norm, fragPos, viewDir, texCoord);    
+        result += CalcSpotLight(spotLights[i], norm, fragPos, viewDir, texCoord);
+
+    // vec3 reflection = texture(material.cubemap, reflect(-viewDir, norm)).rgb;
+    // result += reflection;
     
     return vec4(result, texture(material.diffuse0, texCoord).a);
 }

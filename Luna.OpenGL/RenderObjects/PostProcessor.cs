@@ -1,4 +1,3 @@
-using Luna.OpenGL.Materials;
 using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 
@@ -38,7 +37,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     {
         GL.Disable(EnableCap.DepthTest);
 
-        _material.Set("SCREEN_TEXTURE", _texture);
+        _material.SetTexture("SCREEN_TEXTURE", _texture);
         _material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
         

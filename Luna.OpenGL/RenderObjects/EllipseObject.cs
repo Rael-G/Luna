@@ -10,7 +10,7 @@ internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
 
     public override void Draw()
     {
-        _mesh.BindMaterial(_ellipseData.Material);
+        _ellipseData.Material.Bind();
         _mesh.Draw(PrimitiveType.TriangleFan);
     }
     

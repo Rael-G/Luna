@@ -12,15 +12,10 @@ public class Mesh : Disposable
     private readonly BufferObject<uint> _ebo;
     private readonly BufferObject<Vertex> _vbo;
     
-    private readonly Texture2D[]? _diffuseMaps;
-    private readonly Texture2D[]? _specularMaps;
-
     private readonly uint _size;
 
-    public Mesh(Vertex[] vertices, uint[] indices, Texture2D[]? diffuseMaps = null, Texture2D[]? specularMaps = null)
+    public Mesh(Vertex[] vertices, uint[] indices)
     {
-        _diffuseMaps = diffuseMaps;
-        _specularMaps = specularMaps;
         _size = (uint)indices.Length;
 
         _ebo = new BufferObject<uint>(GL, indices, BufferTargetARB.ElementArrayBuffer, BufferUsageARB.StaticDraw);
@@ -32,17 +27,6 @@ public class Mesh : Disposable
         _vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, _stride, 6 * sizeof(float));
 
         GlErrorUtils.CheckError("Mesh Setup");
-    }
-
-    public void BindMaterial(IStandardMaterial material)
-    {
-        if (_diffuseMaps is not null)
-            material.DiffuseMaps = _diffuseMaps;
-
-        if (_specularMaps is not null)
-            material.SpecularMaps = _specularMaps;
-        
-        material.Bind();
     }
 
     public void Draw(PrimitiveType primitiveType)

@@ -1,4 +1,6 @@
-﻿namespace Luna.OpenGL;
+﻿using Luna.OpenGL.RenderObjects;
+
+namespace Luna.OpenGL;
 
 public static class LunaOpenGL
 {
@@ -39,6 +41,7 @@ public static class LunaOpenGL
         RenderObjectFactory.RegisterCallback<BoxData>((data) => new BoxObject(data));
         RenderObjectFactory.RegisterCallback<ModelData>((data) => new Model(data));
         RenderObjectFactory.RegisterCallback<PostProcessorData>((data) => new PostProcessor(data));
+        RenderObjectFactory.RegisterCallback<SkyboxData>((data) => new SkyboxObject(data));
 
     }
 }

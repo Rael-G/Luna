@@ -7,9 +7,9 @@ namespace Luna.OpenGL;
 
 public abstract class TextureBase : Disposable
 {
-    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
+    protected static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
 
-    public uint Handle { get; private set; }
+    public uint Handle { get; protected set; }
 
     public int MipmapLevel { get; }
 
@@ -17,7 +17,7 @@ public abstract class TextureBase : Disposable
 
     public TextureTarget TextureTarget { get; protected set; }
 
-    public TextureFilter TextureFilter
+    public virtual TextureFilter TextureFilter
     {
         get => _textureFilter;
         set
@@ -53,8 +53,8 @@ public abstract class TextureBase : Disposable
         }
     }
 
-    private TextureFilter _textureFilter;
-    private TextureWrap _textureWrap;
+    protected TextureFilter _textureFilter;
+    protected TextureWrap _textureWrap;
 
     protected string Hash { get; set; }
 
@@ -79,21 +79,6 @@ public abstract class TextureBase : Disposable
         _gl.ActiveTexture(unit);
         _gl.BindTexture(TextureTarget, 0);
         GlErrorUtils.CheckError("Texture Unbind");
-    }
-
-    protected void CreateTexture(uint width, uint height, ReadOnlySpan<byte> data, PixelFormat pixelFormat, InternalFormat internalFormat)
-    {
-        Handle = _gl.GenTexture();
-        _gl.BindTexture(TextureTarget, Handle);
-
-        TextureFilter = _textureFilter;
-        TextureWrap = _textureWrap;
-
-        _gl.PixelStore(GLEnum.UnpackAlignment, 1);
-        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, width,
-            height, 0, pixelFormat, PixelType.UnsignedByte, data);
-        _gl.GenerateMipmap(TextureTarget);
-        GlErrorUtils.CheckError("Texture CreateTexture");
     }
 
     public override void Dispose(bool disposing)
@@ -121,11 +106,6 @@ public abstract class TextureBase : Disposable
 
         switch (type)
         {
-            case ImageType.HDR:
-                pixelFormat = PixelFormat.Rgba;
-                internalFormat = InternalFormat.Rgba16f; // Use a higher precision format for HDR
-                break;
-
             case ImageType.DepthMap:
                 pixelFormat = PixelFormat.DepthComponent;
                 internalFormat = InternalFormat.DepthComponent; // 24-bit depth map
@@ -139,11 +119,6 @@ public abstract class TextureBase : Disposable
             case ImageType.DepthStencilMap:
                 pixelFormat = PixelFormat.DepthStencil;
                 internalFormat = InternalFormat.Depth24Stencil8;
-                break;
-
-            case ImageType.Cubemap:
-                pixelFormat = PixelFormat.Rgba;
-                internalFormat = InternalFormat.Rgba8;
                 break;
 
             default:

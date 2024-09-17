@@ -3,7 +3,7 @@ using Luna.OpenGL.Enums;
 using Silk.NET.OpenGL;
 using StbiSharp;
 
-namespace Luna.OpenGL.Materials;
+namespace Luna.OpenGL;
 
 public class GlTexture2D : TextureBase
 {
@@ -20,7 +20,6 @@ public class GlTexture2D : TextureBase
         Path = path;
         FlipV = flipV;
         ImageType = imageType;
-        TextureTarget = textureTarget;
         //Hash = string.IsNullOrEmpty(hash)? GetHashCode().ToString() : hash;
     }
 
@@ -34,7 +33,7 @@ public class GlTexture2D : TextureBase
         texture = new GlTexture2D(path, textureFilter, textureWrap, mipmaps, flipV, textureTarget, hash, imageType);
         texture.LoadTexture();
         TextureManager.Cache(hash, texture);
-        GlErrorUtils.CheckError("Texture Load");
+        GlErrorUtils.CheckError("GlTexture2D Load");
         return texture;
     }
 
@@ -43,7 +42,7 @@ public class GlTexture2D : TextureBase
         var texture = new GlTexture2D("", textureFilter, textureWrap, mipmaps, false, textureTarget, "", imageType);
         var (pFmt, iFmt) = GetFormat(imageType);
         texture.CreateTexture(width, height, new ReadOnlySpan<byte>(), pFmt, iFmt);
-        GlErrorUtils.CheckError("Texture Load");
+        GlErrorUtils.CheckError("GlTexture2D Load");
         return texture;
     }
 
@@ -64,8 +63,23 @@ public class GlTexture2D : TextureBase
         CreateTexture((uint)image.Width, (uint)image.Height, image.Data, pFmt, iFmt);
     }
 
+    protected void CreateTexture(uint width, uint height, ReadOnlySpan<byte> data, PixelFormat pixelFormat, InternalFormat internalFormat)
+    {
+        Handle = _gl.GenTexture();
+        _gl.BindTexture(TextureTarget, Handle);
+
+        TextureFilter = _textureFilter;
+        TextureWrap = _textureWrap;
+
+        _gl.PixelStore(GLEnum.UnpackAlignment, 1);
+        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, width,
+            height, 0, pixelFormat, PixelType.UnsignedByte, data);
+        _gl.GenerateMipmap(TextureTarget);
+        GlErrorUtils.CheckError("GlTexture2D CreateTexture");
+    }
+
     public override int GetHashCode()
     {
-        return (Path + MipmapLevel + TextureFilter + TextureWrap + TextureTarget + ImageType).GetHashCode();
+        return Path.GetHashCode() + base.GetHashCode();
     }
 }

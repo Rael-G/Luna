@@ -1,5 +1,4 @@
-﻿
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
@@ -26,7 +25,7 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
 
     public override void Draw()
     {
-        _mesh.BindMaterial(_boxData.Material);
+        _boxData.Material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
     }
     

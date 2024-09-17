@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Luna.Maths;
-using Luna.OpenGL.Materials;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -14,11 +13,11 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
     public Dictionary<string, int> IntProperties { get; private set; } = [];
     public Dictionary<string, bool> BoolProperties { get; private set; } = [];
 
-    private Dictionary<string, GlTexture2D> Textures { get; set; } = [];
+    private Dictionary<string, TextureBase> Textures { get; set; } = [];
 
     private ProgramShader Shader { get; set; } = new(shaders);
 
-    public void Set(string key, GlTexture2D texture)
+    public void SetTexture(string key, TextureBase texture)
     {
         var t = Textures.GetValueOrDefault(key);
         if (texture.GetHashCode() != t?.GetHashCode())

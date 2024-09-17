@@ -15,7 +15,8 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 
     public override void Draw()
     {
-        _mesh.BindMaterial(_rectangleData.Material);
+        _rectangleData.Material.Bind();
+
         _mesh.Draw(PrimitiveType.Triangles);
     }
 

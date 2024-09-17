@@ -1,5 +1,4 @@
 using Luna.OpenGL.Enums;
-using Luna.OpenGL.Materials;
 using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 

@@ -2,7 +2,7 @@
 
 internal class Model(ModelData data) : RenderObject<ModelData>
 {
-    private readonly List<Mesh> _meshes = ModelLoader.LoadMeshes(data);
+    private readonly List<ModelMesh> _meshes = ModelLoader.LoadMeshes(data);
     private ModelData _modelData = data;
 
     public override void Draw()
