@@ -161,6 +161,43 @@ public class Matrix : IEnumerable<float>
     public static implicit operator Matrix(float[,] data)
         => new(data);
 
+    public static implicit operator Matrix(Matrix4x4 data)
+    {
+        var matrix = new Matrix(4, 4);
+        matrix[0, 0] = data.M11;
+        matrix[0, 1] = data.M12;
+        matrix[0, 2] = data.M13;
+        matrix[0, 3] = data.M14;
+        matrix[1, 0] = data.M21;
+        matrix[1, 1] = data.M22;
+        matrix[1, 2] = data.M23;
+        matrix[1, 3] = data.M24;
+        matrix[2, 0] = data.M31;
+        matrix[2, 1] = data.M32;
+        matrix[2, 2] = data.M33;
+        matrix[2, 3] = data.M34;
+        matrix[3, 0] = data.M41;
+        matrix[3, 1] = data.M42;
+        matrix[3, 2] = data.M43;
+        matrix[3, 3] = data.M44;
+        return matrix;
+    }
+
+    public static implicit operator Matrix4x4(Matrix data)
+    {
+        if (data.Rows != 4 || data.Columns != 4)
+        {
+            throw new InvalidOperationException("Matrix must be 4x4 to convert to Matrix4x4.");
+        }
+
+        return new Matrix4x4(
+            data[0, 0], data[0, 1], data[0, 2], data[0, 3],
+            data[1, 0], data[1, 1], data[1, 2], data[1, 3],
+            data[2, 0], data[2, 1], data[2, 2], data[2, 3],
+            data[3, 0], data[3, 1], data[3, 2], data[3, 3]
+        );
+    }
+
     public static implicit operator float[,](Matrix matrix)
     {
         var data = new float[matrix.Rows, matrix.Columns];
