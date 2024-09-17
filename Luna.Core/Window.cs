@@ -23,4 +23,6 @@ public static class Window
 
     public static float AspectRatio { get => Size.X / Size.Y; }
 
+    public static CursorMode CursorMode { get => EngineWindow.CursorMode; set => EngineWindow.CursorMode = value; }
+
 }

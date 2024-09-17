@@ -1,4 +1,6 @@
-﻿namespace Luna;
+﻿using Luna.Core.Events;
+
+namespace Luna;
 
 public class Host(Node root)
 {
@@ -14,6 +16,12 @@ public class Host(Node root)
 
         Injector.Get<IWindow>().SetKeyCallback((key, action, mods) 
             => Root.Input(new KeyboardEvent(key, action, mods)));
+        Injector.Get<IWindow>().SetMouseCursorPosCallback((x, y) 
+            => Root.Input(new MousePositionEvent(x, y)));
+        Injector.Get<IWindow>().SetScrollCallback((x, y) 
+            => Root.Input(new MouseScrollEvent(x, y)));
+        Injector.Get<IWindow>().SetMouseButtonCallback((button, action, mods) 
+            => Root.Input(new MouseButtonEvent(button, action, mods)));
 
        Root.InternalAwake();
        Root.InternalStart();

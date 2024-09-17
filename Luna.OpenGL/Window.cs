@@ -13,8 +13,17 @@ internal unsafe class Window : IWindow
         {
             _flags = value;
             Vsync = _flags.HasFlag(WindowFlags.Vsync);
-            CursorHidden = _flags.HasFlag(WindowFlags.CursorHidden);
             BackFaceCulling = _flags.HasFlag(WindowFlags.BackFaceCulling);
+        }
+    }
+
+    public CursorMode CursorMode
+    {
+        get => _cursorMode;
+        set
+        {
+            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, (CursorModeValue)value);
+            _cursorMode = value;
         }
     }
 
@@ -52,15 +61,6 @@ internal unsafe class Window : IWindow
         }
     }
 
-    private static bool CursorHidden
-    {
-        set 
-        {
-            var mode = value? CursorModeValue.CursorHidden : CursorModeValue.CursorNormal;
-            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, mode);   
-        } 
-    }
-
     private static bool BackFaceCulling
     {
         set 
@@ -79,6 +79,7 @@ internal unsafe class Window : IWindow
     private static WindowHandle* WindowHandle = null!;
 
     private KeyCallback? _keyCallback;
+    private MouseButtonCallback? _mouseButtonCallback;
     private MouseCursorPosCallback? _mouseCursorPosCallback;
     private ScrollCallback? _scrollCallback;
 
@@ -86,6 +87,7 @@ internal unsafe class Window : IWindow
     private string _title = string.Empty;
     private Vector2 _windowSize = new(800, 600);
     private bool _running;
+    private static CursorMode _cursorMode;
 
     public void Init()
     {
@@ -172,12 +174,23 @@ internal unsafe class Window : IWindow
         Glfw?.SetScrollCallback(WindowHandle, ScrollCallback);
     }
 
+    public void SetMouseButtonCallback(MouseButtonCallback mouseButtonCallback)
+    {
+        _mouseButtonCallback = mouseButtonCallback;
+        Glfw?.SetMouseButtonCallback(WindowHandle, MouseButtonCallback);
+    }
+
     private void MouseCursorPosCallback(WindowHandle* window, double xpos, double ypos)
     {
         if (_mouseCursorPosCallback is not null)
             _mouseCursorPosCallback(xpos, ypos);
     }
 
+    private void MouseButtonCallback(WindowHandle* window, Silk.NET.GLFW.MouseButton button,  Silk.NET.GLFW.InputAction action, Silk.NET.GLFW.KeyModifiers mods)
+    {
+        if (_mouseButtonCallback is not null)
+            _mouseButtonCallback((MouseButton)button, (InputAction)action, (KeyModifiers)mods);
+    }
 
     private void KeyCallback(WindowHandle* window, Silk.NET.GLFW.Keys key, int scanCode, Silk.NET.GLFW.InputAction action, Silk.NET.GLFW.KeyModifiers mods)
     {

@@ -5,6 +5,7 @@ namespace Luna;
 public interface IWindow
 {
     WindowFlags Flags { get; set; }
+    CursorMode CursorMode { get; set; }
     string Title { get; set;}
     bool Running { get; set; }
     Vector2 Size { get; set; }
@@ -17,5 +18,5 @@ public interface IWindow
     void SetKeyCallback(KeyCallback keyCallback);
     void SetMouseCursorPosCallback(MouseCursorPosCallback mouseCursorPosCallback);
     void SetScrollCallback(ScrollCallback scrollCallback);
-    
+    void SetMouseButtonCallback(MouseButtonCallback mouseButtonCallback);
 }
