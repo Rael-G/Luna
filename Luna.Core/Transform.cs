@@ -71,10 +71,10 @@ public class Transform
     }
 
     internal Matrix ModelMatrix()
-        =>  GlobalPosition.Translation() *
-            Origin.Translation() *
-            GlobalQuaternion.ToMatrix() *
+        =>  GlobalScale.Scale() *
             (-Origin).Translation() *
-            GlobalScale.Scale();
+            GlobalQuaternion.ToMatrix() *
+            Origin.Translation() *
+            GlobalPosition.Translation();
 
 }

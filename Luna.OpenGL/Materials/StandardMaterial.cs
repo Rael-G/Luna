@@ -62,9 +62,9 @@ public class StandardMaterial : Material, IStandardMaterial
         set
         {
             _modelViewProjection = value;
-            MatricesProperties["model"] = _modelViewProjection.Model.Transpose();
-            MatricesProperties["view"] = _modelViewProjection.View.Transpose();
-            MatricesProperties["projection"] = _modelViewProjection.Projection.Transpose();
+            MatricesProperties["model"] = _modelViewProjection.Model;
+            MatricesProperties["view"] = _modelViewProjection.View;
+            MatricesProperties["projection"] = _modelViewProjection.Projection;
             Vector3Properties["viewPos"] = _modelViewProjection.CameraPosition;
         }
     }

@@ -17,23 +17,7 @@ public class PerspectiveCamera : Node, ICamera
         } 
     }
 
-    public Vector3 Target 
-    {
-        get
-        {
-            if (_target != null) return (Vector3)_target;
-
-            var front = Vector3.Zero;
-            front.X = (float)(Math.Cos(Transform.GlobalRotation.Y) * Math.Cos(Transform.GlobalRotation.Z));
-            front.Y = (float)(Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
-                Math.Cos(Transform.GlobalRotation.Z) - Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z));
-            front.Z = (float)(Math.Cos(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Y) * 
-                Math.Cos(Transform.GlobalRotation.Z) + Math.Sin(Transform.GlobalRotation.X) * Math.Sin(Transform.GlobalRotation.Z));
-                
-            return front;
-        }  
-        set => _target = value;
-    }
+    public Vector3 Target { get; set; } = Vector3.UnitZ;
 
     public Vector3 Up { get; set; } = Vector3.UnitY;
     public float Fov { get; set; } = 45.0f;
@@ -41,8 +25,6 @@ public class PerspectiveCamera : Node, ICamera
     public float Far { get; set; } = 1000.0f;
 
     public Listener? Listener { get; set; }
-
-    private Vector3? _target;
 
     public override void LateUpdate()
     {
