@@ -4,32 +4,35 @@ namespace Luna.Maths;
 
 public static class Vector3Extensions
 {
-    public static Matrix ToMatrix(this Vector3 Vector)
-        => new(4, 1, [Vector.X , Vector.Y, Vector.Z, 1.0f]);
+    // public static Matrix ToMatrix(this Vector3 Vector)
+    //     => new(4, 1, [Vector.X , Vector.Y, Vector.Z, 1.0f]);
 
-    public static Matrix ToMatrix(this Vector3[] vectors)
-    {
-        var matrix = new Matrix(3, vectors.Length);
-        for (int i = 0; i < vectors.Length; i++)
-        {
-            matrix[i, 0] = vectors[i].X;
-            matrix[i, 1] = vectors[i].Y;
-            matrix[i, 2] = vectors[i].Z;
-        }
-        return matrix;
-    }
+    // public static Matrix ToMatrix(this Vector3[] vectors)
+    // {
+    //     var matrix = new Matrix(3, vectors.Length);
+    //     for (int i = 0; i < vectors.Length; i++)
+    //     {
+    //         matrix[i, 0] = vectors[i].X;
+    //         matrix[i, 1] = vectors[i].Y;
+    //         matrix[i, 2] = vectors[i].Z;
+    //     }
+    //     return matrix;
+    // }
 
-    public static Vector3? ToVector3(this Matrix matrix)
-    {
-        try
-        {
-            return new(matrix[0,0], matrix[1,0], matrix[2,0]);
-        }
-        catch
-        {
-            return null;
-        }
-    }
+    // public static Vector3? ToVector3(this Matrix matrix)
+    // {
+    //     try
+    //     {
+    //         return new(matrix[0,0], matrix[1,0], matrix[2,0]);
+    //     }
+    //     catch
+    //     {
+    //         return null;
+    //     }
+    // }
+
+    public static float[] ToFloatArray(this Vector3 vector)
+        => [vector.X, vector.Y, vector.Z];
 
     public static Vector2 ToVector2(this Vector3 vector)
         => new(vector.X, vector.Y);
@@ -102,10 +105,10 @@ public static class Vector3Extensions
     }
 
     public static Vector3 Scale(this Vector3 vector, Vector3 other)
-        => (Vector3)(other.ToMatrix().Diagonal() * vector.ToMatrix()).ToVector3()!;
+        => vector.Transform(other.CreateScale());
 
-    public static Vector3 Shear(this Vector3 vector, Vector3 shearFactor, Vector3 axis)
-        => (Vector3)(Transformations.ShearMatrix(shearFactor, axis) * vector.ToMatrix()).ToVector3()!;
+    // public static Vector3 Shear(this Vector3 vector, Vector3 shearFactor, Vector3 axis)
+    //     => (Vector3)(Transformations.ShearMatrix(shearFactor, axis) * vector.ToMatrix()).ToVector3()!;
     
     public static Vector3 Lerp(this Vector3 from, Vector3 to, float weight)
         => Vector3.Lerp(from, to, weight);
@@ -134,19 +137,14 @@ public static class Vector3Extensions
     public static Vector3 ToDegrees(this Vector3 from)
         => new(from.X.ToDegrees(), from.Y.ToDegrees(), from.Z.ToDegrees());
 
-    public static Matrix Translation(this Vector3 vector)
-        => Transformations.TranslationMatrix(vector);
+    public static Matrix4x4 CreateTranslation(this Vector3 vector)
+        => Matrix4x4.CreateTranslation(vector);
 
-    public static Matrix Scale(this Vector3 vector)
-        => Transformations.ScaleMatrix(vector);
+    public static Matrix4x4 CreateScale(this Vector3 vector)
+        => Matrix4x4.CreateScale(vector);
 
-    public static Vector3 Transform(this Vector3 vector, Matrix matrix)
-    {
-        if (matrix.Rows != 4 || matrix.Columns != 4)
-            throw new InvalidOperationException("This operation requires a 4x4 matrix.");
-
-        return (Vector3)(matrix * vector.ToMatrix()).ToVector3()!;
-    }
+    public static Vector3 Transform(this Vector3 vector, Matrix4x4 matrix)    
+        => Vector3.Transform(vector, matrix);
 
     public static Vector3 Transform(this Vector3 vector, Quaternion quaternion)
         => Vector3.Transform(vector, quaternion);
