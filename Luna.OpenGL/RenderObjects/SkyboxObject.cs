@@ -35,12 +35,17 @@ public class SkyboxObject : RenderObject<SkyboxData>
 
     public override void Draw()
     {
-        GL.DepthFunc(DepthFunction.Lequal);
+        GlErrorUtils.CheckError("Before SkyboxDraw");
+        var window = Injector.Get<IWindow>();
+        var previousDepthMode = window.DepthMode;
+
+        window.DepthMode = DepthMode.Lequal;
+        GlErrorUtils.CheckError("raw");
         _material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
-        GL.DepthMask(true);
-        GL.DepthFunc(DepthFunction.Less);
-
+        GlErrorUtils.CheckError("raw");
+        window.DepthMode = previousDepthMode;
+        GlErrorUtils.CheckError("SkyboxDraw");
     }
 
     public override void Update(SkyboxData data)
@@ -52,30 +57,30 @@ public class SkyboxObject : RenderObject<SkyboxData>
 
     private static readonly uint[] _indices =
     [
-        // Face da frente
+        // Front Face
         4, 7, 6, 6, 5, 4,
-        // Face de trás
+        // Back Face
         0, 1, 2, 2, 3, 0,
-        // Face esquerda
+        // Left Face
          0, 4, 5, 5, 1, 0,
-        // Face direita
+        // Right Face
         3, 2, 6, 6, 7, 3,
-        // Face superior
+        // Top Face
         0, 3, 7, 7, 4, 0,
-        // Face inferior
+        // Bottom Face
         1, 5, 6, 6, 2, 1
     ];
 
     private static readonly Vertex[] _vertices
         =
         [
-            new Vertex() { Position = new(-1.0f,  1.0f, -1.0f) }, // 0
-            new Vertex() { Position = new(-1.0f, -1.0f, -1.0f) }, // 1
-            new Vertex() { Position = new( 1.0f, -1.0f, -1.0f) }, // 2
-            new Vertex() { Position = new( 1.0f,  1.0f, -1.0f) }, // 3
-            new Vertex() { Position = new(-1.0f,  1.0f,  1.0f) }, // 4
-            new Vertex() { Position = new(-1.0f, -1.0f,  1.0f) }, // 5
-            new Vertex() { Position = new( 1.0f, -1.0f,  1.0f) }, // 6
-            new Vertex() { Position = new( 1.0f,  1.0f,  1.0f) }, // 7
+            new Vertex() { Position = new(-1.0f,  1.0f, -1.0f) },
+            new Vertex() { Position = new(-1.0f, -1.0f, -1.0f) },
+            new Vertex() { Position = new( 1.0f, -1.0f, -1.0f) },
+            new Vertex() { Position = new( 1.0f,  1.0f, -1.0f) },
+            new Vertex() { Position = new(-1.0f,  1.0f,  1.0f) },
+            new Vertex() { Position = new(-1.0f, -1.0f,  1.0f) },
+            new Vertex() { Position = new( 1.0f, -1.0f,  1.0f) },
+            new Vertex() { Position = new( 1.0f,  1.0f,  1.0f) },
         ];
 }

@@ -42,21 +42,6 @@ public struct Color
     private float _b;
     private float _a;
 
-    public readonly Matrix ToMatrix()
-        => new(new float[,]{ {R}, {G}, {B}, {A} });
-    
-    public static Color? ToColor(Matrix matrix)
-    {
-        try
-        {
-            return new(matrix[0,0], matrix[1,0], matrix[2,0], matrix[3,0]);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     public static implicit operator System.Drawing.Color (Color color)
         => System.Drawing.Color.FromArgb(
             (int)0.0f.Lerp(255.0f, color.A), 
@@ -77,11 +62,14 @@ public struct Color
     public readonly Vector3 RGB()
         => new(R, G, B);
 
-    public readonly Color Lerp(Color other, float weight)
-        => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;
+    public readonly float[] ToFloatArray()
+        => [R, G, B, A];
 
-    public readonly Color Mix(Color color)
-        => Lerp(color, 0.5f);
+    // public readonly Color Lerp(Color other, float weight)
+    //     => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;
+
+    // public readonly Color Mix(Color color)
+    //     => Lerp(color, 0.5f);
 
     public static Color Desaturate(Color c)
     {

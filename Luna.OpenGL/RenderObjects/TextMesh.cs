@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Luna.Maths;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -36,8 +37,11 @@ internal class TextMesh : Disposable
     public void Draw(ProgramShader shader, TextData text)
     {
         shader.Use();
-        shader.SetVec4("textColor", text.Color.ToMatrix());
-        shader.SetMat4("transform", text.Transform.Transpose());
+        shader.SetVec4("textColor", text.Color.ToFloatArray());
+        shader.SetMat4("model", text.ModelViewProjection.Model.ToFloatArray());
+        shader.SetMat4("view", text.ModelViewProjection.View.ToFloatArray());
+        shader.SetMat4("projection", text.ModelViewProjection.Projection.ToFloatArray());
+
 
         _gl.ActiveTexture(TextureUnit.Texture0);
         _vao.Bind();
@@ -87,12 +91,13 @@ internal class TextMesh : Disposable
         var bottom = flipV? 1.0f : 0.0f;
         var top = flipV? 0.0f : 1.0f;
         return [
-            xpos,           ypos + height,  0.0f, bottom,
+            xpos + width,   ypos,           1.0f, top,
             xpos,           ypos,           0.0f, top,
+            xpos,           ypos + height,  0.0f, bottom,
+            
+            xpos + width,   ypos + height,  1.0f, bottom,
             xpos + width,   ypos,           1.0f, top,
             xpos,           ypos + height,  0.0f, bottom,
-            xpos + width,   ypos,           1.0f, top,
-            xpos + width,   ypos + height,  1.0f, bottom
         ];
     }
 }

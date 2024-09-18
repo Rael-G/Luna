@@ -9,7 +9,7 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
     public Dictionary<string, float> FloatProperties { get; private set; } = [];
     public Dictionary<string, Vector3> Vector3Properties { get; private set; } = [];
     public Dictionary<string, Color> ColorProperties { get; private set; } = [];
-    public Dictionary<string, Matrix> MatricesProperties { get; private set; } = [];
+    public Dictionary<string, Matrix4x4> MatricesProperties { get; private set; } = [];
     public Dictionary<string, int> IntProperties { get; private set; } = [];
     public Dictionary<string, bool> BoolProperties { get; private set; } = [];
 
@@ -55,17 +55,17 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
 
         foreach (var property in Vector3Properties)
         {
-            Shader.SetVec3(property.Key, property.Value.ToMatrix());
+            Shader.SetVec3(property.Key, property.Value.ToFloatArray());
         }
 
         foreach (var property in ColorProperties)
         {
-            Shader.SetVec4(property.Key, property.Value.ToMatrix());
+            Shader.SetVec4(property.Key, property.Value.ToFloatArray());
         }
 
         foreach (var property in MatricesProperties)
         {
-            Shader.SetMat4(property.Key, property.Value);
+            Shader.SetMat4(property.Key, property.Value.ToFloatArray());
         }
     }
 

@@ -70,9 +70,9 @@ public class StandardMaterial : Material, IStandardMaterial
 
     private ModelViewProjection _modelViewProjection = new() 
     { 
-        Model = Matrix.Identity(4), 
-        View = Matrix.Identity(4), 
-        Projection = Matrix.Identity(4),
+        Model = Matrix4x4.Identity, 
+        View = Matrix4x4.Identity, 
+        Projection = Matrix4x4.Identity,
         CameraPosition = Vector3.Zero
     };
 

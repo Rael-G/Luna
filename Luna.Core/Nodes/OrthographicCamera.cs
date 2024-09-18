@@ -1,4 +1,5 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
 namespace Luna;
 
@@ -13,12 +14,12 @@ public class OrtographicCamera : Node, ICamera
 
     public Listener? Listener { get; set; }
 
-    public virtual Matrix Projection 
-        => Transformations.OrthographicProjection(Left, Right, Bottom, Top, Near, Far);
+    public virtual Matrix4x4 Projection 
+        => Matrix4x4.CreateOrthographicOffCenter(Left, Right, Bottom, Top, Near, Far);
     
 
-    public virtual Matrix View 
-        => Transformations.TranslationMatrix(-Transform.GlobalPosition);
+    public virtual Matrix4x4 View 
+        => Matrix4x4.CreateTranslation(-Transform.GlobalPosition);
     
     protected override Node? Parent 
     { 

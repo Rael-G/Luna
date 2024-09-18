@@ -33,7 +33,7 @@ public class Label : Node
         (
             new TextData
             {
-                Text = Text, Path = Path, Color = Color, Transform = ModelViewProjection.Projection * ModelViewProjection.View * ModelViewProjection.Model, 
+                Text = Text, Path = Path, Color = Color, ModelViewProjection = ModelViewProjection, 
                 Size = Size, FlipV = FlipV
             }
         );
@@ -53,7 +53,7 @@ public class Label : Node
         (
             new TextData
             {
-                Text = Text, Path = Path, Color = Color, Transform = ModelViewProjection.Projection * ModelViewProjection.View * ModelViewProjection.Model, 
+                Text = Text, Path = Path, Color = Color, ModelViewProjection = ModelViewProjection, 
                 Size = Size, FlipV = FlipV
             }
         );

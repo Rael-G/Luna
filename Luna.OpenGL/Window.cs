@@ -22,8 +22,18 @@ internal unsafe class Window : IWindow
         get => _cursorMode;
         set
         {
-            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, (CursorModeValue)value);
             _cursorMode = value;
+            Glfw?.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, (CursorModeValue)_cursorMode);
+        }
+    }
+
+    public DepthMode DepthMode
+    {
+        get => _depthFunction;
+        set
+        {
+            _depthFunction = value;
+            GL?.DepthFunc((DepthFunction)_depthFunction);
         }
     }
 
@@ -87,7 +97,9 @@ internal unsafe class Window : IWindow
     private string _title = string.Empty;
     private Vector2 _windowSize = new(800, 600);
     private bool _running;
-    private static CursorMode _cursorMode;
+    private static CursorMode _cursorMode = CursorMode.Normal;
+    private DepthMode _depthFunction = DepthMode.Lequal;
+
 
     public void Init()
     {
@@ -127,6 +139,7 @@ internal unsafe class Window : IWindow
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.Enable(EnableCap.DepthTest);
+        GL.DepthFunc(DepthFunction.Lequal);
     }
 
     public void Close()
@@ -151,7 +164,6 @@ internal unsafe class Window : IWindow
     {
         if (Glfw is null)
             throw new WindowException("Window was not initialized");
-
 
         return (InputAction)Glfw.GetKey(WindowHandle, (Silk.NET.GLFW.Keys)key);
     }

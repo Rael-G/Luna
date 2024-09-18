@@ -6,6 +6,7 @@ public interface IWindow
 {
     WindowFlags Flags { get; set; }
     CursorMode CursorMode { get; set; }
+    DepthMode DepthMode { get; set; }
     string Title { get; set;}
     bool Running { get; set; }
     Vector2 Size { get; set; }

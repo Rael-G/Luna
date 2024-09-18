@@ -6,8 +6,8 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 {
     private static readonly uint[] _indices = 
     [
-        0, 1, 2,   // first triangle
-        2, 3, 0    // second triangle
+        2, 1, 0,   // first triangle
+        0, 3, 2    // second triangle
     ];
 
     private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);

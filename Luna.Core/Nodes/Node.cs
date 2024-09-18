@@ -1,4 +1,5 @@
-﻿using Luna.Maths;
+﻿using System.Numerics;
+using Luna.Maths;
 
 namespace Luna;
 
@@ -45,11 +46,19 @@ public class Node : Disposable
     {
         get => new()
         {
-            Projection = Camera?.Projection?? Matrix.Identity(4),
-            View = Camera?.View?? Matrix.Identity(4),
+            Projection = Camera?.Projection?? Matrix4x4.Identity,
+            View = Camera?.View?? Matrix4x4.Identity,
             Model = Transform.ModelMatrix()
         };
     }
+
+    public Action? ConfigAction { get; set; }
+    public Action? AwakeAction { get; set; }
+    public Action? StartAction { get; set; }
+    public Action? EarlyUpdateAction { get; set; }
+    public Action? UpdateAction { get; set; }
+    public Action? LateUpdateAction { get; set; }
+    public Action? FixedUpdateAction { get; set; }
 
     private bool _awakened;
     private bool _started;
@@ -75,6 +84,7 @@ public class Node : Disposable
     internal void InternalConfig()
     {
         Config();
+        ConfigAction?.Invoke();
         foreach (var child in Children)
             child.InternalConfig();
     }
@@ -91,6 +101,7 @@ public class Node : Disposable
     {
         if (_awakened) return;
         Awake();
+        AwakeAction?.Invoke();
         foreach (var child in Children)
             child.InternalAwake();
         _awakened = true;
@@ -108,6 +119,7 @@ public class Node : Disposable
     {
         if (_started) return;
         Start();
+        StartAction?.Invoke();
         foreach (var child in Children)
             child.InternalStart();
         _started = true;
@@ -126,6 +138,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         EarlyUpdate();
+        EarlyUpdateAction?.Invoke();
         foreach (var child in Children)
             child.InternalEarlyUpdate();
     }
@@ -143,6 +156,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         Update();
+        UpdateAction?.Invoke();
         foreach (var child in Children)
             child.InternalUpdate();
     }
@@ -160,6 +174,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         LateUpdate();
+        LateUpdateAction?.Invoke();
         foreach (var child in Children)
             child.InternalLateUpdate();
     }
@@ -174,6 +189,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         FixedUpdate();
+        FixedUpdateAction?.Invoke();
         foreach (var child in Children)
             child.InternalFixedUpdate();
     }

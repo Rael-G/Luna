@@ -25,4 +25,7 @@ public static class Window
 
     public static CursorMode CursorMode { get => EngineWindow.CursorMode; set => EngineWindow.CursorMode = value; }
 
+    public static DepthMode DepthMode { get => EngineWindow.DepthMode; set => EngineWindow.DepthMode = value; }
+
+
 }

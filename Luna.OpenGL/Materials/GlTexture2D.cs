@@ -52,6 +52,7 @@ public class GlTexture2D : TextureBase
 
     private void LoadTexture()
     {
+        GlErrorUtils.CheckError("Before GlTexture2D LoadTexture");
         using var stream = File.OpenRead(Path);
         using var memoryStream = new MemoryStream();
 
@@ -65,6 +66,7 @@ public class GlTexture2D : TextureBase
 
     protected void CreateTexture(uint width, uint height, ReadOnlySpan<byte> data, PixelFormat pixelFormat, InternalFormat internalFormat)
     {
+        GlErrorUtils.CheckError("Before GlTexture2D CreateTexture");
         Handle = _gl.GenTexture();
         _gl.BindTexture(TextureTarget, Handle);
 

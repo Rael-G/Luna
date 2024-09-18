@@ -70,11 +70,11 @@ public class Transform
         get => GlobalRotation.ToQuaternion();
     }
 
-    internal Matrix ModelMatrix()
-        =>  GlobalScale.Scale() *
-            (-Origin).Translation() *
-            GlobalQuaternion.ToMatrix() *
-            Origin.Translation() *
-            GlobalPosition.Translation();
+    internal Matrix4x4 ModelMatrix()
+        =>  GlobalScale.CreateScale() *
+            (-Origin).CreateTranslation() *
+            GlobalQuaternion.ToMatrix4x4() *
+            (Origin).CreateTranslation() *
+            GlobalPosition.CreateTranslation();
 
 }

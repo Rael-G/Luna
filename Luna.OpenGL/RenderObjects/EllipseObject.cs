@@ -70,7 +70,7 @@ internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
     {
         List<uint> indices = [0];
 
-        for (uint i = 1; i <= segments; i++)
+        for (uint i = (uint)segments + 1; i >= 1; i--)
         {
             indices.Add(i);
         }

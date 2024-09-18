@@ -5,8 +5,8 @@ namespace Luna;
 
 public struct ModelViewProjection
 {
-    public Matrix Model { get; set; }
-    public Matrix View { get; set; }
-    public Matrix Projection { get; set; }
+    public Matrix4x4 Model { get; set; }
+    public Matrix4x4 View { get; set; }
+    public Matrix4x4 Projection { get; set; }
     public Vector3 CameraPosition { get; set; }
 }

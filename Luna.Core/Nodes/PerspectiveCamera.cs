@@ -20,7 +20,7 @@ public class PerspectiveCamera : Node, ICamera
     public Vector3 Target { get; set; } = Vector3.UnitZ;
 
     public Vector3 Up { get; set; } = Vector3.UnitY;
-    public float Fov { get; set; } = 45.0f;
+    public float Fov { get; set; } = (45.0f).ToRadians();
     public float Near { get; set; } = 0.1f;
     public float Far { get; set; } = 1000.0f;
 
@@ -32,10 +32,10 @@ public class PerspectiveCamera : Node, ICamera
         base.LateUpdate();
     }
 
-    public virtual Matrix Projection
-        => Transformations.PerspectiveProjection(Fov, Window.AspectRatio, Near, Far);
+    public virtual Matrix4x4 Projection
+        => Matrix4x4.CreatePerspectiveFieldOfView(Fov, Window.AspectRatio, Near, Far);
 
-    public virtual Matrix View 
-        => Transformations.LookAtMatrix(Transform.GlobalPosition, Target, Up);
+    public virtual Matrix4x4 View 
+        => Matrix4x4.CreateLookAt(Transform.GlobalPosition, Target, Up);
 }
 

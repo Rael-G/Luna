@@ -87,16 +87,15 @@ public class Root : Node
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
         ellipse.Material.DiffuseMaps = [ texture ];
         ellipse.Material.SpecularMaps = [ texture ];
-        ellipse.Transform.EulerAngles += new Vector3(0, 180, 0);
 
         rect = new Rectangle(){
             Size = new(400, 400),
-            Center = true,
+            Center = false,
         };
         rect.Transform.Position = Window.VirtualCenter;
         rect.Transform.Position = new Vector3(0, 0, 0);
+        rect.Transform.Position = Vector3.Zero;
 
-        rect.Transform.EulerAngles += new Vector3(0, 180, 0);
         rect.Material.DiffuseMaps = [texture];
         rect.Material.IsAffectedByLight = false;
 
@@ -104,11 +103,12 @@ public class Root : Node
         label = new Label("Assets/fonts/OpenSans-Regular.ttf")
         {
             Text = "Hello, World!",
-            FlipV = false,
+            FlipV = true,
             CenterH = true,
             CenterV = true
         };
-        label.Transform.Position = new Vector3{ X = 0, Y = 0, Z = -500 };
+        label.Transform.Position = Window.VirtualCenter;
+        label.Transform.Position = Vector3.Zero;
         
         var sound = new Sound("Assets/audio/music/Death.wav");
         sound.Transform.Position = Vector3.Zero;
@@ -151,7 +151,7 @@ public class Root : Node
         };
         
         //postProcessor.AddChild(camera3D, box, light);
-        AddChild(camera3D, model, light, skybox);
+        AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         base.Start();
     }
 
@@ -159,7 +159,7 @@ public class Root : Node
     {
         model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
         // box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
-        // label.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
+        //label.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
@@ -176,7 +176,7 @@ public class Root : Node
             Mouse((float)mouseEvent.X, (float)mouseEvent.Y);
 
         if (inputEvent is MouseScrollEvent scrollEvent)
-            Scroll((float)scrollEvent.X, (float)scrollEvent.Y);
+            Scroll((float)scrollEvent.Y);
 
         if (inputEvent is MouseButtonEvent buttonEvent)
         {
@@ -234,19 +234,17 @@ public class Root : Node
         }
 
         float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float yoffset = lastY - ypos;
         lastX = xpos;
         lastY = ypos;
 
-        float sensitivity = 0.1f; // change this value to your liking
+        float sensitivity = 0.1f; 
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
         yaw += xoffset;
         pitch += yoffset;
-        var roll = 0;
 
-        // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (pitch > 89.0f)
             pitch = 89.0f;
         if (pitch < -89.0f)
@@ -258,11 +256,9 @@ public class Root : Node
         front.Z = (float)Math.Sin(yaw.ToRadians()) * (float)Math.Cos(pitch.ToRadians());
     
         cameraFront = Vector3.Normalize(front);
-
-        // camera3D.Transform.EulerAngles = new Vector3(pitch, yaw, 0);
     }
 
-    public void Scroll(float xoffset, float yoffset)
+    public void Scroll(float yoffset)
     {
         fov -= yoffset;
         if (fov < 1.0f)
@@ -270,7 +266,7 @@ public class Root : Node
         if (fov > 45.0f)
             fov = 45.0f;
 
-        camera3D.Fov = fov;
+        camera3D.Fov = fov.ToRadians();
     }
 
 }

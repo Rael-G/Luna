@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Luna.Maths;
 
 namespace Luna;
 
@@ -11,7 +10,7 @@ public struct TextData
     public Vector2 Size { get; set; }
     public Color Color { get; set; }
     public string Text { get; set; }
-    public Matrix Transform { get; set; }
+    public ModelViewProjection ModelViewProjection { get; set; }
     public bool FlipV { get; set; }
     public readonly FontKey FontKey => (Path, Size);
 }
