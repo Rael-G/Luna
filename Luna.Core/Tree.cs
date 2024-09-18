@@ -1,5 +1,8 @@
 ﻿namespace Luna;
 
+/// <summary>
+/// The Hierarchy of the program
+/// </summary>
 public static class Tree
 {
     // Is registered by host

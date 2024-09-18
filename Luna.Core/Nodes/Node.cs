@@ -42,7 +42,7 @@ public class Node : Disposable
         } 
     }
 
-    public ModelViewProjection ModelViewProjection
+    protected ModelViewProjection ModelViewProjection
     {
         get => new()
         {
@@ -108,7 +108,7 @@ public class Node : Disposable
     }
 
     /// <summary>
-    /// Initializes this GameObject.
+    /// Performs initialization operations.
     /// </summary>
     public virtual void Start()
     {
@@ -126,7 +126,7 @@ public class Node : Disposable
     }
 
     /// <summary>
-    /// Updates this GameObject once per frame.
+    /// Updates this Node once per frame early.
     /// </summary>
     public virtual void EarlyUpdate()
     {   
@@ -144,7 +144,7 @@ public class Node : Disposable
     }
 
     /// <summary>
-    /// Updates this GameObject once per frame.
+    /// Updates this Node once per frame.
     /// </summary>
     public virtual void Update()
     {
@@ -162,7 +162,7 @@ public class Node : Disposable
     }
 
     /// <summary>
-    /// Updates this GameObject once per frame.
+    /// Updates this Node once per frame late.
     /// </summary>
     public virtual void LateUpdate()
     {
@@ -179,6 +179,9 @@ public class Node : Disposable
             child.InternalLateUpdate();
     }
 
+    /// <summary>
+    /// Updates this Node at a fixed time.
+    /// </summary>
     public virtual void FixedUpdate()
     {
 
@@ -195,7 +198,7 @@ public class Node : Disposable
     }
 
     /// <summary>
-    ///  Performs drawing operations.
+    /// Performs drawing operations.
     /// </summary>
     internal virtual void Draw()
     {
@@ -208,12 +211,20 @@ public class Node : Disposable
             child.Draw();
     }
 
+    /// <summary>
+    /// Is called when an input event occurs.
+    /// </summary>
+    /// <param name="inputEvent"></param>
     public virtual void Input(InputEvent inputEvent)
     {
         foreach (var child in Children)
             child.Input(inputEvent);
     }
 
+    /// <summary>
+    /// Make nodes children of this one and call its Awake and Start methods if necessary.
+    /// </summary>
+    /// <param name="nodes"></param>
     public virtual void AddChild(params Node[] nodes)
     {
         foreach (var node in nodes)
@@ -233,16 +244,28 @@ public class Node : Disposable
         }
     }
 
-    public virtual void RemoveChild(Node node)
+    /// <summary>
+    /// Disaffiliates nodes and removes them from the tree.
+    /// </summary>
+    /// <param name="node"></param>
+    public virtual void RemoveChild(params Node[] nodes)
     {
-        Children.Remove(node);
-        node.Parent = null;
-        Tree.RemoveNode(node.UID);
-        node.Dispose();
+        foreach(var node in nodes)
+        {
+            Children.Remove(node);
+            node.Parent = null;
+            Tree.RemoveNode(node.UID);
+            node.Dispose();
+        }
     }
 
-    // Alias is opcional, if you want to use this method to find a node, every node on the hierarchy path need to have an alias
-    public T? FindNode<T>(string alias) where T : Node
+    /// <summary>
+    /// Find a node among its descendents. e.g. Node tongue = Body.FindNode("Head/Mouth/Tongue")
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="alias"></param>
+    /// <returns></returns>
+    public Node? FindNode(string alias)
     {
         var aliases = alias.Split('/', options: StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
@@ -253,8 +276,17 @@ public class Node : Disposable
             node = node?.Children.Find(n => n.Alias == aliases[i]);
         }
 
-        return node as T;
+        return node;
     }
+
+    /// <summary>
+    /// Find a node of the generic type among its descendents. e.g. Tongue tongue = Body.FindNode<Tongue>("Head/Mouth/Tongue")
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="alias"></param>
+    /// <returns></returns>
+    public T? FindNode<T>(string alias) where T : Node
+        => FindNode(alias) as T;
 
     protected internal void CreateRenderObject<TData>(TData data)
     {
@@ -275,14 +307,11 @@ public class Node : Disposable
     {
         if (_disposed) return;
 
-        var renderMap = Injector.Get<IRenderer>();
-        renderMap.Remove(UID);
+        Injector.Get<IRenderer>().Remove(UID);
 
         foreach (var child in Children)
-        {
             child.Dispose();
-        }
-
+        
         base.Dispose(disposing);
     }
 }
