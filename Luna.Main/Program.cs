@@ -26,11 +26,24 @@ public class Root : Node
     Model model;
     Light<DirectionalLight> light;
     PerspectiveCamera camera3D;
+    Luna.PostProcessor postProcessor;
+
+    readonly Vector2[] resolutions =
+    [
+        new Vector2(1280, 720),  // HD
+        new Vector2(1366, 768),  // HD+ (16:9 aproximado)
+        new Vector2(1600, 900),  // HD+ (quase Full HD)
+        new Vector2(1920, 1080), // Full HD
+        new Vector2(2560, 1440), // Quad HD
+        new Vector2(3840, 2160)  // 4K UHD
+    ];
+
+    int i = 2;
 
     public override void Config()
     {
         Window.Title = "Hello Rectangle!";
-        Window.Size = new(800, 600);
+        Window.Size = resolutions[i];
         Window.Flags |= WindowFlags.BackFaceCulling;
         base.Config();
     }
@@ -42,7 +55,7 @@ public class Root : Node
 
     public override void Start()
     {
-        var postProcessor = new Luna.PostProcessor()
+        postProcessor = new Luna.PostProcessor()
         {
             Shaders =
             [
@@ -150,8 +163,10 @@ public class Root : Node
             }
         };
         
-        //postProcessor.AddChild(camera3D, box, light);
-        AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
+        postProcessor.AddChild(camera3D, model, light);
+        //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
+        //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
+        AddChild(postProcessor);
         base.Start();
     }
 
@@ -188,7 +203,21 @@ public class Root : Node
         {
             if (keyEvent.Key == Keys.Tab && keyEvent.Action == InputAction.Down)
                 Window.CursorMode = CursorMode.Normal;
+
+            if (keyEvent.Key == Keys.Up && keyEvent.Action == InputAction.Down)
+            {
+                i = (i + 1) % resolutions.Length;
+                postProcessor.Resolution = resolutions[i];
+            }
+
+            if (keyEvent.Key == Keys.Down && keyEvent.Action == InputAction.Down)
+            {
+                i = (i - 1 + resolutions.Length) % resolutions.Length;
+                postProcessor.Resolution = resolutions[i];
+            }
+
         }
+
     }
 
     bool firstMouse = true;
