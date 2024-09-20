@@ -3,11 +3,11 @@ using Luna.Maths;
 
 namespace Luna;
 
-public class Light<T> : Node 
+public class Light<T>(T lightSource) : Node 
     where T : DirectionalLight
 {
-    public T LightSource { get; } = new DirectionalLight().CreateLight<T>();
-
+    public T LightSource { get; } = lightSource;
+    
     public override void Awake()
     {
         Injector.Get<ILightEmitter>().Add(UID, LightSource);
@@ -17,7 +17,6 @@ public class Light<T> : Node
     public override void LateUpdate()
     {
         LightSource.Position = Transform.GlobalPosition;
-        LightSource.Direction = (-Vector3.UnitZ).Transform(Transform.Quaternion);
         base.LateUpdate();
     }
 

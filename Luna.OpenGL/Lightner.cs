@@ -15,11 +15,11 @@ public class LightEmitter : ILightEmitter
 
     public void Add<T>(string id, T light) where T : DirectionalLight
     {
-        if (light is DirectionalLight dirLight)
+        if (light is SpotLight spotLight)
         {
-            if (DirLights.Count >= DirectionalMaxLenght)
+            if (SpotLights.Count >= SpotMaxLenght)
                 return;
-            DirLights[id] = dirLight;
+            SpotLights[id] = spotLight;
             return;
         }
 
@@ -31,13 +31,9 @@ public class LightEmitter : ILightEmitter
             return;
         }
 
-        if (light is SpotLight spotLight)
-        {
-            if (SpotLights.Count >= SpotMaxLenght)
-                return;
-            SpotLights[id] = spotLight;
+        if (DirLights.Count >= DirectionalMaxLenght)
             return;
-        }
+        DirLights[id] = light;
     }
     
     public void Remove(string id)
