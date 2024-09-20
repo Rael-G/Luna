@@ -24,7 +24,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light<DirectionalLight> light;
+    Light<SpotLight> light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -100,6 +100,8 @@ public class Root : Node
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
         ellipse.Material.DiffuseMaps = [ texture ];
         ellipse.Material.SpecularMaps = [ texture ];
+        ellipse.Material.IsAffectedByLight = false;
+
 
         rect = new Rectangle(){
             Size = new(400, 400),
@@ -135,10 +137,10 @@ public class Root : Node
         box.Material.DiffuseMaps = [ texture ];
         box.Material.SpecularMaps = [ texture ];
         
-        light = new Light<DirectionalLight>();
-        light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
-        light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
-        light.LightSource.Diffuse = Vector3.One;
+        light = new Light<SpotLight>(new SpotLight());
+        // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
+        // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
+        // light.LightSource.Diffuse = Vector3.One;
         light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
         box.Material.IsAffectedByLight = false;
 
@@ -163,10 +165,11 @@ public class Root : Node
             }
         };
         
-        postProcessor.AddChild(camera3D, model, light);
+        //postProcessor.AddChild(camera3D, model, light);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
-        AddChild(postProcessor);
+        camera3D.AddChild(light);
+        AddChild(camera3D, model);
         base.Start();
     }
 
@@ -178,6 +181,8 @@ public class Root : Node
 
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
+
+        light.LightSource.Direction = camera3D.Target - camera3D.Transform.Position;
 
         Movement();
         camera3D.Target = camera3D.Transform.GlobalPosition + cameraFront.Normalize();

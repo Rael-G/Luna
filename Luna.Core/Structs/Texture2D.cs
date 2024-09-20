@@ -1,4 +1,6 @@
-﻿namespace Luna;
+﻿using System.Numerics;
+
+namespace Luna;
 
 public struct Texture2D
 {
@@ -7,13 +9,23 @@ public struct Texture2D
     }
 
     public string Path { get; set; } = string.Empty;
+    public Vector2 Size { get; set; }
     public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
     public TextureWrap TextureWrap { get; set; } = TextureWrap.Repeat;
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
 
+    public string Hash
+    { 
+        readonly get => string.IsNullOrEmpty(_hash)? GetHashCode().ToString() : _hash;
+        set => _hash = value;
+    }
+
+    private string? _hash;
+
     public override readonly int GetHashCode()
     {
-        return (Path + TextureFilter + TextureWrap + MipmapLevel).GetHashCode();
+
+        return (Path + Size + TextureFilter + TextureWrap + MipmapLevel).GetHashCode();
     }
 }

@@ -30,7 +30,7 @@ public class SkyboxObject : RenderObject<SkyboxData>
         _data = data;
         _material.MatricesProperties["view"] = _data.ModelViewProjection.View;
         _material.MatricesProperties["projection"] = _data.ModelViewProjection.Projection;
-        _material.SetTexture("skybox", GlCubeMap.Load(data.CubeMap));
+        _material.SetCubeMap("skybox", data.CubeMap);
     }
 
     public override void Draw()

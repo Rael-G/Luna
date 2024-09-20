@@ -13,16 +13,39 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
     public Dictionary<string, int> IntProperties { get; private set; } = [];
     public Dictionary<string, bool> BoolProperties { get; private set; } = [];
 
-    private Dictionary<string, TextureBase> Textures { get; set; } = [];
+    private Dictionary<string, Texture2D> Textures2D { get; set; } = [];
+    private Dictionary<string, CubeMap> CubeMaps { get; set; } = [];
 
     private ProgramShader Shader { get; set; } = new(shaders);
 
-    public void SetTexture(string key, TextureBase texture)
+    public void SetTexture2D(string key, Texture2D texture)
     {
-        var t = Textures.GetValueOrDefault(key);
-        if (texture.GetHashCode() != t?.GetHashCode())
-            t?.Dispose();
-        Textures[key] = texture;
+        if (Textures2D.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
+        {
+            TextureManager.Get(oldTexture.Hash)?.Dispose();
+        }
+
+        if (texture.Hash != oldTexture.Hash)
+        {
+            TextureManager.Load(texture);
+        }
+
+        Textures2D[key] = texture;
+    }
+
+    public void SetCubeMap(string key, CubeMap texture)
+    {
+        if (CubeMaps.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
+        {
+            TextureManager.Get(oldTexture.Hash)?.Dispose();
+        }
+
+        if (texture.Hash != oldTexture.Hash)
+        {
+            TextureManager.Load(texture);
+        }
+
+        CubeMaps[key] = texture;
     }
 
     public virtual void Bind()
@@ -41,10 +64,19 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
             Shader.Set(property.Key, property.Value);
         }
 
-        foreach (var texture in Textures)
+        foreach (var pair in Textures2D)
         {
-            texture.Value.Bind(TextureUnit.Texture0 + textureUnit);
-            Shader.Set(texture.Key, textureUnit);
+            var texture = TextureManager.Get(pair.Value.Hash);
+            texture?.Bind(TextureUnit.Texture0 + textureUnit);
+            Shader.Set(pair.Key, textureUnit);
+            textureUnit++;
+        }
+
+        foreach (var pair in CubeMaps)
+        {
+            var texture = TextureManager.Get(pair.Value.Hash);
+            texture?.Bind(TextureUnit.Texture0 + textureUnit);
+            Shader.Set(pair.Key, textureUnit);
             textureUnit++;
         }
 
@@ -72,10 +104,17 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
     public override void Dispose(bool disposing)
     {
         if (_disposed) return;
+
         Shader.Dispose();
-        foreach (var texture in Textures.Values)
+
+        foreach (var texture in Textures2D.Values)
         {
-            texture.Dispose();
+            TextureManager.Dispose(texture.Hash);
+        }
+
+        foreach (var texture in CubeMaps.Values)
+        {
+            TextureManager.Dispose(texture.Hash);
         }
 
         base.Dispose(disposing);

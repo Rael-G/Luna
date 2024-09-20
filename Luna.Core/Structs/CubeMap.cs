@@ -1,5 +1,3 @@
-using System;
-
 namespace Luna;
 
 public struct CubeMap
@@ -15,12 +13,16 @@ public struct CubeMap
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
 
+    public string Hash
+    { 
+        readonly get => string.IsNullOrEmpty(_hash)? GetHashCode().ToString() : _hash;
+        set => _hash = value;
+    }
+
+    private string? _hash;
+
     public override readonly int GetHashCode()
     {
-        var paths = "";
-        foreach(var path in Paths)
-            paths += path;
-
-        return (paths + TextureFilter + TextureWrap + MipmapLevel + FlipV).GetHashCode();
+        return (string.Join("", Paths) + TextureFilter + TextureWrap + MipmapLevel + FlipV).GetHashCode();
     }
 }

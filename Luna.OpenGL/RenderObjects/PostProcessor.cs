@@ -6,9 +6,9 @@ namespace Luna.OpenGL;
 
 public class PostProcessor : FrameBuffer<PostProcessorData>
 {
-    private readonly Material _material;
+    private readonly IMaterial _material;
 
-    private GlTexture2D? _texture;
+    private Texture2D _texture;
     private RenderBufferObject? _rbo;
     private Mesh? _mesh;
 
@@ -17,7 +17,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     public PostProcessor(PostProcessorData data)
     {
         _data = data;
-        _material = new(data.Shaders);
+        _material = new Material(data.Shaders);
         
         CreatePostProcessor(data.Resolution);
     }
@@ -29,7 +29,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
         GL.Disable(EnableCap.DepthTest);
 
-        _material.SetTexture("SCREEN_TEXTURE", _texture!);
+        _material.SetTexture2D("SCREEN_TEXTURE", _texture);
         _material.Bind();
         _mesh!.Draw(PrimitiveType.Triangles);
         
@@ -56,18 +56,26 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
     private void CreatePostProcessor(Vector2 resolution)
     {
-        _texture?.Dispose();
+        TextureManager.Get(_texture.Hash)?.Dispose();
         _rbo?.Dispose();
         _mesh?.Dispose();
 
         var width = (uint)resolution.X;
         var height = (uint)resolution.Y;
 
-        _texture = GlTexture2D.Load(width, height, TextureFilter.Bilinear, TextureWrap.Clamp, 0, TextureTarget.Texture2D);
+        _texture = new Texture2D()
+        {
+            Size = new Vector2(width, height),
+            TextureFilter = TextureFilter.Bilinear,
+            TextureWrap = TextureWrap.Clamp,
+            MipmapLevel = 0,
+            Hash = Guid.NewGuid().ToString()
+        };
+
         _rbo = new(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
         _mesh = new(_vertices, _indices);
 
-        FBO.AttachTexture2D(_texture);
+        FBO.AttachTexture2D(TextureManager.Load(_texture));
         FBO.AttachRenderBuffer(_rbo);
 
         GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);

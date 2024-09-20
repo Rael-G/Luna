@@ -1,7 +1,5 @@
-﻿using System.Numerics;
-using Luna.OpenGL.Enums;
+﻿using Luna.OpenGL.Enums;
 using Silk.NET.OpenGL;
-using StbiSharp;
 
 namespace Luna.OpenGL;
 
@@ -83,20 +81,16 @@ public abstract class TextureBase : Disposable
 
     public override void Dispose(bool disposing)
     {
-        if (_disposed) return;
-        
         if (TextureManager.StopUsing(Hash) <= 0)
         {
+            if (_disposed) return;
+
             TextureManager.Delete(Hash);
             _gl.DeleteTexture(Handle);
+
+            base.Dispose(disposing);
         }
 
-        base.Dispose(disposing);
-    }
-
-    public override int GetHashCode()
-    {
-        return (MipmapLevel.ToString() + TextureFilter + TextureWrap + TextureTarget + ImageType).GetHashCode();
     }
 
     protected static (PixelFormat, InternalFormat) GetFormat(ImageType type, int numChannels = 3)

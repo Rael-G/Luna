@@ -14,7 +14,7 @@ public class StandardMaterial : Material, IStandardMaterial
         {
             _diffuse = value;
             for(int i = 0; i < _diffuse.Length; i++)
-                SetTexture("material.diffuse" + i, GlTexture2D.Load(_diffuse[i]));
+                SetTexture2D("material.diffuse" + i, _diffuse[i]);
         } 
     }
 
@@ -25,7 +25,7 @@ public class StandardMaterial : Material, IStandardMaterial
         {
             _specullar = value;
             for(int i = 0; i < _specullar.Length; i++)
-                SetTexture("material.specular" + i , GlTexture2D.Load(_specullar[i]));
+                SetTexture2D("material.specular" + i , _specullar[i]);
         }
     }
     
