@@ -8,9 +8,11 @@ public class PostProcessor : Node
 
     public Vector2 Resolution { get; set; } = Window.Size;
 
+    public bool MSAA { get; set; }
+
     public override void Awake()
     {
-        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution });
+        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA });
 
         base.Awake();
     }
@@ -19,10 +21,10 @@ public class PostProcessor : Node
     {
         if (Invisible)  return;
 
-        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, Bind = true, ClearColorBuffer = true, ClearDepthBuffer = true});
+        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, MSAA = MSAA, Bind = true, ClearColorBuffer = true, ClearDepthBuffer = true});
         foreach (var child in Children)
             child.Draw();
-        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, Bind = false });
+        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, MSAA = MSAA, Bind = false });
     
         Injector.Get<IRenderer>().Draw(UID);
     }

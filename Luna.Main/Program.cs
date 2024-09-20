@@ -24,7 +24,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light<SpotLight> light;
+    Light light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -35,16 +35,18 @@ public class Root : Node
         new Vector2(1600, 900),  // HD+ (quase Full HD)
         new Vector2(1920, 1080), // Full HD
         new Vector2(2560, 1440), // Quad HD
-        new Vector2(3840, 2160)  // 4K UHD
+        //new Vector2(3840, 2160)  // 4K UHD
     ];
 
-    int i = 2;
+    int resolutionsIndex = 4;
+
 
     public override void Config()
     {
         Window.Title = "Hello Rectangle!";
-        Window.Size = resolutions[i];
+        Window.Size = resolutions[resolutionsIndex];
         Window.Flags |= WindowFlags.BackFaceCulling;
+        Window.MSAA = 2;
         base.Config();
     }
 
@@ -72,6 +74,7 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
+            MSAA = true
         };
 
         var texture = new Texture2D()
@@ -137,7 +140,7 @@ public class Root : Node
         box.Material.DiffuseMaps = [ texture ];
         box.Material.SpecularMaps = [ texture ];
         
-        light = new Light<SpotLight>(new SpotLight());
+        light = new Light(new DirectionalLight());
         // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
         // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
         // light.LightSource.Diffuse = Vector3.One;
@@ -165,17 +168,18 @@ public class Root : Node
             }
         };
         
-        //postProcessor.AddChild(camera3D, model, light);
+        postProcessor.AddChild(camera3D, model, light);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
-        camera3D.AddChild(light);
-        AddChild(camera3D, model);
+        
+        //AddChild(camera3D, model, light);
+        AddChild(postProcessor);
         base.Start();
     }
 
     public override void Update()
     {
-        model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
+        //model.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
         // box.Transform.Rotation += Vector3.UnitX * Time.DeltaTime;
         //label.Transform.Rotation += Vector3.UnitY * Time.DeltaTime;
 
@@ -209,20 +213,18 @@ public class Root : Node
             if (keyEvent.Key == Keys.Tab && keyEvent.Action == InputAction.Down)
                 Window.CursorMode = CursorMode.Normal;
 
-            if (keyEvent.Key == Keys.Up && keyEvent.Action == InputAction.Down)
+            if (keyEvent.Key == Keys.PageUp && keyEvent.Action == InputAction.Down)
             {
-                i = (i + 1) % resolutions.Length;
-                postProcessor.Resolution = resolutions[i];
+                resolutionsIndex = (resolutionsIndex + 1) % resolutions.Length;
+                postProcessor.Resolution = resolutions[resolutionsIndex];
             }
 
-            if (keyEvent.Key == Keys.Down && keyEvent.Action == InputAction.Down)
+            if (keyEvent.Key == Keys.PageDown && keyEvent.Action == InputAction.Down)
             {
-                i = (i - 1 + resolutions.Length) % resolutions.Length;
-                postProcessor.Resolution = resolutions[i];
+                resolutionsIndex = (resolutionsIndex - 1 + resolutions.Length) % resolutions.Length;
+                postProcessor.Resolution = resolutions[resolutionsIndex];
             }
-
         }
-
     }
 
     bool firstMouse = true;

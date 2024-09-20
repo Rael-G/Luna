@@ -3,10 +3,9 @@ using Luna.Maths;
 
 namespace Luna;
 
-public class Light<T>(T lightSource) : Node 
-    where T : DirectionalLight
+public class Light(DirectionalLight lightSource) : Node 
 {
-    public T LightSource { get; } = lightSource;
+    public DirectionalLight LightSource { get; } = lightSource;
     
     public override void Awake()
     {

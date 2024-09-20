@@ -1,6 +1,6 @@
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGL.RenderObjects;
+namespace Luna.OpenGL;
 
 public class SkyboxObject : RenderObject<SkyboxData>
 {

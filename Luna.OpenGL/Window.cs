@@ -17,6 +17,19 @@ internal unsafe class Window : IWindow
         }
     }
 
+    //Only has effect before window init
+    public int MSAA
+    {
+        get => _msaa;
+        set
+        {
+            _msaa = Math.Clamp(value, 0, 16);
+            Glfw?.WindowHint(WindowHintInt.Samples, _msaa);
+        }
+    }
+
+    private int _msaa;
+
     public CursorMode CursorMode
     {
         get => _cursorMode;
@@ -60,15 +73,13 @@ internal unsafe class Window : IWindow
         {
             _windowSize = value;
             GL?.Viewport(0, 0, (uint)_windowSize.X, (uint)_windowSize.Y);
+            Glfw?.SetWindowSize(WindowHandle, (int)_windowSize.X, (int)_windowSize.Y);
         }
     }
 
     private static bool Vsync 
     {
-        set 
-        {
-            Glfw?.SwapInterval(value? 1 : 0);
-        }
+        set => Glfw?.SwapInterval(value? 1 : 0);
     }
 
     private static bool BackFaceCulling
@@ -111,6 +122,7 @@ internal unsafe class Window : IWindow
         Glfw.WindowHint(WindowHintInt.ContextVersionMajor, 3);
         Glfw.WindowHint(WindowHintInt.ContextVersionMinor, 3);
         Glfw.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+        Glfw.WindowHint(WindowHintInt.Samples, 8);
 
         WindowHandle = Glfw.CreateWindow((int)Size.X, (int)Size.Y, Title, null, null);
 
@@ -140,6 +152,7 @@ internal unsafe class Window : IWindow
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Lequal);
+        GL.Enable(EnableCap.Multisample);
     }
 
     public void Close()

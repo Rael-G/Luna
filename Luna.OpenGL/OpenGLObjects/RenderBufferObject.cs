@@ -1,6 +1,6 @@
 using Silk.NET.OpenGL;
 
-namespace Luna.OpenGL.RenderObjects;
+namespace Luna.OpenGL;
 
 public class RenderBufferObject : Disposable
 {
@@ -22,6 +22,20 @@ public class RenderBufferObject : Disposable
         GlErrorUtils.CheckError("RenderBufferObject");
     }
 
+    public RenderBufferObject(GL gl, RenderbufferTarget renderBufferType, InternalFormat internalFormat, FramebufferAttachment framebufferAttachment, uint width, uint height, int samples)
+    {
+        _gl = gl;
+
+        _renderBufferType = renderBufferType;
+        _frameBufferAttachment = framebufferAttachment;
+        samples = Math.Clamp(samples, 2, _gl.GetInteger(GLEnum.MaxSamples));
+
+        _handle = _gl.GenRenderbuffer();
+        Bind();
+        _gl.RenderbufferStorageMultisample(_renderBufferType, (uint)samples, internalFormat, width, height);
+        GlErrorUtils.CheckError("RenderBufferObject");
+    }
+
     public void Bind()
     {
         _gl.BindRenderbuffer(_renderBufferType, _handle);
@@ -38,7 +52,7 @@ public class RenderBufferObject : Disposable
     {
         Bind();
         _gl.FramebufferRenderbuffer(frameBufferType, _frameBufferAttachment, _renderBufferType, _handle);
-        GlErrorUtils.CheckError("RenderBufferObject AttachRenderBuffer");
+        GlErrorUtils.CheckFrameBuffer(frameBufferType, "RenderBufferObject AttachRenderBuffer");
     }
 
     public override void Dispose(bool disposing)

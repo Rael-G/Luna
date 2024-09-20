@@ -1,5 +1,4 @@
 using System.Numerics;
-using Luna.OpenGL.Enums;
 using Silk.NET.OpenGL;
 using StbiSharp;
 
@@ -8,7 +7,7 @@ namespace Luna.OpenGL;
 public class GlTexture2D : TextureBase
 {
     public string Path { get; }
-    public Vector2 Size { get; private set; }
+    public Vector2 Size { get; protected set; }
     public bool FlipVertically { get; }
 
     protected GlTexture2D(string path, TextureFilter filter, TextureWrap wrap, int mipmaps, 
@@ -22,7 +21,7 @@ public class GlTexture2D : TextureBase
     public static GlTexture2D Create(Texture2D texture2D)
     {
         return string.IsNullOrEmpty(texture2D.Path)
-            ? CreateEmptyTexture(texture2D)
+            ? CreateInMemory(texture2D)
             : CreateFromFile(texture2D);
     }
 
@@ -35,35 +34,40 @@ public class GlTexture2D : TextureBase
         return texture;
     }
 
-    private static GlTexture2D CreateEmptyTexture(Texture2D texture2D)
+    private static GlTexture2D CreateInMemory(Texture2D texture2D)
     {
-        return new GlTexture2D(string.Empty, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
+        var texture = new GlTexture2D(string.Empty, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
             false, TextureTarget.Texture2D, texture2D.Hash, ImageType.Standard)
         {
-            Size = new Vector2(texture2D.Size.X, texture2D.Size.Y)
+            Size = texture2D.Size
         };
+
+        texture.UploadTexture(3, new ReadOnlySpan<byte>());
+        return texture;
     }
 
     private void LoadTextureFromFile()
     {
         using var image = LoadImageFromFile(Path, FlipVertically);
-        UploadTexture(image);
+        Size = new Vector2(image.Width, image.Height);
+        UploadTexture(image.NumChannels, image.Data);
     }
 
-    private void UploadTexture(StbiImage image)
+    private void UploadTexture(int channels, ReadOnlySpan<byte> data)
     {
-        var (pixelFormat, internalFormat) = GetFormat(ImageType, image.NumChannels);
-        Size = new Vector2(image.Width, image.Height);
+        var (pixelFormat, internalFormat) = GetFormat(ImageType, channels);
         
         Handle = _gl.GenTexture();
-        _gl.BindTexture(TextureTarget, Handle);
+        Bind();
 
         _gl.PixelStore(GLEnum.UnpackAlignment, 1);
         TextureFilter = _textureFilter;
         TextureWrap = _textureWrap;
 
-        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, (uint)image.Width, (uint)image.Height, 0, pixelFormat, PixelType.UnsignedByte, image.Data);
+        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, (uint)Size.X, (uint)Size.Y, 0, pixelFormat, PixelType.UnsignedByte, data);
         _gl.GenerateMipmap(TextureTarget);
+
+        Unbind();
 
         GlErrorUtils.CheckError("After Texture Creation");
     }

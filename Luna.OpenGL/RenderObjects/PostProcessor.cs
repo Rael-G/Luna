@@ -1,5 +1,4 @@
 using System.Numerics;
-using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -9,8 +8,11 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     private readonly IMaterial _material;
 
     private Texture2D _texture;
+    private Texture2D? _multisampleTexture;
     private RenderBufferObject? _rbo;
     private Mesh? _mesh;
+
+    private FrameBufferObject _intermediateFbo;
 
     private PostProcessorData _data;
 
@@ -18,8 +20,9 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     {
         _data = data;
         _material = new Material(data.Shaders);
-        
-        CreatePostProcessor(data.Resolution);
+        _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
+
+        CreatePostProcessor(data.Resolution, data.MSAA);
     }
 
     public override void Draw()
@@ -29,10 +32,16 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
         GL.Disable(EnableCap.DepthTest);
 
+        if (_data.MSAA && _multisampleTexture != null)
+        {
+            _material.SetTexture2D("SCREEN_TEXTURE_MULTI_SAMPLE", (Texture2D)_multisampleTexture);
+        }
+
         _material.SetTexture2D("SCREEN_TEXTURE", _texture);
+        
         _material.Bind();
         _mesh!.Draw(PrimitiveType.Triangles);
-        
+
         GL.Enable(EnableCap.DepthTest);
 
         GlErrorUtils.CheckError("PostProcessor Draw");
@@ -40,10 +49,10 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
     public override void Update(PostProcessorData data)
     {
-        if (data.Resolution != _data.Resolution)
+        if (data.Resolution != _data.Resolution || data.MSAA != _data.MSAA)
         {
             _data = data;
-            CreatePostProcessor(data.Resolution);
+            CreatePostProcessor(data.Resolution, data.MSAA);
         }
         base.Update(data);
     }
@@ -51,69 +60,113 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     protected override void Bind(PostProcessorData data)
     {
         GL.Viewport(0, 0, (uint)_data.Resolution.X, (uint)_data.Resolution.Y);
+        GlErrorUtils.CheckError("PostProcessor Bind");
         base.Bind(data);
     }
 
-    private void CreatePostProcessor(Vector2 resolution)
+    protected override void Unbind(PostProcessorData data)
+    {
+        if (_data.MSAA && _multisampleTexture != null)
+        {
+            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO.Handle);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _intermediateFbo.Handle);
+            GL.BlitFramebuffer(0, 0, (int)_data.Resolution.X, (int)_data.Resolution.Y, 
+                0, 0, (int)_data.Resolution.X, (int)_data.Resolution.Y, 
+                ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
+            GlErrorUtils.CheckError("PostProcessor Unbind");
+        }
+        base.Unbind(data);
+    }
+
+    private void CreatePostProcessor(Vector2 resolution, bool msaa)
     {
         TextureManager.Get(_texture.Hash)?.Dispose();
         _rbo?.Dispose();
         _mesh?.Dispose();
-
+        if (_multisampleTexture != null) 
+        {
+            TextureManager.Get(_multisampleTexture?.Hash!)?.Dispose();
+        }
+        
         var width = (uint)resolution.X;
         var height = (uint)resolution.Y;
+
+        _mesh = new Mesh(_vertices, _indices);
 
         _texture = new Texture2D()
         {
             Size = new Vector2(width, height),
             TextureFilter = TextureFilter.Bilinear,
             TextureWrap = TextureWrap.Clamp,
-            MipmapLevel = 0,
             Hash = Guid.NewGuid().ToString()
         };
 
-        _rbo = new(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
-        _mesh = new(_vertices, _indices);
+        var texture = GlTexture2D.Create(_texture);
+        TextureManager.Cache(_texture.Hash, texture);
 
-        FBO.AttachTexture2D(TextureManager.Load(_texture));
-        FBO.AttachRenderBuffer(_rbo);
+        if (msaa)
+        {
+            var samples = Injector.Get<IWindow>().MSAA;
+            _multisampleTexture = new Texture2D()
+            {
+                Size = new Vector2(width, height),
+                TextureFilter = TextureFilter.Bilinear,
+                TextureWrap = TextureWrap.Clamp,
+                Hash = Guid.NewGuid().ToString()
+            };
+
+            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height, samples);
+
+            var msTexture = GlTexture2DMultiSample.Create((Texture2D)_multisampleTexture, samples);
+            TextureManager.Cache(_multisampleTexture?.Hash!, msTexture);
+
+            FBO.AttachTexture2D(msTexture);
+            FBO.AttachRenderBuffer(_rbo);
+
+            _intermediateFbo.AttachTexture2D(texture);
+        }
+        else
+        {
+            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
+
+            FBO.AttachTexture2D(texture);
+            FBO.AttachRenderBuffer(_rbo);
+        }
 
         GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);
     }
 
-    private static readonly uint[] _indices = 
+    private static readonly uint[] _indices =
     [
         0, 1, 2,
         2, 3, 0
     ];
 
-    private readonly static Vertex[] _vertices
-        = 
-        [
-            new Vertex
-            {
-                Position = new (-1.0f, -1.0f, 0.0f),
-                Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (0.0f, 0.0f)
-            },
-            new Vertex
-            {
-                Position = new (1.0f, -1.0f, 0.0f), 
-                Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (1.0f, 0.0f)
-            },
-            new Vertex
-            {
-                Position = new (1.0f, 1.0f, 0.0f),
-                Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (1.0f, 1.0f)
-            },
-            new Vertex
-            {
-                Position = new (-1.0f, 1.0f, 0.0f),
-                Normal = new (0.0f, 0.0f, 1.0f),
-                TexCoords = new (0.0f, 1.0f)
-            }
-        ];
+    private readonly static Vertex[] _vertices =
+    [
+        new Vertex
+        {
+            Position = new (-1.0f, -1.0f, 0.0f),
+            Normal = new (0.0f, 0.0f, 1.0f),
+            TexCoords = new (0.0f, 0.0f)
+        },
+        new Vertex
+        {
+            Position = new (1.0f, -1.0f, 0.0f),
+            Normal = new (0.0f, 0.0f, 1.0f),
+            TexCoords = new (1.0f, 0.0f)
+        },
+        new Vertex
+        {
+            Position = new (1.0f, 1.0f, 0.0f),
+            Normal = new (0.0f, 0.0f, 1.0f),
+            TexCoords = new (1.0f, 1.0f)
+        },
+        new Vertex
+        {
+            Position = new (-1.0f, 1.0f, 0.0f),
+            Normal = new (0.0f, 0.0f, 1.0f),
+            TexCoords = new (0.0f, 1.0f)
+        }
+    ];
 }
-

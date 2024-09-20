@@ -5,6 +5,7 @@ namespace Luna;
 public interface IWindow
 {
     WindowFlags Flags { get; set; }
+    public int MSAA { get; set; }
     CursorMode CursorMode { get; set; }
     DepthMode DepthMode { get; set; }
     string Title { get; set;}

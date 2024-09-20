@@ -27,5 +27,5 @@ public static class Window
 
     public static DepthMode DepthMode { get => EngineWindow.DepthMode; set => EngineWindow.DepthMode = value; }
 
-
+    public static int MSAA { get => EngineWindow.MSAA; set => EngineWindow.MSAA = value; }
 }

@@ -1,5 +1,4 @@
 using System.Numerics;
-using Luna.OpenGL.Enums;
 using Silk.NET.OpenGL;
 using StbiSharp;
 

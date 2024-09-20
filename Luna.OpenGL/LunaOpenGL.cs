@@ -1,6 +1,4 @@
-﻿using Luna.OpenGL.RenderObjects;
-
-namespace Luna.OpenGL;
+﻿namespace Luna.OpenGL;
 
 public static class LunaOpenGL
 {

@@ -1,4 +1,4 @@
-namespace Luna.OpenGL.Enums;
+namespace Luna.OpenGL;
 
 public enum ImageType
 {

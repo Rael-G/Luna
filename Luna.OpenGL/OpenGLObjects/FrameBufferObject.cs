@@ -1,5 +1,3 @@
-using Luna.OpenGL.Enums;
-using Luna.OpenGL.RenderObjects;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -35,9 +33,9 @@ public class FrameBufferObject : Disposable
     {
         Bind();
         var attachment = AttachmentType(texture.ImageType);
-        _gl.FramebufferTexture2D(_frameBufferType, attachment, TextureTarget.Texture2D, texture.Handle, texture.MipmapLevel);
+        _gl.FramebufferTexture2D(_frameBufferType, attachment, texture.TextureTarget, texture.Handle, texture.MipmapLevel);
+        GlErrorUtils.CheckFrameBuffer(_frameBufferType, "FrameBufferObject AttachTexture2D");
         Unbind();
-        GlErrorUtils.CheckError("FrameBufferObject AttachTexture2D");
     }
 
     public void AttachRenderBuffer(RenderBufferObject rbo)
