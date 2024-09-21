@@ -140,11 +140,11 @@ public class Root : Node
         box.Material.DiffuseMaps = [ texture ];
         box.Material.SpecularMaps = [ texture ];
         
-        light = new Light(new DirectionalLight());
-        // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
-        // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
-        // light.LightSource.Diffuse = Vector3.One;
-        light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
+        light = new Light(new SpotLight());
+        light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
+        light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
+        light.LightSource.Diffuse = Vector3.One;
+        //light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
         box.Material.IsAffectedByLight = false;
 
         model = new Model()
@@ -168,7 +168,8 @@ public class Root : Node
             }
         };
         
-        postProcessor.AddChild(camera3D, model, light);
+        camera3D.AddChild(light);
+        postProcessor.AddChild(camera3D, model);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         
