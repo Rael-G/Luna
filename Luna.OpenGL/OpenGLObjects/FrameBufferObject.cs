@@ -29,10 +29,9 @@ public class FrameBufferObject : Disposable
         GlErrorUtils.CheckError("FrameBufferObject Unbind");
     }
 
-    public void AttachTexture2D(GlTexture2D texture)
+    public void AttachTexture2D(GlTexture2D texture, FramebufferAttachment attachment)
     {
         Bind();
-        var attachment = AttachmentType(texture.ImageType);
         _gl.FramebufferTexture2D(_frameBufferType, attachment, texture.TextureTarget, texture.Handle, texture.MipmapLevel);
         GlErrorUtils.CheckFrameBuffer(_frameBufferType, "FrameBufferObject AttachTexture2D");
         Unbind();
@@ -54,14 +53,5 @@ public class FrameBufferObject : Disposable
 
         base.Dispose(disposing);
     }
-
-    private FramebufferAttachment AttachmentType(ImageType imageType)
-        => imageType switch
-        {
-            ImageType.DepthMap => FramebufferAttachment.DepthAttachment,
-            ImageType.StencilMap => FramebufferAttachment.StencilAttachment,
-            ImageType.DepthStencilMap => FramebufferAttachment.DepthStencilAttachment,
-            _ => FramebufferAttachment.ColorAttachment0,
-        };
     
 }

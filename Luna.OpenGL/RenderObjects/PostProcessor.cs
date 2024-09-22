@@ -98,7 +98,8 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
             Size = new Vector2(width, height),
             TextureFilter = TextureFilter.Bilinear,
             TextureWrap = TextureWrap.Clamp,
-            Hash = Guid.NewGuid().ToString()
+            Hash = Guid.NewGuid().ToString(),
+            ImageType = ImageType.Linear
         };
 
         var texture = GlTexture2D.Create(_texture);
@@ -112,7 +113,8 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
                 Size = new Vector2(width, height),
                 TextureFilter = TextureFilter.Bilinear,
                 TextureWrap = TextureWrap.Clamp,
-                Hash = Guid.NewGuid().ToString()
+                Hash = Guid.NewGuid().ToString(),
+                ImageType = ImageType.Linear
             };
 
             _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height, samples);
@@ -120,16 +122,16 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
             var msTexture = GlTexture2DMultiSample.Create((Texture2D)_multisampleTexture, samples);
             TextureManager.Cache(_multisampleTexture?.Hash!, msTexture);
 
-            FBO.AttachTexture2D(msTexture);
+            FBO.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
             FBO.AttachRenderBuffer(_rbo);
 
-            _intermediateFbo.AttachTexture2D(texture);
+            _intermediateFbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
         }
         else
         {
             _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
 
-            FBO.AttachTexture2D(texture);
+            FBO.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
             FBO.AttachRenderBuffer(_rbo);
         }
 

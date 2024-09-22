@@ -141,9 +141,9 @@ public class Root : Node
         box.Material.SpecularMaps = [ texture ];
         
         light = new Light(new SpotLight());
-        light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
-        light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
-        light.LightSource.Diffuse = Vector3.One;
+        // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
+        // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
+        // light.LightSource.Diffuse = Vector3.One;
         //light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
         box.Material.IsAffectedByLight = false;
 
@@ -173,7 +173,7 @@ public class Root : Node
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         
-        //AddChild(camera3D, model, light);
+        //AddChild(camera3D, model);
         AddChild(postProcessor);
         base.Start();
     }
@@ -233,7 +233,7 @@ public class Root : Node
     float pitch =  0.0f;
     float lastX =  Window.Size.X / 2;
     float lastY =  Window.Size.Y / 2;
-    float fov   =  65.0f;
+    float fov   =  45.0f;
     Vector3 cameraFront;
 
     public void Movement()

@@ -8,7 +8,7 @@ public class GlTexture2DMultiSample : GlTexture2D
     public int Samples { get; set; }
 
     private GlTexture2DMultiSample(Vector2 size, TextureFilter filter, TextureWrap wrap, string hash, int samples)
-        : base(string.Empty, filter, wrap, 0, false, TextureTarget.Texture2DMultisample, hash, ImageType.Standard)
+        : base(string.Empty, filter, wrap, 0, false, TextureTarget.Texture2DMultisample, hash, ImageType.Linear)
     {
         Samples = Math.Clamp(samples, 2, _gl.GetInteger(GLEnum.MaxSamples));
         Size = size;

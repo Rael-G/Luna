@@ -19,7 +19,7 @@ public class GlCubeMap : TextureBase
 
     public static GlCubeMap Create(CubeMap cubeMap)
     {
-        var texture = new GlCubeMap(cubeMap.Paths, cubeMap.TextureFilter, cubeMap.TextureWrap, cubeMap.MipmapLevel, cubeMap.FlipV, cubeMap.Hash, ImageType.Standard);
+        var texture = new GlCubeMap(cubeMap.Paths, cubeMap.TextureFilter, cubeMap.TextureWrap, cubeMap.MipmapLevel, cubeMap.FlipV, cubeMap.Hash, ImageType.Linear);
         texture.LoadTextureFromFiles();
         return texture;
     }

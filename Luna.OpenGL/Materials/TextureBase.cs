@@ -94,47 +94,35 @@ public abstract class TextureBase : Disposable
 
     protected static (PixelFormat, InternalFormat) GetFormat(ImageType type, int numChannels = 3)
     {
-        PixelFormat pixelFormat;
-        InternalFormat internalFormat;
-
-        switch (type)
+        var pixelFormat = numChannels switch
         {
-            case ImageType.DepthMap:
-                pixelFormat = PixelFormat.DepthComponent;
-                internalFormat = InternalFormat.DepthComponent; // 24-bit depth map
-                break;
-            
-            case ImageType.StencilMap:
-                pixelFormat = PixelFormat.StencilIndex;
-                internalFormat = InternalFormat.StencilIndex;
-                break;
+            1 => PixelFormat.Red, 
+            2 => PixelFormat.RG,
+            3 => PixelFormat.Rgb,
+            4 => PixelFormat.Rgba,
+            _ => throw new ArgumentException("Unsupported number of channels")
+        };
 
-            case ImageType.DepthStencilMap:
-                pixelFormat = PixelFormat.DepthStencil;
-                internalFormat = InternalFormat.Depth24Stencil8;
-                break;
+        var internalFormat = type switch
+        {
+            ImageType.Linear => numChannels switch
+            {
+                1 => InternalFormat.R8,
+                2 => InternalFormat.RG8,
+                3 => InternalFormat.Rgb8,
+                4 => InternalFormat.Rgba8,
+                _ => throw new ArgumentException("Unsupported number of channels")
+            },
+            _ => numChannels switch
+            {
+                1 => InternalFormat.R8,
+                2 => InternalFormat.RG8,
+                3 => InternalFormat.Srgb8,
+                4 => InternalFormat.Srgb8Alpha8,
+                _ => throw new ArgumentException("Unsupported number of channels")
+            },
+        };
 
-            default:
-                pixelFormat = numChannels switch
-                {
-                    1 => PixelFormat.Red,        // Monochrome
-                    2 => PixelFormat.RG,         // Two-channel (e.g., RG format)
-                    3 => PixelFormat.Rgb,        // RGB
-                    4 => PixelFormat.Rgba,       // RGBA
-                    _ => throw new ArgumentException("Unsupported number of channels")
-                };
-
-                internalFormat = numChannels switch
-                {
-                    1 => InternalFormat.R8,      // 8-bit Red channel
-                    2 => InternalFormat.RG8,     // 8-bit RG
-                    3 => InternalFormat.Rgb8,    // 8-bit RGB
-                    4 => InternalFormat.Rgba8,   // 8-bit RGBA
-                    _ => throw new ArgumentException("Unsupported number of channels")
-                };
-                break;
-        }
-        
         return (pixelFormat, internalFormat);
     }
 }

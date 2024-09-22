@@ -84,10 +84,24 @@ public static unsafe class ModelLoader
             textures.Add(new Texture2D()
             { 
                 Path = Path.Combine(directory, path),
-                TextureFilter = modelData.TextureFilter
+                TextureFilter = modelData.TextureFilter,
+                ImageType = GetImageType(type)
             });
         }
 
         return [.. textures];
+    }
+
+    private static ImageType GetImageType(TextureType textureType)
+    {
+        if (textureType == TextureType.Diffuse || 
+        textureType == TextureType.Emissive || 
+        textureType == TextureType.BaseColor || 
+        textureType == TextureType.EmissionColor)
+        {
+            return ImageType.SRGB;
+        }
+
+        return ImageType.Linear;
     }
 }

@@ -28,7 +28,7 @@ public class DirectionalLight
     }
 
     private Vector3 _ambient = new(0.2f, 0.2f, 0.2f);
-    private Vector3 _diffuse = new(1f, 1f, 1f);
-    private Vector3 _specullar = new(0.8f, 0.8f, 0.8f);
+    private Vector3 _diffuse = new(.9f, .9f, .9f);
+    private Vector3 _specullar = new(0.5f, 0.5f, 0.5f);
     
 }

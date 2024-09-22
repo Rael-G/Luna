@@ -12,6 +12,7 @@ public struct CubeMap
     public TextureWrap TextureWrap { get; set; } = TextureWrap.Clamp;
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
+    public ImageType ImageType { get; set; } = ImageType.SRGB;
 
     public string Hash
     { 

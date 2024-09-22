@@ -28,7 +28,7 @@ public class GlTexture2D : TextureBase
     private static GlTexture2D CreateFromFile(Texture2D texture2D)
     {
         var texture = new GlTexture2D(texture2D.Path, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
-            texture2D.FlipV, TextureTarget.Texture2D, texture2D.Hash, ImageType.Standard);
+            texture2D.FlipV, TextureTarget.Texture2D, texture2D.Hash, texture2D.ImageType);
 
         texture.LoadTextureFromFile();
         return texture;
@@ -37,7 +37,7 @@ public class GlTexture2D : TextureBase
     private static GlTexture2D CreateInMemory(Texture2D texture2D)
     {
         var texture = new GlTexture2D(string.Empty, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
-            false, TextureTarget.Texture2D, texture2D.Hash, ImageType.Standard)
+            false, TextureTarget.Texture2D, texture2D.Hash, texture2D.ImageType)
         {
             Size = texture2D.Size
         };
