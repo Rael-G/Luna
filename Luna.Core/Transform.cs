@@ -28,6 +28,8 @@ public class Transform
             if (Parent is null) return Position - Origin;
             return Parent.GlobalPosition + Position - Origin;
         }
+
+        set => Position = value - Parent?.GlobalPosition?? Vector3.Zero;
     }
 
     public Vector3 Rotation { get; set; }
@@ -35,6 +37,8 @@ public class Transform
     public Vector3 GlobalRotation 
     { 
         get => Parent?.GlobalRotation + Rotation?? Rotation;
+
+        set => Rotation = value - Parent?.GlobalRotation?? Vector3.Zero;
     }
 
     public Vector3 Scale { get; set; }
@@ -42,6 +46,8 @@ public class Transform
     public Vector3 GlobalScale
     {
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
+
+        set => Scale = value / Parent?.GlobalScale?? Vector3.Zero;
     }
 
     public Vector3 Origin { get; set; }
@@ -57,6 +63,7 @@ public class Transform
     public Vector3 GlobalEulerAngles 
     { 
         get => GlobalRotation.ToDegrees();
+        set => GlobalRotation = value.ToRadians();
     }
 
     public Quaternion Quaternion 
@@ -68,13 +75,14 @@ public class Transform
     public Quaternion GlobalQuaternion 
     { 
         get => GlobalRotation.ToQuaternion();
+        set => GlobalRotation = value.ToVector3();
     }
 
     internal Matrix4x4 ModelMatrix()
         =>  GlobalScale.CreateScale() *
             (-Origin).CreateTranslation() *
             GlobalQuaternion.ToMatrix4x4() *
-            (Origin).CreateTranslation() *
+            Origin.CreateTranslation() *
             GlobalPosition.CreateTranslation();
 
 }
