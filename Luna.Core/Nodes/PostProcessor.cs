@@ -21,11 +21,10 @@ public class PostProcessor : Node
     {
         if (Invisible)  return;
 
-        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, MSAA = MSAA, Bind = true, ClearColorBuffer = true, ClearDepthBuffer = true});
+        var map = Injector.Get<IRenderer>();
+        map.Draw(UID);
+
         foreach (var child in Children)
             child.Draw();
-        UpdateRenderObject(new PostProcessorData{ Resolution = Resolution, MSAA = MSAA, Bind = false });
-    
-        Injector.Get<IRenderer>().Draw(UID);
     }
 }

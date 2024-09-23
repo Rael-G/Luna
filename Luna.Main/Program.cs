@@ -44,7 +44,7 @@ public class Root : Node
         Window.Title = "Hello Rectangle!";
         Window.Size = resolutions[resolutionsIndex];
         Window.Flags |= WindowFlags.BackFaceCulling;
-        Window.MSAA = 2;
+        Window.MSAA = 0;
         base.Config();
     }
 
@@ -72,7 +72,7 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
-            MSAA = true
+            MSAA = false
         };
 
         var texture = new Texture2D()
@@ -167,12 +167,10 @@ public class Root : Node
         };
         
         camera3D.AddChild(light);
-        postProcessor.AddChild(camera3D, model);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         
-        //AddChild(camera3D, model);
-        AddChild(postProcessor);
+        AddChild(camera3D, model, postProcessor);
         base.Start();
     }
 

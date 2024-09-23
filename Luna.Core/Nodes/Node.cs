@@ -219,7 +219,7 @@ public class Node : Disposable
         if (Invisible)  return;
 
         var map = Injector.Get<IRenderer>();
-        map.Draw(UID);
+        map.Enqueue(UID);
 
         foreach (var child in Children)
             child.Draw();

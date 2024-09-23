@@ -35,6 +35,7 @@ public static class Host
 
             Window.EngineWindow.BeginRender();
             Tree.Root.Draw();
+            Injector.Get<IRenderer>().DrawQueue();
             Window.EngineWindow.EndRender();
         }
 

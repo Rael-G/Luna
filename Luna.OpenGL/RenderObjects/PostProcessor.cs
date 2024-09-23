@@ -3,7 +3,7 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-public class PostProcessor : FrameBuffer<PostProcessorData>
+public class PostProcessor :  RenderObject<PostProcessorData>
 {
     private readonly IMaterial _material;
 
@@ -12,6 +12,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     private RenderBufferObject? _rbo;
     private Mesh? _mesh;
 
+    public FrameBufferObject FBO { get; set; }
     private FrameBufferObject _intermediateFbo;
 
     private PostProcessorData _data;
@@ -20,6 +21,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
     {
         _data = data;
         _material = new Material(data.Shaders);
+        FBO = new(GL, FramebufferTarget.Framebuffer);
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
 
         CreatePostProcessor(data.Resolution, data.MSAA);
@@ -27,6 +29,10 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
 
     public override void Draw()
     {
+        Bind();
+        Injector.Get<IRenderer>().DrawQueue();
+        Unbind();
+
         var size = Injector.Get<IWindow>().Size;
         GL.Viewport(0, 0, (uint)size.X, (uint)size.Y);
 
@@ -54,17 +60,17 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
             _data = data;
             CreatePostProcessor(data.Resolution, data.MSAA);
         }
-        base.Update(data);
     }
 
-    protected override void Bind(PostProcessorData data)
+    private void Bind()
     {
         GL.Viewport(0, 0, (uint)_data.Resolution.X, (uint)_data.Resolution.Y);
+        FBO.Bind();
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GlErrorUtils.CheckError("PostProcessor Bind");
-        base.Bind(data);
     }
 
-    protected override void Unbind(PostProcessorData data)
+    private void Unbind()
     {
         if (_data.MSAA && _multisampleTexture != null)
         {
@@ -75,7 +81,7 @@ public class PostProcessor : FrameBuffer<PostProcessorData>
                 ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
             GlErrorUtils.CheckError("PostProcessor Unbind");
         }
-        base.Unbind(data);
+        FBO.Unbind();
     }
 
     private void CreatePostProcessor(Vector2 resolution, bool msaa)
