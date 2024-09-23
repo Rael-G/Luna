@@ -2,7 +2,6 @@
 using Luna;
 using Luna.Audio;
 using Luna.Core;
-using Luna.Core.Events;
 using Luna.Maths;
 using Luna.OpenGL;
 
@@ -13,8 +12,7 @@ internal class Program
         LunaOpenGL.AddServices();
         LunaAudio.AddServices();
         var root = new Root();
-        var host = new Host(root);
-        host.Run();
+        Host.Run(root);
     }
 }
 

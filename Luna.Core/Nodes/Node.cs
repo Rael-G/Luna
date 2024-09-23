@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Xml.Serialization;
 using Luna.Maths;
 
 namespace Luna;
@@ -52,12 +53,25 @@ public class Node : Disposable
         };
     }
 
+    [XmlIgnore]
     public Action? ConfigAction { get; set; }
+
+    [XmlIgnore]
     public Action? AwakeAction { get; set; }
+
+    [XmlIgnore]
     public Action? StartAction { get; set; }
+
+    [XmlIgnore]
     public Action? EarlyUpdateAction { get; set; }
+
+    [XmlIgnore]
     public Action? UpdateAction { get; set; }
+
+    [XmlIgnore]
     public Action? LateUpdateAction { get; set; }
+
+    [XmlIgnore]
     public Action? FixedUpdateAction { get; set; }
 
     private bool _awakened;
