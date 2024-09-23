@@ -1,6 +1,4 @@
-using System;
-
-namespace Luna.Core.Events;
+namespace Luna;
 
 public class MouseButtonEvent(MouseButton button, InputAction action, KeyModifiers mods) : InputEvent
 {

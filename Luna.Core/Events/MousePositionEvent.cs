@@ -1,6 +1,4 @@
-using System;
-
-namespace Luna.Core.Events;
+namespace Luna;
 
 public class MousePositionEvent(double x, double y) : InputEvent
 {
