@@ -61,7 +61,7 @@ internal static class ShaderManager
         if (!File.Exists(filePath))
             return GetFromSource(program);
 
-        var fileStream = File.OpenRead(filePath);
+        using var fileStream = File.OpenRead(filePath);
         using var binaryReader = new BinaryReader(fileStream);
 
         var bynaryFormat = (GLEnum)binaryReader.ReadInt32();
@@ -73,7 +73,11 @@ internal static class ShaderManager
         if (!GlErrorUtils.CheckProgramLink(id))
         {
             _gl.DeleteProgram(id);
-            GetFromSource(program);
+
+            binaryReader.Dispose();
+            fileStream.Dispose();
+
+            return GetFromSource(program);
         }
 
         Shaders.Add(program.Name, id);
