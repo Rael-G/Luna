@@ -2,7 +2,7 @@
 
 public static class SystemExtensions
 {
-    public static void Add<T>(this List<T> list, params T[] args)
+    public static void Add<T>(this IEnumerable<T> list, params T[] args)
     {
         foreach(var arg in args)
             list.Add(arg);
