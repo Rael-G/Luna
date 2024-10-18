@@ -39,7 +39,6 @@ public class DynamicBody2D
     {
         Transform.Position = Body!.GetPosition().ToPixels().ToVector3();
         Transform.Rotation = new (Transform.Rotation.X, Transform.Rotation.Y, Body.GetAngle());
-
         base.FixedUpdate();
     }
 

@@ -88,6 +88,13 @@ public abstract class CollisionBody2D : Node
 
     public override void Awake()
     {
+        CreateBody();
+        
+        base.Awake();
+    }
+
+    private void CreateBody()
+    {
         var world = WorldManager.GetWorld(WorldIndex);
         Body = world.CreateBody(BodyDef);
 
@@ -95,8 +102,6 @@ public abstract class CollisionBody2D : Node
             throw new LunaBox2DException("Shape2D should be defined before CollisionBody2D.Awake().");
         
         Fixture = Body.CreateFixture(FixtureDef);
-        
-        base.Awake();
     }
 }
 

@@ -6,11 +6,26 @@ using Iteration = (int Velocity, int Position);
 
 public class WorldManager : Node
 {
-    public static WorldManager Instance => _instance?? new();
+    public static WorldManager Instance
+    {
+        get
+        {
+            if (_instance is null)
+            {
+                var worldManager = Tree.Root.FindNode<WorldManager>("WorldManager");
+                if (worldManager is null)
+                {
+                    return _instance = new();
+                }
+
+                return worldManager;
+            }
+
+            return _instance;
+        }
+    }
     
     public static float PixelsPerMeter { get; set; } = 1;
-    public static int VelocityIterations { get; set; } = 8;
-    public static int PositionIterations { get; set; } = 3;
 
     private static readonly Dictionary<int, World> Worlds = [];
     private static readonly Dictionary<int, Iteration> Iterations = [];
@@ -23,16 +38,25 @@ public class WorldManager : Node
     {
     }
 
-    public static World GetWorld(int worldIndex)
+    public static World GetWorld(int worldIndex = 0)
     {
+        if (Tree.FindNodeByUID<WorldManager>(Instance.UID) is null)
+        {
+            Tree.Root.AddChild(Instance);
+        }
+
         if (Worlds.TryGetValue(worldIndex, out var world))
+        {
             return world;
+        }
 
         var newWorld = new World();
         newWorld.SetContactListener(_contactListener);
         Worlds.Add(worldIndex, newWorld);
         if (!Iterations.TryGetValue(worldIndex, out _))
+        {
             Iterations[worldIndex] = (8, 3);
+        }
 
         return newWorld;
     }
@@ -40,7 +64,7 @@ public class WorldManager : Node
     public static void SetIterations(int worldIndex, Iteration iteration)
         => Iterations[worldIndex] = iteration;
     
-    public void FixedUpdate()
+    public override void FixedUpdate()
     {
         foreach(var pair in Worlds)
         {
