@@ -5,5 +5,6 @@ using Luna.OpenGL;
 
 LunaOpenGL.AddServices();
 LunaAudio.AddServices();
-var root = new Root();
+Host.CreateWindow();
+var root = new Test();
 Host.Run(root);

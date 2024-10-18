@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Luna.Editor;
@@ -19,41 +20,50 @@ public class ProjectHandler : IEditor
 
         foreach (var package in packages)
         {
-            RunDotnetCommand($"add package {package}", projectDir);
+            //TODO Nuget packages for Luna
+            //RunDotnetCommand($"add package {package}", projectDir);
+            var tempReferencePath = "C:\\Users\\israe\\OneDrive\\Documentos\\Projetos\\C#\\Luna";
+            RunDotnetCommand($"add reference {Path.Combine(tempReferencePath, package)}", projectDir);
         }
 
         AddProjectInfo(projectDir, projectName);
         CreateProgramClass(usings, services, projectDir);
-        SaveRootFile(projectDir, new Node());
+        CreateClass(projectName, "Root", "Node", projectDir);
+        RunDotnetCommand("build", projectDir);
+        var assembly = GetAssembly(projectDir, projectName);
+        var root = InstatiateClassAsNode(assembly, projectName + ".Root");
+        SaveRootFile(projectDir, root);
     }
 
-    public static void SaveRootFile(string projectPath, Node root)
-        => NodeSerializer.SaveToFile(root, Path.Combine(projectPath, "rootfile"));
+    public static Node OpenProject(string path)
+    {
+        var projectName = Path.GetFileName(path)!;
+        var assembly = GetAssembly(path, projectName);
+        var type = GetTypeFromAssembly(assembly, projectName + ".Root");
 
-    public Node ReadRootFile()
-        => NodeSerializer.LoadFromFile<Node>(Path.Combine(Directory.GetCurrentDirectory(), "rootfile"))?? new Node();
+        return NodeSerializer.LoadFromFile(Path.Combine(path, "rootfile"), type, assembly) as Node??
+            throw new LunaException($"Can't get root node from rootfile at: {path}");
+    }  
+
+    public static void SaveRootFile(string projectPath, Node root)
+        => NodeSerializer.SaveToFile(root, Path.Combine(projectPath, "rootfile"), Assembly.GetAssembly(root.GetType()));
+
+    public T? ReadRootFile<T>() where T : Node
+    {
+        return NodeSerializer.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "rootfile"), typeof(T), Assembly.GetAssembly(typeof(T))) as T;
+    }
 
     public static void CreateClass(string nameSpace, string className, string baseClassName, string directory)
     {
         string filePath = Path.Combine(directory, $"{className}.cs");        
-        string classContent = $@"
-using Luna;
+        string classContent = 
+$@"using Luna;
 
-namespace {nameSpace}
+namespace {nameSpace};
+
+public class {className} : {baseClassName}
 {{
-    public class {className} : {baseClassName}
-    {{
 
-        public override void Start()
-        {{
-            
-        }}
-
-        public override void Update()
-        {{
-            
-        }}
-    }}
 }}
 ";
         File.WriteAllText(filePath, classContent);
@@ -68,20 +78,18 @@ namespace {nameSpace}
         }
 
         string servicesContent = string.Empty;
-        foreach(var s in usings)
+        foreach(var s in services)
         {
             servicesContent += $"{s}.AddServices();\n";
         }
 
-        string programContent = $@"
-using Luna;
+        string programContent = 
+$@"using Luna;
 {usingsContent}
-
 {servicesContent}
-
-var root = Injector.Get<IEditor>().ReadRootFile();
+Host.CreateWindow();
+var root = Injector.Get<IEditor>().ReadRootFile<Root>();
 Host.Run(root);
-
 ";
         File.WriteAllText(Path.Combine(projectDirectory, "Program.cs"), programContent);
         Console.WriteLine("Created Program.cs.");
@@ -132,5 +140,23 @@ Host.Run(root);
 
         projectXml?.Save(csprojPath);
         Console.WriteLine($"Updated {csprojPath} with assets info.");
+    }
+
+    private static Assembly GetAssembly(string projectPath, string projectName) 
+    {
+        var dll = Path.Combine(projectPath, "bin", "Debug", "net8.0",  projectName + ".dll");
+        return Assembly.LoadFrom(dll);
+    }
+
+    private static Type GetTypeFromAssembly(Assembly assembly, string className)
+        => assembly.GetType(className)??
+            throw new LunaException($"Failed to get node type of {className} from assembly : {assembly.GetName()}.");
+
+    private static Node InstatiateClassAsNode(Assembly assembly, string className)
+    {
+        var nodeType = GetTypeFromAssembly(assembly, className);
+
+        return Activator.CreateInstance(nodeType) as Node??
+            throw new LunaException($"Failed to create an instance of {nodeType} as a {nameof(Node)}.");
     }
 }

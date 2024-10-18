@@ -3,7 +3,7 @@ using Luna.Maths;
 
 namespace Luna.Editor.ViewPort;
 
-public class Player(PerspectiveCamera camera3D) : Node
+public class Player : Node
 {
     bool firstMouse = true;
     float yaw   = -90.0f;
@@ -13,10 +13,12 @@ public class Player(PerspectiveCamera camera3D) : Node
     float fov   =  45.0f;
     Vector3 cameraFront;
 
+    PerspectiveCamera Camera3D { get; set; }
+
     public override void Update()
     {
         Movement();
-        camera3D.Target = Transform.GlobalPosition + cameraFront.Normalize();
+        Camera3D.Target = Transform.GlobalPosition + cameraFront.Normalize();
     }
 
     public override void Input(InputEvent inputEvent)
@@ -43,7 +45,7 @@ public class Player(PerspectiveCamera camera3D) : Node
     public void Movement()
     {
         float cameraSpeed;
-        var right = cameraFront.Cross(camera3D.Up).Normalize();
+        var right = cameraFront.Cross(Camera3D.Up).Normalize();
 
         if (Keyboard.KeyDown(Keys.ShiftLeft))
             cameraSpeed = 10f * Time.DeltaTime;
@@ -51,17 +53,17 @@ public class Player(PerspectiveCamera camera3D) : Node
             cameraSpeed = 5f * Time.DeltaTime;
 
         if (Keyboard.KeyDown(Keys.W))
-            camera3D.Transform.Position += cameraSpeed * cameraFront;
+            Camera3D.Transform.Position += cameraSpeed * cameraFront;
         if (Keyboard.KeyDown(Keys.S))
-            camera3D.Transform.Position += -cameraSpeed * cameraFront;
+            Camera3D.Transform.Position += -cameraSpeed * cameraFront;
         if (Keyboard.KeyDown(Keys.A))
-            camera3D.Transform.Position += -cameraSpeed * right;
+            Camera3D.Transform.Position += -cameraSpeed * right;
         if (Keyboard.KeyDown(Keys.D))
-            camera3D.Transform.Position += cameraSpeed * right;
+            Camera3D.Transform.Position += cameraSpeed * right;
         if (Keyboard.KeyDown(Keys.Space))
-            camera3D.Transform.Position += cameraSpeed * camera3D.Up;
+            Camera3D.Transform.Position += cameraSpeed * Camera3D.Up;
         if (Keyboard.KeyDown(Keys.ControlLeft))
-            camera3D.Transform.Position += -cameraSpeed * camera3D.Up;
+            Camera3D.Transform.Position += -cameraSpeed * Camera3D.Up;
     }
 
     public void Mouse(float xpos, float ypos)
@@ -107,7 +109,7 @@ public class Player(PerspectiveCamera camera3D) : Node
         if (fov > 45.0f)
             fov = 45.0f;
 
-        camera3D.Fov = fov.ToRadians();
+        Camera3D.Fov = fov.ToRadians();
     }
 
 }

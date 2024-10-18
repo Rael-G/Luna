@@ -4,5 +4,5 @@ namespace Luna;
 
 public interface IEditor
 {
-    Node ReadRootFile();
+    T ReadRootFile<T>() where T : Node;
 }
