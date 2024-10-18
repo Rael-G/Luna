@@ -122,7 +122,7 @@ internal unsafe class Window : IWindow
         Glfw.WindowHint(WindowHintInt.ContextVersionMajor, 3);
         Glfw.WindowHint(WindowHintInt.ContextVersionMinor, 3);
         Glfw.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
-        Glfw.WindowHint(WindowHintInt.Samples, 8);
+        Glfw.WindowHint(WindowHintInt.Samples, MSAA);
 
         WindowHandle = Glfw.CreateWindow((int)Size.X, (int)Size.Y, Title, null, null);
 
