@@ -2,16 +2,15 @@
 
 public static class Host
 {
+    public static void CreateWindow()
+    {
+        Window.EngineWindow.Init();
+    }
+    
     public static void Run(Node root)
     {
         Tree.Root = root;
         
-        Time.StartTimer();
-        
-        Tree.Root.InternalConfig();
-
-        Window.EngineWindow.Init();
-
         Injector.Get<IWindow>().SetKeyCallback((key, action, mods) 
             => Tree.Root.Input(new KeyboardEvent(key, action, mods)));
         Injector.Get<IWindow>().SetMouseCursorPosCallback((x, y) 
@@ -23,6 +22,8 @@ public static class Host
 
        Tree.Root.InternalAwake();
        Tree.Root.InternalStart();
+
+       Time.StartTimer();
 
         while (Window.Running)
         {
