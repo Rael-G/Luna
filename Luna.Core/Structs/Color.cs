@@ -3,6 +3,7 @@ using Luna.Maths;
 
 namespace Luna;
 
+[Serialize]
 public struct Color
 {
     public Color(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f)
@@ -11,6 +12,15 @@ public struct Color
         G = g;
         B = b;
         A = a;
+    }
+
+    //values from 0 - 255
+    public Color(int r = 0, int g = 0, int b = 0, int a = 255)
+    {
+        R = Math.Clamp(r, 0, 255) / 255.0f;
+        G = Math.Clamp(g, 0, 255) / 255.0f;
+        B = Math.Clamp(b, 0, 255) / 255.0f;
+        A = Math.Clamp(a, 0, 255) / 255.0f;
     }
 
     public float R 
@@ -51,13 +61,7 @@ public struct Color
         );
 
     public static implicit operator Color(System.Drawing.Color color)
-        => new()
-    {
-        R = color.R / 255.0f,
-        G = color.G / 255.0f,
-        B = color.B / 255.0f,
-        A = color.A / 255.0f
-    };
+        => new(color.R, color.G, color.B, color.A);
 
     public readonly Vector3 RGB()
         => new(R, G, B);
