@@ -1,11 +1,12 @@
 ﻿using System.Numerics;
-using System.Xml.Serialization;
-using Luna.Maths;
+using System.Runtime.Serialization;
 
 namespace Luna;
 
+[Serialize]
 public class Node : Disposable
 {
+    [IgnoreDataMember]
     public string UID { get; }
 
     public string Alias { get; set; } 
@@ -14,9 +15,9 @@ public class Node : Disposable
 
     public bool Invisible { get; set; }
 
-    public virtual Transform Transform { get; }
+    public virtual Transform Transform { get; set; }
 
-    protected List<Node> Children { get; set; }
+    public List<Node> Children { get; set; }
 
     protected virtual Node? Parent 
     { 
@@ -53,25 +54,25 @@ public class Node : Disposable
         };
     }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? ConfigAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? AwakeAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? StartAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? EarlyUpdateAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? UpdateAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? LateUpdateAction { get; set; }
 
-    [XmlIgnore]
+    [IgnoreDataMember]
     public Action? FixedUpdateAction { get; set; }
 
     private bool _awakened;

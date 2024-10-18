@@ -1,11 +1,8 @@
-﻿using System.Numerics;
-using Luna.Maths;
+﻿namespace Luna;
 
-namespace Luna;
-
-public class Light(DirectionalLight lightSource) : Node 
+public class Light : Node 
 {
-    public DirectionalLight LightSource { get; } = lightSource;
+    public DirectionalLight LightSource { get; set; }
     
     public override void Awake()
     {

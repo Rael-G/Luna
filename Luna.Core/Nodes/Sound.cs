@@ -34,22 +34,17 @@ public class Sound : Node
         set => _player.Speed = value; 
     }
     
-    private IAudioPlayer _player = null!;
+    private IAudioPlayer? _player;
     private string _path = string.Empty;
 
-    public Sound(string path)
-    {
-        Path = path;
-    }
-
     public void Play()
-        => _player.Play();
+        => _player?.Play();
 
     public void Pause()
-        => _player.Pause();
+        => _player?.Pause();
 
     public void Stop()
-        => _player.Stop();
+        => _player?.Stop();
 
     public override void LateUpdate()
     {
@@ -59,7 +54,7 @@ public class Sound : Node
 
     public override void Dispose(bool disposing)
     {
-        _player.Dispose();
+        _player?.Dispose();
         base.Dispose(disposing);
     }
 

@@ -5,7 +5,6 @@ namespace Luna;
 
 public class PerspectiveCamera : Node, ICamera
 {
-    
     protected override Node? Parent 
     { 
         get => base.Parent; 
@@ -20,7 +19,7 @@ public class PerspectiveCamera : Node, ICamera
     public Vector3 Target { get; set; } = Vector3.UnitZ;
 
     public Vector3 Up { get; set; } = Vector3.UnitY;
-    public float Fov { get; set; } = (45.0f).ToRadians();
+    public float Fov { get; set; } = 45.0f.ToRadians();
     public float Near { get; set; } = 0.1f;
     public float Far { get; set; } = 1000.0f;
 

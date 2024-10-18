@@ -7,7 +7,7 @@ public class Label : Node
     public string Text { get; set; } = string.Empty;
     public Vector2 Size { get; set; } = new Vector2(48f, 48f);
     public Color Color { get; set; } = Colors.White;
-    public bool FlipV { get; set; } = false;
+    public bool FlipV { get; set; }
     public bool CenterH { get; set; }
     public bool CenterV { get; set; }
 
@@ -21,11 +21,6 @@ public class Label : Node
     }
 
     private string _path = string.Empty;
-
-    public Label(string path)
-    {
-        Path = path;
-    }
 
     public override void Awake()
     {

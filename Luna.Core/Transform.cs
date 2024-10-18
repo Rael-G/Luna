@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
+using System.Runtime.Serialization;
 using Luna.Maths;
 
 namespace Luna;
 
+[Serialize]
 public class Transform
 {
     public Transform()
@@ -21,6 +23,7 @@ public class Transform
 
     public Vector3 Position { get; set; }
 
+    [IgnoreDataMember]
     public Vector3 GlobalPosition 
     { 
         get 
@@ -34,6 +37,7 @@ public class Transform
 
     public Vector3 Rotation { get; set; }
 
+    [IgnoreDataMember]
     public Vector3 GlobalRotation 
     { 
         get => Parent?.GlobalRotation + Rotation?? Rotation;
@@ -43,6 +47,7 @@ public class Transform
 
     public Vector3 Scale { get; set; }
 
+    [IgnoreDataMember]
     public Vector3 GlobalScale
     {
         get => Parent?.GlobalScale.Scale(Scale)?? Scale;
@@ -54,24 +59,28 @@ public class Transform
 
     internal Transform? Parent { get; set; }
 
+    [IgnoreDataMember]
     public Vector3 EulerAngles 
     { 
         get => Rotation.ToDegrees(); 
         set => Rotation = value.ToRadians(); 
     }
 
+    [IgnoreDataMember]
     public Vector3 GlobalEulerAngles 
     { 
         get => GlobalRotation.ToDegrees();
         set => GlobalRotation = value.ToRadians();
     }
 
+    [IgnoreDataMember]
     public Quaternion Quaternion 
     { 
         get => Rotation.ToQuaternion(); 
         set => Rotation = value.ToVector3(); 
     }
 
+    [IgnoreDataMember]
     public Quaternion GlobalQuaternion 
     { 
         get => GlobalRotation.ToQuaternion();
