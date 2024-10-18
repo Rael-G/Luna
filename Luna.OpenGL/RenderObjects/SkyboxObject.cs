@@ -10,20 +10,25 @@ public class SkyboxObject : RenderObject<SkyboxData>
     private const string VertexName = "SkyboxVertexShader.glsl";
     private const string FragmentName = "SkyboxFragmentShader.glsl";
 
-    private readonly Material _material = new(
-        [new()
-        {
-            Name = VertexName,
-            Path = ProgramShader.DefaultShaderPath(VertexName),
-            ShaderType = ShaderType.VertexShader
-        },
-        new()
-        {
-            Name = FragmentName,
-            Path = ProgramShader.DefaultShaderPath(FragmentName),
-            ShaderType = ShaderType.FragmentShader
-        }]
-    );
+    private readonly Material _material = new()
+    {
+        Shaders = 
+        [
+            new()
+            {
+                Name = VertexName,
+                Path = ProgramShader.DefaultShaderPath(VertexName),
+                ShaderType = ShaderType.VertexShader
+            },
+            new()
+            {
+                Name = FragmentName,
+                Path = ProgramShader.DefaultShaderPath(FragmentName),
+                ShaderType = ShaderType.FragmentShader
+            }
+        ]
+    };
+
 
     public SkyboxObject(SkyboxData data)
     {

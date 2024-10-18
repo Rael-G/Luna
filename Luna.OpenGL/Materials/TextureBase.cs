@@ -89,11 +89,15 @@ public abstract class TextureBase : Disposable
 
             base.Dispose(disposing);
         }
-
     }
 
     protected static (PixelFormat, InternalFormat) GetFormat(ImageType type, int numChannels = 3)
     {
+        if (type == ImageType.DeathMap)
+        {
+            return (PixelFormat.DepthComponent, InternalFormat.DepthComponent);
+        }
+        
         var pixelFormat = numChannels switch
         {
             1 => PixelFormat.Red, 

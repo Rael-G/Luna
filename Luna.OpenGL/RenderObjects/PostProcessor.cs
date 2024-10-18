@@ -12,7 +12,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
     private RenderBufferObject? _rbo;
     private Mesh? _mesh;
 
-    public FrameBufferObject FBO { get; set; }
+    public FrameBufferObject _fbo { get; set; }
     private FrameBufferObject _intermediateFbo;
 
     private PostProcessorData _data;
@@ -20,8 +20,11 @@ public class PostProcessor :  RenderObject<PostProcessorData>
     public PostProcessor(PostProcessorData data)
     {
         _data = data;
-        _material = new Material(data.Shaders);
-        FBO = new(GL, FramebufferTarget.Framebuffer);
+        _material = new Material()
+        {
+            Shaders = data.Shaders
+        };
+        _fbo = new(GL, FramebufferTarget.Framebuffer);
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
 
         CreatePostProcessor(data.Resolution, data.MSAA);
@@ -32,9 +35,6 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         Bind();
         Injector.Get<IRenderer>().DrawQueue();
         Unbind();
-
-        var size = Injector.Get<IWindow>().Size;
-        GL.Viewport(0, 0, (uint)size.X, (uint)size.Y);
 
         GL.Disable(EnableCap.DepthTest);
 
@@ -65,7 +65,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
     private void Bind()
     {
         GL.Viewport(0, 0, (uint)_data.Resolution.X, (uint)_data.Resolution.Y);
-        FBO.Bind();
+        _fbo.Bind();
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GlErrorUtils.CheckError("PostProcessor Bind");
     }
@@ -74,14 +74,17 @@ public class PostProcessor :  RenderObject<PostProcessorData>
     {
         if (_data.MSAA && _multisampleTexture != null)
         {
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO.Handle);
+            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _fbo.Handle);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _intermediateFbo.Handle);
             GL.BlitFramebuffer(0, 0, (int)_data.Resolution.X, (int)_data.Resolution.Y, 
                 0, 0, (int)_data.Resolution.X, (int)_data.Resolution.Y, 
                 ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
-            GlErrorUtils.CheckError("PostProcessor Unbind");
         }
-        FBO.Unbind();
+        _fbo.Unbind();
+
+        var size = Injector.Get<IWindow>().Size;
+        GL.Viewport(0, 0, (uint)size.X, (uint)size.Y);
+        GlErrorUtils.CheckError("PostProcessor Unbind");
     }
 
     private void CreatePostProcessor(Vector2 resolution, bool msaa)
@@ -128,8 +131,8 @@ public class PostProcessor :  RenderObject<PostProcessorData>
             var msTexture = GlTexture2DMultiSample.Create((Texture2D)_multisampleTexture, samples);
             TextureManager.Cache(_multisampleTexture?.Hash!, msTexture);
 
-            FBO.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
-            FBO.AttachRenderBuffer(_rbo);
+            _fbo.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
+            _fbo.AttachRenderBuffer(_rbo);
 
             _intermediateFbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
         }
@@ -137,8 +140,8 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         {
             _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
 
-            FBO.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
-            FBO.AttachRenderBuffer(_rbo);
+            _fbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
+            _fbo.AttachRenderBuffer(_rbo);
         }
 
         GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);
