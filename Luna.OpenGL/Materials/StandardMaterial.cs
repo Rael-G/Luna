@@ -5,7 +5,7 @@ namespace Luna.OpenGL;
 
 public class StandardMaterial : Material, IStandardMaterial
 {
-    private static readonly string DefaultTexturePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets/images/DefaultTexture.png");
+    private static readonly string DefaultTexturePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/images/DefaultTexture.png");
 
     public Texture2D[] DiffuseMaps 
     {
@@ -83,7 +83,6 @@ public class StandardMaterial : Material, IStandardMaterial
     private bool _isAffectedByLight = true;
 
     public StandardMaterial() 
-        : base(Injector.Get<ShaderSource[]>())
     {
         DiffuseMaps = _diffuse;
         SpecularMaps = _specullar;
@@ -91,6 +90,7 @@ public class StandardMaterial : Material, IStandardMaterial
         Shininess = _shininess;
         IsAffectedByLight = _isAffectedByLight;
         ModelViewProjection = _modelViewProjection;
+        Shaders = Injector.Get<ShaderSource[]>();
     }
 
     public override void Bind()

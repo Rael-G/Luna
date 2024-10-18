@@ -4,7 +4,8 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-public class Material(ShaderSource[] shaders) : Disposable, IMaterial
+[Serialize]
+public class Material() : Disposable, IMaterial
 {
     public Dictionary<string, float> FloatProperties { get; private set; } = [];
     public Dictionary<string, Vector3> Vector3Properties { get; private set; } = [];
@@ -16,7 +17,16 @@ public class Material(ShaderSource[] shaders) : Disposable, IMaterial
     private Dictionary<string, Texture2D> Textures2D { get; set; } = [];
     private Dictionary<string, CubeMap> CubeMaps { get; set; } = [];
 
-    private ProgramShader Shader { get; set; } = new(shaders);
+    // Shoud be set only once on creation
+    public ShaderSource[] Shaders 
+    {
+        set
+        {
+            Shader = new(value);
+        }
+    }
+
+    private ProgramShader Shader { get; set; }
 
     public void SetTexture2D(string key, Texture2D texture)
     {
