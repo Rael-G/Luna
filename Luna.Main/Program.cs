@@ -29,8 +29,8 @@ public class Root : Node
     readonly Vector2[] resolutions =
     [
         new Vector2(1280, 720),  // HD
-        new Vector2(1366, 768),  // HD+ (16:9 aproximado)
-        new Vector2(1600, 900),  // HD+ (quase Full HD)
+        new Vector2(1366, 768),  // HD+
+        new Vector2(1600, 900),  // HD++
         new Vector2(1920, 1080), // Full HD
         new Vector2(2560, 1440), // Quad HD
         //new Vector2(3840, 2160)  // 4K UHD
@@ -70,7 +70,6 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
-            MSAA = true
         };
 
         var texture = new Texture2D()
@@ -230,14 +229,14 @@ public class Root : Node
             if (keyEvent.Key == Keys.Up && keyEvent.Action == InputAction.Down)
             {
                 msaa++;
-                Math.Clamp(msaa, 0, 16);
+                msaa = Math.Clamp(msaa, 0, 16);
                 postProcessor.Samples = msaa;
             }
 
             if (keyEvent.Key == Keys.Down && keyEvent.Action == InputAction.Down)
             {
                 msaa--;
-                Math.Clamp(msaa, 0, 16);
+                msaa = Math.Clamp(msaa, 0, 16);
                 postProcessor.Samples = msaa;
             }
         }

@@ -6,12 +6,12 @@ public class FrameBufferObject : Disposable
 {
     public uint Handle { get; }
     private readonly GL _gl;
-    private readonly FramebufferTarget _frameBufferType;
+    public FramebufferTarget FrameBufferType { get; }
 
     public FrameBufferObject(GL gl, FramebufferTarget frameBufferType)
     {
         _gl = gl;
-        _frameBufferType = frameBufferType;
+        FrameBufferType = frameBufferType;
 
         Handle = _gl.GenFramebuffer();
         GlErrorUtils.CheckError("FrameBufferObject");
@@ -19,28 +19,34 @@ public class FrameBufferObject : Disposable
 
     public void Bind()
     {
-        _gl.BindFramebuffer(_frameBufferType, Handle);
+        _gl.BindFramebuffer(FrameBufferType, Handle);
         GlErrorUtils.CheckError("FrameBufferObject Bind");
     }
 
     public void Unbind()
     {
-        _gl.BindFramebuffer(_frameBufferType, 0);
+        _gl.BindFramebuffer(FrameBufferType, 0);
         GlErrorUtils.CheckError("FrameBufferObject Unbind");
     }
 
     public void AttachTexture2D(GlTexture2D texture, FramebufferAttachment attachment)
     {
         Bind();
-        _gl.FramebufferTexture2D(_frameBufferType, attachment, texture.TextureTarget, texture.Handle, texture.MipmapLevel);
-        GlErrorUtils.CheckFrameBuffer(_frameBufferType, "FrameBufferObject AttachTexture2D");
+        _gl.FramebufferTexture2D(FrameBufferType, attachment, texture.TextureTarget, texture.Handle, texture.MipmapLevel);
         Unbind();
     }
 
     public void AttachRenderBuffer(RenderBufferObject rbo)
     {
         Bind();
-        rbo.AttachRenderBuffer(_frameBufferType);
+        rbo.AttachRenderBuffer(FrameBufferType);
+        Unbind();
+    }
+
+    public void CheckFrameBuffer(string location)
+    {
+        Bind();
+        GlErrorUtils.CheckFrameBuffer(FrameBufferType, location);
         Unbind();
     }
 

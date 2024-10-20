@@ -6,13 +6,6 @@ public class PostProcessorData
 {
     public ShaderSource[] Shaders { get; set; } = [];
     public Vector2 Resolution { get; set; }
-    public bool MSAA { get; set; }
 
-    public int Samples 
-    {
-        get => _samples;
-        set => _samples = Math.Clamp(value, 0, 16);
-    }
-
-    private int _samples;
+    public int Samples { get; set; }
 }

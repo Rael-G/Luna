@@ -8,20 +8,18 @@ public class PostProcessor : Node
 
     public Vector2 Resolution { get; set; } = Window.Size;
 
-    public bool MSAA { get; set; }
-
     public int Samples { get; set; }
 
     public override void Awake()
     {
-        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA, Samples = Samples });
+        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, Samples = Samples });
 
         base.Awake();
     }
 
     public override void Update()
     {
-        UpdateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA, Samples = Samples });
+        UpdateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, Samples = Samples });
 
         base.Update();
     }

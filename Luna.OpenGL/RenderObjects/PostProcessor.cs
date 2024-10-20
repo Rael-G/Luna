@@ -27,7 +27,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         _fbo = new(GL, FramebufferTarget.Framebuffer);
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
 
-        CreatePostProcessor(data.Resolution, data.MSAA, data.Samples);
+        CreatePostProcessor(data.Resolution, data.Samples);
     }
 
     public override void Draw()
@@ -38,7 +38,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         GL.Disable(EnableCap.DepthTest);
 
-        if (_data.MSAA && _multisampleTexture != null)
+        if (_data.Samples > 0 && _multisampleTexture != null)
         {
             _material.SetTexture2D("SCREEN_TEXTURE_MULTI_SAMPLE", (Texture2D)_multisampleTexture);
         }
@@ -55,10 +55,10 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
     public override void Update(PostProcessorData data)
     {
-        if (data.Resolution != _data.Resolution || data.MSAA != _data.MSAA || data.Samples != _data.Samples)
+        if (data.Resolution != _data.Resolution || data.Samples != _data.Samples)
         {
             _data = data;
-            CreatePostProcessor(data.Resolution, data.MSAA, data.Samples);
+            CreatePostProcessor(data.Resolution, data.Samples);
         }
     }
 
@@ -72,7 +72,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
     private void Unbind()
     {
-        if (_data.MSAA && _multisampleTexture != null)
+        if (_data.Samples > 0 && _multisampleTexture != null)
         {
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _fbo.Handle);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _intermediateFbo.Handle);
@@ -87,7 +87,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         GlErrorUtils.CheckError("PostProcessor Unbind");
     }
 
-    private void CreatePostProcessor(Vector2 resolution, bool msaa, int samples)
+    private void CreatePostProcessor(Vector2 resolution, int samples)
     {
         TextureManager.Get(_texture.Hash)?.Dispose();
         _rbo?.Dispose();
@@ -113,8 +113,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         var texture = GlTexture2D.Create(_texture);
         TextureManager.Cache(_texture.Hash, texture);
-
-        if (msaa)
+        if (samples > 0)
         {
             _multisampleTexture = new Texture2D()
             {
@@ -132,8 +131,10 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
             _fbo.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);
+            _fbo.CheckFrameBuffer("PostProcessor CreatePostProcessor MultiSample");
 
             _intermediateFbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
+            _intermediateFbo.CheckFrameBuffer("PostProcessor CreatePostProcessor MultiSample Intermediate");
         }
         else
         {
@@ -141,6 +142,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
             _fbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);
+            _fbo.CheckFrameBuffer("PostProcessor CreatePostProcessor");
         }
 
         GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);
