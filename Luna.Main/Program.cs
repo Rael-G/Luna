@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using Luna;
 using Luna.Audio;
-using Luna.Core;
 using Luna.Maths;
 using Luna.OpenGL;
 
@@ -12,6 +11,7 @@ internal class Program
         LunaOpenGL.AddServices();
         LunaAudio.AddServices();
         var root = new Root();
+        Host.CreateWindow();
         Host.Run(root);
     }
 }
@@ -36,25 +36,23 @@ public class Root : Node
         //new Vector2(3840, 2160)  // 4K UHD
     ];
 
-    int resolutionsIndex = 4;
+    int resolutionsIndex = 3;
+    int msaa = 0;
 
-
-    public override void Config()
+    public override void Awake()
     {
         Window.Title = "Hello Rectangle!";
         Window.Size = resolutions[resolutionsIndex];
         Window.Flags |= WindowFlags.BackFaceCulling;
-        Window.MSAA = 0;
         base.Config();
-    }
-
-    public override void Awake()
-    {
-        base.Awake();
     }
 
     public override void Start()
     {
+        var background = new BackGroundColor{
+            Color = Colors.AliceBlue
+        };
+        AddChild(background);
         postProcessor = new Luna.PostProcessor()
         {
             Shaders =
@@ -72,7 +70,7 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
-            MSAA = false
+            MSAA = true
         };
 
         var texture = new Texture2D()
@@ -116,8 +114,9 @@ public class Root : Node
         rect.Material.IsAffectedByLight = false;
 
 
-        label = new Label("Assets/fonts/OpenSans-Regular.ttf")
+        label = new Label()
         {
+            Path = "Assets/fonts/OpenSans-Regular.ttf",
             Text = "Hello, World!",
             FlipV = true,
             CenterH = true,
@@ -126,7 +125,10 @@ public class Root : Node
         label.Transform.Position = Window.VirtualCenter;
         label.Transform.Position = Vector3.Zero;
         
-        var sound = new Sound("Assets/audio/music/Death.wav");
+        var sound = new Sound()
+        {
+            Path = "Assets/audio/music/Death.wav"
+        };
         sound.Transform.Position = Vector3.Zero;
 
         box = new Box()
@@ -138,7 +140,10 @@ public class Root : Node
         box.Material.DiffuseMaps = [ texture ];
         box.Material.SpecularMaps = [ texture ];
         
-        light = new Light(new SpotLight());
+        light = new Light
+        {
+            LightSource = new SpotLight()
+        };
         // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
         // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
         // light.LightSource.Diffuse = Vector3.One;
@@ -220,6 +225,20 @@ public class Root : Node
             {
                 resolutionsIndex = (resolutionsIndex - 1 + resolutions.Length) % resolutions.Length;
                 postProcessor.Resolution = resolutions[resolutionsIndex];
+            }
+
+            if (keyEvent.Key == Keys.Up && keyEvent.Action == InputAction.Down)
+            {
+                msaa++;
+                Math.Clamp(msaa, 0, 16);
+                postProcessor.Samples = msaa;
+            }
+
+            if (keyEvent.Key == Keys.Down && keyEvent.Action == InputAction.Down)
+            {
+                msaa--;
+                Math.Clamp(msaa, 0, 16);
+                postProcessor.Samples = msaa;
             }
         }
     }

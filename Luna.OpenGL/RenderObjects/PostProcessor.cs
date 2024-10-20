@@ -27,7 +27,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         _fbo = new(GL, FramebufferTarget.Framebuffer);
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
 
-        CreatePostProcessor(data.Resolution, data.MSAA);
+        CreatePostProcessor(data.Resolution, data.MSAA, data.Samples);
     }
 
     public override void Draw()
@@ -55,10 +55,10 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
     public override void Update(PostProcessorData data)
     {
-        if (data.Resolution != _data.Resolution || data.MSAA != _data.MSAA)
+        if (data.Resolution != _data.Resolution || data.MSAA != _data.MSAA || data.Samples != _data.Samples)
         {
             _data = data;
-            CreatePostProcessor(data.Resolution, data.MSAA);
+            CreatePostProcessor(data.Resolution, data.MSAA, data.Samples);
         }
     }
 
@@ -87,7 +87,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         GlErrorUtils.CheckError("PostProcessor Unbind");
     }
 
-    private void CreatePostProcessor(Vector2 resolution, bool msaa)
+    private void CreatePostProcessor(Vector2 resolution, bool msaa, int samples)
     {
         TextureManager.Get(_texture.Hash)?.Dispose();
         _rbo?.Dispose();
@@ -116,7 +116,6 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         if (msaa)
         {
-            var samples = Injector.Get<IWindow>().MSAA;
             _multisampleTexture = new Texture2D()
             {
                 Size = new Vector2(width, height),

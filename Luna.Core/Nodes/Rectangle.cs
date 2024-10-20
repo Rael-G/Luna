@@ -11,11 +11,10 @@ public class Rectangle : Node
 
     public bool Center { get; set; }
     
-    public IStandardMaterial? Material { get; set; } 
+    public IStandardMaterial? Material { get; set; } = Injector.Get<IStandardMaterial>();
 
     public override void Awake()
     {
-        Material ??= Injector.Get<IStandardMaterial>();
 
         Material.Color = Color;
         Material.ModelViewProjection = ModelViewProjection;

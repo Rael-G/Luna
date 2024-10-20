@@ -10,11 +10,20 @@ public class PostProcessor : Node
 
     public bool MSAA { get; set; }
 
+    public int Samples { get; set; }
+
     public override void Awake()
     {
-        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA });
+        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA, Samples = Samples });
 
         base.Awake();
+    }
+
+    public override void Update()
+    {
+        UpdateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, MSAA = MSAA, Samples = Samples });
+
+        base.Update();
     }
 
     internal override void Draw()

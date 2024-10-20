@@ -17,17 +17,6 @@ internal unsafe class Window : IWindow
         }
     }
 
-    //Only has effect before window init
-    public int MSAA
-    {
-        get => _msaa;
-        set
-        {
-            _msaa = Math.Clamp(value, 0, 16);
-            Glfw?.WindowHint(WindowHintInt.Samples, _msaa);
-        }
-    }
-
     private int _msaa;
 
     public CursorMode CursorMode
@@ -122,7 +111,6 @@ internal unsafe class Window : IWindow
         Glfw.WindowHint(WindowHintInt.ContextVersionMajor, 3);
         Glfw.WindowHint(WindowHintInt.ContextVersionMinor, 3);
         Glfw.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
-        Glfw.WindowHint(WindowHintInt.Samples, MSAA);
 
         WindowHandle = Glfw.CreateWindow((int)Size.X, (int)Size.Y, Title, null, null);
 
