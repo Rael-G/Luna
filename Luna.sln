@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.Audio", "Luna.Audio\Lu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.Editor", "Luna.Editor\Luna.Editor.csproj", "{A5BF6A60-C27C-4C82-BB0E-B1BB352BC4C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luna.EditorPlayGround", "Luna.EditorPlayGround\Luna.EditorPlayGround.csproj", "{7C52509D-8901-4B2E-86CA-54A0FB262F0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{A5BF6A60-C27C-4C82-BB0E-B1BB352BC4C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5BF6A60-C27C-4C82-BB0E-B1BB352BC4C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5BF6A60-C27C-4C82-BB0E-B1BB352BC4C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C52509D-8901-4B2E-86CA-54A0FB262F0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C52509D-8901-4B2E-86CA-54A0FB262F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C52509D-8901-4B2E-86CA-54A0FB262F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C52509D-8901-4B2E-86CA-54A0FB262F0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

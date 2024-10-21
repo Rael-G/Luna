@@ -1,7 +1,7 @@
 using System.Numerics;
 using Luna.Maths;
 
-namespace Luna.Editor.ViewPort;
+namespace Luna.EditorPlayGround;
 
 public class Player : Node
 {

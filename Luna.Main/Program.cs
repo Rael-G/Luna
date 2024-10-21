@@ -44,7 +44,7 @@ public class Root : Node
         Window.Title = "Hello Rectangle!";
         Window.Size = resolutions[resolutionsIndex];
         Window.Flags |= WindowFlags.BackFaceCulling;
-        base.Config();
+        base.Awake();
     }
 
     public override void Start()

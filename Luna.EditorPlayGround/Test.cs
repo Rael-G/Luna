@@ -1,17 +1,19 @@
-namespace Luna.Editor;
+using Luna.Editor;
+
+namespace Luna.EditorPlayGround;
 
 public class Test : Node
 {
     public override void Start()
     {
-        const string projectPath = "C:/Users/israe/OneDrive/Documentos/Projetos/C#/LunaTests/Test01";
+        const string projectPath = "C:/Users/israe/OneDrive/Documentos/Projetos/C#/LunaTests/Test02";
 
-        // ProjectHandler.CreateProject("Test01", projectPath, 
-        //     ["Luna.OpenGL", "Luna.Editor", "Luna.Audio", "Test01"], 
-        //     ["Luna.Core", "Luna.OpenGL", "Luna.Audio", "Luna.Editor"], 
-        //     ["LunaOpenGL", "LunaEditor", "LunaAudio"]);
+        ProjectHandler.CreateProject("Test02", projectPath, 
+            ["Luna.OpenGL", "Luna.Editor", "Luna.Audio", "Test02"], 
+            ["Luna.Core", "Luna.OpenGL", "Luna.Audio", "Luna.Editor"], 
+            ["LunaOpenGL", "LunaEditor", "LunaAudio"]);
 
-        var root = ProjectHandler.OpenProject(projectPath + "/Test01");
+        //var root = ProjectHandler.OpenProject(projectPath + "/Test02");
 
         // var camera2D = new OrtographicCamera(){
         //     Left = 0.0f,
@@ -37,7 +39,7 @@ public class Test : Node
 
         // ProjectHandler.SaveRootFile(projectPath + "/Test01", root);
 
-        AddChild(root);
+        //AddChild(root);
     }
 
     public override void Update()

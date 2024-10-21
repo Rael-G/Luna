@@ -70,9 +70,6 @@ public class Node : Disposable
     }
 
     [IgnoreDataMember]
-    public Action? ConfigAction { get; set; }
-
-    [IgnoreDataMember]
     public Action? AwakeAction { get; set; }
 
     [IgnoreDataMember]
@@ -102,22 +99,6 @@ public class Node : Disposable
         Children = [];
         Alias = GetType().Name;
         Transform = new();
-    }
-
-    /// <summary>
-    ///  Configures this GameObject only before window initialization.
-    /// </summary>
-    public virtual void Config()
-    {
-        
-    }
-
-    internal void InternalConfig()
-    {
-        Config();
-        ConfigAction?.Invoke();
-        foreach (var child in Children)
-            child.InternalConfig();
     }
 
     /// <summary>

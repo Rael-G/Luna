@@ -22,8 +22,10 @@ public class ProjectHandler : IEditor
         {
             //TODO Nuget packages for Luna
             //RunDotnetCommand($"add package {package}", projectDir);
+
             var tempReferencePath = "C:\\Users\\israe\\OneDrive\\Documentos\\Projetos\\C#\\Luna";
-            RunDotnetCommand($"add reference {Path.Combine(tempReferencePath, package)}", projectDir);
+            var tempPackage = Path.Combine(tempReferencePath, package);
+            RunDotnetCommand($"add reference {tempPackage}", projectDir);
         }
 
         AddProjectInfo(projectDir, projectName);
@@ -33,6 +35,9 @@ public class ProjectHandler : IEditor
         var assembly = GetAssembly(projectDir, projectName);
         var root = InstatiateClassAsNode(assembly, projectName + ".Root");
         SaveRootFile(projectDir, root);
+        var config = new LunaConfig();
+        var configFilePath = Path.Combine(projectDir, "config.yaml");
+        ConfigSerializer.WriteConfig(configFilePath, config);
     }
 
     public static Node OpenProject(string path)
@@ -43,17 +48,33 @@ public class ProjectHandler : IEditor
 
         return NodeSerializer.LoadFromFile(Path.Combine(path, "rootfile"), type, assembly) as Node??
             throw new LunaException($"Can't get root node from rootfile at: {path}");
-    }  
+    }
+
+    public void ApplyConfig()
+    {
+        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.yaml");
+        var config = ConfigSerializer.ReadConfig(configFilePath);
+
+        if (config is null)
+        {
+            return;
+        }
+        
+        Window.Title = config.Title;
+        Window.Size = config.Resolution;
+        Window.Flags |= config.Vsync? WindowFlags.Vsync : WindowFlags.None;
+    }
 
     public static void SaveRootFile(string projectPath, Node root)
         => NodeSerializer.SaveToFile(root, Path.Combine(projectPath, "rootfile"), Assembly.GetAssembly(root.GetType()));
 
-    public T? ReadRootFile<T>() where T : Node
+    public T ReadRootFile<T>() where T : Node
     {
-        return NodeSerializer.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "rootfile"), typeof(T), Assembly.GetAssembly(typeof(T))) as T;
+        return NodeSerializer.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "rootfile"), typeof(T), Assembly.GetAssembly(typeof(T))) as T 
+            ?? throw new LunaException("Failed to read rootfile.");
     }
 
-    public static void CreateClass(string nameSpace, string className, string baseClassName, string directory)
+    private static void CreateClass(string nameSpace, string className, string baseClassName, string directory)
     {
         string filePath = Path.Combine(directory, $"{className}.cs");        
         string classContent = 
@@ -69,7 +90,7 @@ public class {className} : {baseClassName}
         File.WriteAllText(filePath, classContent);
     }
 
-    public static void CreateProgramClass(string[] usings, string[] services, string projectDirectory)
+    private static void CreateProgramClass(string[] usings, string[] services, string projectDirectory)
     {
         string usingsContent = string.Empty;
         foreach(var u in usings)
@@ -87,8 +108,10 @@ public class {className} : {baseClassName}
 $@"using Luna;
 {usingsContent}
 {servicesContent}
+var editor = Injector.Get<IEditor>();
+editor.ApplyConfig();
 Host.CreateWindow();
-var root = Injector.Get<IEditor>().ReadRootFile<Root>();
+var root = editor.ReadRootFile<Root>();
 Host.Run(root);
 ";
         File.WriteAllText(Path.Combine(projectDirectory, "Program.cs"), programContent);
@@ -132,6 +155,10 @@ Host.Run(root);
             ),
             new XElement("None",
                 new XAttribute("Update", "rootfile"),
+                new XElement("CopyToOutputDirectory", "PreserveNewest")
+            ),
+            new XElement("None",
+                new XAttribute("Update", "config.yaml"),
                 new XElement("CopyToOutputDirectory", "PreserveNewest")
             )
         );

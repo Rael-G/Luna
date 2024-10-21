@@ -1,6 +1,6 @@
 ﻿using Luna;
 using Luna.Audio;
-using Luna.Editor;
+using Luna.EditorPlayGround;
 using Luna.OpenGL;
 
 LunaOpenGL.AddServices();
