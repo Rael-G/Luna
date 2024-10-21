@@ -68,18 +68,90 @@ public struct Color
     public readonly float[] ToFloatArray()
         => [R, G, B, A];
 
-    // public readonly Color Lerp(Color other, float weight)
-    //     => (Color)ToColor(ToMatrix() + (other.ToMatrix() - ToMatrix()) * weight)!;
+    public readonly Color Lerp(Color other, float weight)
+        => new (R.Lerp(other.R, weight), G.Lerp(other.G, weight), B.Lerp(other.B, weight), A.Lerp(other.A, weight));
 
-    // public readonly Color Mix(Color color)
-    //     => Lerp(color, 0.5f);
+    public readonly Color Mix(Color color)
+        => Lerp(color, 0.5f);
 
-    public static Color Desaturate(Color c)
+    public static Color AdjustHue(Color c, float hue)
     {
-        var gray = (c.R + c.G + c.B) / 3.0f;
-        return new(gray, gray, gray, c.A);
+        var (h, s, v) = ToHSV(c);
+        h = (h + hue) % 360.0f;
+        return FromHSV(h, s, v, c.A);
     }
 
-    public static Color Invert(Color c)
-        => new(1.0f - c.R, 1.0f - c.G, 1.0f - c.B, c.A);
+    public static Color AdjustSaturation(Color c, float saturation)
+    {
+        var (h, s, v) = ToHSV(c);
+        s = Math.Clamp(s * saturation, 0.0f, 1.0f);
+        return FromHSV(h, s, v, c.A);
+    }
+
+    public static Color AdjustBrightness(Color c, float brightness)
+    {
+        var (h, s, v) = ToHSV(c);
+        v = Math.Clamp(v * brightness, 0.0f, 1.0f);
+        return FromHSV(h, s, v, c.A);
+    }
+
+    public static Color AdjustContrast(Color c, float contrast)
+    {
+        contrast = Math.Clamp(contrast, -1.0f, 1.0f);
+        float factor = 259 * (contrast + 1) / (255 * (259 - contrast));
+
+        float Adjust(float channel)
+        {
+            return Math.Clamp(factor * (channel - 0.5f) + 0.5f, 0.0f, 1.0f);
+        }
+
+        return new Color(Adjust(c.R), Adjust(c.G), Adjust(c.B), c.A);
+    }
+
+
+    private static (float H, float S, float V) ToHSV(Color c)
+    {
+        float max = Math.Max(c.R, Math.Max(c.G, c.B));
+        float min = Math.Min(c.R, Math.Min(c.G, c.B));
+        float delta = max - min;
+
+        float h = 0.0f;
+        if (delta > 0)
+        {
+            if (max == c.R)
+                h = (c.G - c.B) / delta;
+            else if (max == c.G)
+                h = 2.0f + (c.B - c.R) / delta;
+            else
+                h = 4.0f + (c.R - c.G) / delta;
+
+            h *= 60;
+            if (h < 0)
+                h += 360;
+        }
+
+        float s = (max == 0) ? 0 : (delta / max);
+        float v = max;
+
+        return (h, s, v);
+    }
+
+    private static Color FromHSV(float h, float s, float v, float a = 1.0f)
+    {
+        h = h % 360;
+        if (h < 0) h += 360;
+        float c = v * s;
+        float x = c * (1 - Math.Abs((h / 60) % 2 - 1));
+        float m = v - c;
+
+        float r1 = 0, g1 = 0, b1 = 0;
+        if (h < 60) { r1 = c; g1 = x; b1 = 0; }
+        else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+        else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+        else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+        else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+        else { r1 = c; g1 = 0; b1 = x; }
+
+        return new Color(r1 + m, g1 + m, b1 + m, a);
+    }
 }

@@ -50,7 +50,7 @@ public class Root : Node
     public override void Start()
     {
         var background = new BackGroundColor{
-            Color = Colors.SkyBlue
+            Color = Colors.Azure
         };
         AddChild(background);
         postProcessor = new Luna.PostProcessor()
