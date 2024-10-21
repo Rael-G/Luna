@@ -26,18 +26,17 @@ public class DynamicBody2D
         Restitution = 0.2f;
         Friction = 0.2f;
         BodyDef.BodyType = BodyType.DynamicBody;
-
     }
 
     public override void Start()
     {
-        Body.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
+        Body?.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
         base.Start();
     }
 
     public override void FixedUpdate()
     {
-        Transform.Position = Body!.GetPosition().ToPixels().ToVector3();
+        Transform.Position = Body.GetPosition().ToPixels().ToVector3();
         Transform.Rotation = new (Transform.Rotation.X, Transform.Rotation.Y, Body.GetAngle());
         base.FixedUpdate();
     }
