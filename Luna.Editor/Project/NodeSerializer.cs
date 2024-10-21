@@ -1,7 +1,5 @@
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
-using Silk.NET.OpenGL;
 
 namespace Luna.Editor;
 
@@ -26,29 +24,8 @@ public static class NodeSerializer
         var serializer = new DataContractSerializer(type, GetAllSerializableTypes(assembly));
         using var fs = new FileStream(filePath, FileMode.Open);
         var root = serializer.ReadObject(fs);
-
-        if (root is Node node)
-        {
-            ReAddChildren(node);
-        }
         
         return root;
-    }
-
-    private static void ReAddChildren(Node node)
-    {
-        var reAddArray = new Node[node.Children.Count];
-        node.Children.CopyTo(reAddArray);
-        
-        foreach(var child in reAddArray)
-        {
-            node.RemoveChild(child);
-        }
-
-        foreach(var child in reAddArray)
-        {
-            node.AddChild(child);
-        }
     }
 
     private static List<Type> GetAllSerializableTypes(Assembly assembly)

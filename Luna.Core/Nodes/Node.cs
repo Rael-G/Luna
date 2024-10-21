@@ -17,7 +17,22 @@ public class Node : Disposable
 
     public virtual Transform Transform { get; set; }
 
-    public List<Node> Children { get; set; }
+    public List<Node> Children 
+    { 
+        get => _children;
+        set
+        {
+            foreach(var node in _children)
+            {
+                RemoveChild(node);
+            }
+
+            foreach(var node in value)
+            {
+                AddChild(node);
+            }
+        }
+    }
 
     protected virtual Node? Parent 
     { 
@@ -79,6 +94,7 @@ public class Node : Disposable
     private bool _started;
     private Node? _parent;
     private ICamera? _camera;
+    private readonly List<Node> _children = [];
 
     public Node()
     {
