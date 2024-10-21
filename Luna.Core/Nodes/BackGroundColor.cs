@@ -2,7 +2,7 @@
 
 public class BackGroundColor : Node
 {
-    public Color Color { get; set; } = Colors.DimGray;
+    public Color Color { get; set; } = Colors.Gray;
 
     public override void Awake()
     {

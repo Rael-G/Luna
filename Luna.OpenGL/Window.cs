@@ -152,7 +152,7 @@ internal unsafe class Window : IWindow
     public void BeginRender()
     {
         GL?.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        GL?.ClearColor(Colors.DimGray);
+        GL?.ClearColor(Colors.Gray);
     }
     
     public void EndRender()
