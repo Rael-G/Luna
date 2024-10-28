@@ -1,3 +1,4 @@
+using FreeTypeSharp;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
@@ -40,13 +41,18 @@ public class SkyboxObject : RenderObject<SkyboxData>
 
     public override void Draw()
     {
+        Draw(_material);
+    }
+
+    public override void Draw(IMaterial material)
+    {
         GlErrorUtils.CheckError("Before SkyboxDraw");
         var window = Injector.Get<IWindow>();
         var previousDepthMode = window.DepthMode;
 
         window.DepthMode = DepthMode.Lequal;
         GlErrorUtils.CheckError("raw");
-        _material.Bind();
+        material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
         GlErrorUtils.CheckError("raw");
         window.DepthMode = previousDepthMode;

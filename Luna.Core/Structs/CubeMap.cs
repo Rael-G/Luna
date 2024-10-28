@@ -9,7 +9,8 @@ public struct CubeMap
 
     public string[] Paths { get; set; } = [];
     public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
-    public TextureWrap TextureWrap { get; set; } = TextureWrap.Clamp;
+    public TextureWrap TextureWrap { get; set; } = TextureWrap.ClampToEdge;
+    public Color BorderColor { get; set; } = Colors.White;
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
     public ImageType ImageType { get; set; } = ImageType.SRGB;

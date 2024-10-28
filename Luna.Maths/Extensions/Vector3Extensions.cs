@@ -65,12 +65,10 @@ public static class Vector3Extensions
         => (float)Math.Atan2(vector.Cross(other).Length(), vector.Dot(other));
 
     public static Vector3 Rotate(this Vector3 vector, float angle, Vector3 axis)
-    {
-        axis = axis.Normalize();
-        var rotation = Quaternion.Normalize(Quaternion.CreateFromAxisAngle(axis, angle));
-        var result = (rotation * new Quaternion(vector, 0) * Quaternion.Conjugate(rotation)).ToVector3();
-        return result;
-    }
+        => Vector3.Transform(axis.Normalize(), Quaternion.CreateFromAxisAngle(axis, angle));
+    
+    public static Vector3 RotateDegress(this Vector3 vector, float angle, Vector3 axis)
+        => Rotate(vector, angle.ToRadians(), axis);
     
     public static Vector3 RotateTo(this Vector3 vector, Vector3 other)
     {

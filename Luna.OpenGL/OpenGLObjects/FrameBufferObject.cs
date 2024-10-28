@@ -8,6 +8,8 @@ public class FrameBufferObject : Disposable
     private readonly GL _gl;
     public FramebufferTarget FrameBufferType { get; }
 
+    private static readonly Stack<uint> _framebufferStack = [];
+
     public FrameBufferObject(GL gl, FramebufferTarget frameBufferType)
     {
         _gl = gl;
@@ -19,13 +21,15 @@ public class FrameBufferObject : Disposable
 
     public void Bind()
     {
+        _framebufferStack.Push(Handle);
         _gl.BindFramebuffer(FrameBufferType, Handle);
         GlErrorUtils.CheckError("FrameBufferObject Bind");
     }
 
     public void Unbind()
     {
-        _gl.BindFramebuffer(FrameBufferType, 0);
+        _framebufferStack.Pop();
+        _gl.BindFramebuffer(FrameBufferType, _framebufferStack.Count > 0 ?_framebufferStack.Peek() : 0);
         GlErrorUtils.CheckError("FrameBufferObject Unbind");
     }
 

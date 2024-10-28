@@ -98,14 +98,31 @@ public class StandardMaterial : Material, IStandardMaterial
         base.Bind();
     }
 
-    public void Light()
+    private void Light()
     {
         DirLight();
         PointLight();
         SpotLight();
+        Shadow();
     }
 
-    public void DirLight()
+    private void Shadow()
+    {
+        int shadowMapsLength = 0;
+        foreach(var (matrix, texture) in LightEmitter.ShadowMaps)
+        {
+            MatricesProperties[$"lightSpaceMatrix[{shadowMapsLength}]"] = matrix;
+            SetTexture2D($"shadowMaps[{shadowMapsLength}]", texture);
+            
+            shadowMapsLength++;
+        }
+
+        
+        IntProperties["shadowMapsLength"] = shadowMapsLength;
+
+    }
+
+    private void DirLight()
     {
         var dirLightLength = 0;
         
@@ -124,7 +141,7 @@ public class StandardMaterial : Material, IStandardMaterial
         IntProperties["dirLightLength"] = dirLightLength;
     }
 
-    public void PointLight()
+    private void PointLight()
     {
         var pointLightLength = 0;
         
@@ -146,7 +163,7 @@ public class StandardMaterial : Material, IStandardMaterial
         IntProperties["pointLightLength"] = pointLightLength;
     }
 
-    public void SpotLight()
+    private void SpotLight()
     {
         var spotLightLength = 0;
 

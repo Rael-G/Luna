@@ -17,6 +17,8 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
     private PostProcessorData _data;
 
+    private bool _draw = true;
+
     public PostProcessor(PostProcessorData data)
     {
         _data = data;
@@ -28,13 +30,24 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
 
         CreatePostProcessor(data.Resolution, data.Samples);
+
+        Priority = 2;
     }
 
     public override void Draw()
     {
+        // Avoid infinite recursion
+        if (!_draw)
+        {
+            return;
+        }
+        _draw = false;
+
         Bind();
         Injector.Get<IRenderer>().DrawQueue();
         Unbind();
+
+        _draw = true;
 
         GL.Disable(EnableCap.DepthTest);
 
@@ -50,7 +63,14 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         GL.Enable(EnableCap.DepthTest);
 
+        Renderer.Interrupt();
+
         GlErrorUtils.CheckError("PostProcessor Draw");
+    }
+
+    public override void Draw(IMaterial material)
+    {
+        // Do nothing
     }
 
     public override void Update(PostProcessorData data)
@@ -106,7 +126,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         {
             Size = new Vector2(width, height),
             TextureFilter = TextureFilter.Bilinear,
-            TextureWrap = TextureWrap.Clamp,
+            TextureWrap = TextureWrap.ClampToEdge,
             Hash = Guid.NewGuid().ToString(),
             ImageType = ImageType.Linear
         };
@@ -119,7 +139,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
             {
                 Size = new Vector2(width, height),
                 TextureFilter = TextureFilter.Bilinear,
-                TextureWrap = TextureWrap.Clamp,
+                TextureWrap = TextureWrap.ClampToEdge,
                 Hash = Guid.NewGuid().ToString(),
                 ImageType = ImageType.Linear
             };

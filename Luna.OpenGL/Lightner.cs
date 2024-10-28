@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Numerics;
 
 namespace Luna.OpenGL;
 
@@ -7,6 +8,7 @@ public class LightEmitter : ILightEmitter
     public static readonly ConcurrentDictionary<string, DirectionalLight> DirLights = [];
     public static readonly ConcurrentDictionary<string, PointLight> PointLights = [];
     public static readonly ConcurrentDictionary<string, SpotLight> SpotLights = [];
+    public static readonly List<(Matrix4x4, Texture2D)> ShadowMaps = [];
 
     //Temporary limit for the actual improvised light system
     private const int DirectionalMaxLenght = 1;
@@ -41,5 +43,10 @@ public class LightEmitter : ILightEmitter
         DirLights.Remove(id, out _);
         PointLights.Remove(id, out _);
         SpotLights.Remove(id, out _);
+    }
+
+    public static void ClearShadowMaps()
+    {
+        ShadowMaps.Clear();
     }
 }

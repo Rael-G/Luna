@@ -20,4 +20,9 @@ internal class BackgroundColorObject(Color data) : RenderObject<Color>
     public override void Dispose(bool disposing)
     {
     }
+
+    public override void Draw(IMaterial material)
+    {
+        Draw();
+    }
 }

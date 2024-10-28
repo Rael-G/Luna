@@ -10,9 +10,9 @@ public class GlTexture2D : TextureBase
     public Vector2 Size { get; protected set; }
     public bool FlipVertically { get; }
 
-    protected GlTexture2D(string path, TextureFilter filter, TextureWrap wrap, int mipmaps, 
+    protected GlTexture2D(string path, TextureFilter filter, TextureWrap wrap, Color borderColor, int mipmaps, 
         bool flipVertically, TextureTarget target, string hash, ImageType imageType)
-        : base(filter, wrap, mipmaps, target, hash, imageType)
+        : base(filter, wrap, borderColor, mipmaps, target, hash, imageType)
     {
         Path = path;
         FlipVertically = flipVertically;
@@ -27,7 +27,7 @@ public class GlTexture2D : TextureBase
 
     private static GlTexture2D CreateFromFile(Texture2D texture2D)
     {
-        var texture = new GlTexture2D(texture2D.Path, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
+        var texture = new GlTexture2D(texture2D.Path, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.BorderColor, texture2D.MipmapLevel, 
             texture2D.FlipV, TextureTarget.Texture2D, texture2D.Hash, texture2D.ImageType);
 
         texture.LoadTextureFromFile();
@@ -36,7 +36,7 @@ public class GlTexture2D : TextureBase
 
     private static GlTexture2D CreateInMemory(Texture2D texture2D)
     {
-        var texture = new GlTexture2D(string.Empty, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.MipmapLevel, 
+        var texture = new GlTexture2D(string.Empty, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.BorderColor, texture2D.MipmapLevel, 
             false, TextureTarget.Texture2D, texture2D.Hash, texture2D.ImageType)
         {
             Size = texture2D.Size
@@ -55,7 +55,7 @@ public class GlTexture2D : TextureBase
 
     private void UploadTexture(int channels, ReadOnlySpan<byte> data)
     {
-        var (pixelFormat, internalFormat) = GetFormat(ImageType, channels);
+        var (pixelFormat, internalFormat, pixelType) = GetFormat(ImageType, channels);
         
         Handle = _gl.GenTexture();
         Bind();
@@ -63,8 +63,9 @@ public class GlTexture2D : TextureBase
         _gl.PixelStore(GLEnum.UnpackAlignment, 1);
         TextureFilter = _textureFilter;
         TextureWrap = _textureWrap;
+        BorderColor = _borderColor;
 
-        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, (uint)Size.X, (uint)Size.Y, 0, pixelFormat, PixelType.UnsignedByte, data);
+        _gl.TexImage2D(TextureTarget, MipmapLevel, internalFormat, (uint)Size.X, (uint)Size.Y, 0, pixelFormat, pixelType, data);
         _gl.GenerateMipmap(TextureTarget);
 
         Unbind();

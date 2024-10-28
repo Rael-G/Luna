@@ -3,7 +3,7 @@
 public readonly struct Colors
 {
     public static readonly Color White = new(1f, 1f, 1f);
-    public static readonly Color Black = new(0f, 0f, 0f);
+    public static readonly Color Black = new();
     public static readonly Color Gray = White.Mix(Black);
 
     public static readonly Color Red = new(1f, 0f, 0f);

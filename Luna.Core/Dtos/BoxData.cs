@@ -5,5 +5,5 @@ namespace Luna;
 public struct BoxData
 {
     public Vector3 Size { get; set; }
-    public IMaterial Material { get; set; }
+    public IStandardMaterial Material { get; set; }
 }

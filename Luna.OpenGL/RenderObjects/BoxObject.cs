@@ -25,7 +25,13 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
 
     public override void Draw()
     {
-        _boxData.Material.Bind();
+        Draw(_boxData.Material);
+    }
+
+    public override void Draw(IMaterial material)
+    {
+        material.MatricesProperties["model"] = _boxData.Material.ModelViewProjection.Model;
+        material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
     }
     

@@ -34,6 +34,11 @@ internal class TextObject(TextData data) : RenderObject<TextData>
         _textVAO.Draw(Program, _textData);
     }
 
+    public override void Draw(IMaterial material)
+    {
+        Draw();
+    }
+
     public override void Update(TextData data)
     {
         if (data.FontKey != _textData.FontKey)

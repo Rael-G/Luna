@@ -3,16 +3,20 @@
 public class Light : Node 
 {
     public DirectionalLight LightSource { get; set; }
-    
+
     public override void Awake()
     {
         Injector.Get<ILightEmitter>().Add(UID, LightSource);
+        CreateRenderObject(LightSource);
+
         base.Awake();
     }
 
     public override void LateUpdate()
     {
         LightSource.Position = Transform.GlobalPosition;
+        UpdateRenderObject(LightSource);
+
         base.LateUpdate();
     }
 

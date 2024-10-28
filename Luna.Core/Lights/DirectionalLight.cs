@@ -7,7 +7,7 @@ namespace Luna;
 public class DirectionalLight
 {
     public Vector3 Position { get; internal set; }
-    public virtual Vector3 Direction { get; set; } = -Vector3.UnitZ;
+    public virtual Vector3 Direction { get; set; } = -Vector3.UnitY;
 
     public Color Color { get; set; } = Colors.White;
 

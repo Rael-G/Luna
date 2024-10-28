@@ -14,6 +14,16 @@ internal class Model(ModelData data) : RenderObject<ModelData>
         }
     }
 
+    public override void Draw(IMaterial material)
+    {
+        foreach (var mesh in _meshes)
+        {
+            material.MatricesProperties["model"] = _modelData.Material.ModelViewProjection.Model;
+            material.Bind();
+            mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
+        }
+    }
+
     public override void Update(ModelData data)
     {
         

@@ -52,7 +52,6 @@ public class Root : Node
         var background = new BackGroundColor{
             Color = Colors.Azure
         };
-        AddChild(background);
         postProcessor = new Luna.PostProcessor()
         {
             Shaders =
@@ -70,6 +69,9 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
+            Samples = 16
+            //Resolution = resolutions[0]
+
         };
 
         var texture = new Texture2D()
@@ -132,28 +134,30 @@ public class Root : Node
 
         box = new Box()
         {
-            Color = Colors.White,
+            Color = Colors.Lime,
             Center = true
         };
-        box.Transform.Position = new Vector3(0f, 0f, -2f);
-        box.Material.DiffuseMaps = [ texture ];
-        box.Material.SpecularMaps = [ texture ];
+        box.Transform.Position = new Vector3(0f, -1f, 0f);
+        box.Size = new Vector3(1000f, 1f, 1000f);
+        //box.Material.DiffuseMaps = [texture];
         
         light = new Light
         {
-            LightSource = new SpotLight()
+            LightSource = new DirectionalLight()
         };
+        light.Transform.Position = new Vector3(0f, 10, 0f);
+        light.LightSource.Direction = new Vector3(0f, -1f, 0f);
         // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
         // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
         // light.LightSource.Diffuse = Vector3.One;
         //light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
-        box.Material.IsAffectedByLight = false;
 
         model = new Model()
         {
             Path = "Assets/models/backpack/backpack.obj"
         };
-        model.Transform.Position = new Vector3(0f, 0f, -5);
+        model.Transform.Position = new Vector3(-6f, 3f, 3);
+        model.Transform.EulerAngles = new Vector3(0, -45, 0);
 
         var skybox = new Skybox()
         {
@@ -169,12 +173,28 @@ public class Root : Node
                 ]
             }
         };
+
+        var box2 = new Box()
+        {
+            Center = true,
+            Color = Colors.Azure
+        };
+        box2.Transform.Position = new Vector3(-6f, 3f, 3f);
+        box2.Size = new Vector3(1, 1f, 1);
+
+        var box3 = new Box()
+        {
+            Color = Colors.Red,
+            Center = true
+        };
+        box3.Transform.Position = new Vector3(2f, 2f, 2f);
+        box3.Size = new Vector3(1, 1f, 1);
         
-        camera3D.AddChild(light);
+        //camera3D.AddChild(light);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
-        
-        AddChild(camera3D, model, postProcessor);
+        AddChild(camera3D, box, light, model, postProcessor);
+
         base.Start();
     }
 
@@ -187,7 +207,7 @@ public class Root : Node
         if (Keyboard.KeyDown(Keys.Escape))
             Window.Running = false;
 
-        light.LightSource.Direction = camera3D.Target - camera3D.Transform.Position;
+        //light.LightSource.Direction = camera3D.Target - camera3D.Transform.Position;
 
         Movement();
         camera3D.Target = camera3D.Transform.GlobalPosition + cameraFront.Normalize();

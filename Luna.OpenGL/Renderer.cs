@@ -2,13 +2,15 @@
 
 internal class Renderer : IRenderer
 {
-    private readonly Dictionary<string, IRenderObject> _renderer = [];
+    private static readonly Dictionary<string, IRenderObject> _renderer = [];
 
-    private readonly Queue<IRenderObject> _queue = [];
+    private static readonly SortedDictionary<int, Queue<IRenderObject>> _priorityDictionary = [];
+
+    private static bool _interrupt;
 
     public void Add(string id, IRenderObject renderObject)
         => _renderer.Add(id, renderObject);
-    
+
     public void Remove(string id)
     {
         _renderer.GetValueOrDefault(id)?.Dispose();
@@ -19,7 +21,12 @@ internal class Renderer : IRenderer
     {
         if (_renderer.TryGetValue(id, out IRenderObject? renderObject))
         {
-            _queue.Enqueue(renderObject);
+            if (!_priorityDictionary.TryGetValue(renderObject.Priority, out var queue))
+            {
+                queue = [];
+                _priorityDictionary[renderObject.Priority] = queue;
+            }
+            queue.Enqueue(renderObject);
         }
     }
 
@@ -29,25 +36,40 @@ internal class Renderer : IRenderer
         renderObject?.Update(tData);
     }
 
-    public void DrawQueue(bool clear = true)
+    public void DrawQueue(IMaterial? material = null, bool clear = true)
     {
-        foreach (var node in _queue)
+        foreach (var (key, queue) in _priorityDictionary.Reverse())
         {
-            node.Draw();
+            foreach(var node in queue)
+            {
+                if (_interrupt)
+                    break;
+
+                if (material is null)
+                {
+                    node.Draw();
+                    continue;
+                }
+
+                node.Draw(material);
+            }
         }
 
         if (clear)
         {
-            _queue.Clear();
+            _priorityDictionary.Clear();
         }
+
+        _interrupt = false;
     }
 
-    public void Draw(string uid)
+    public void ClearRoutine()
     {
-        if (_renderer.TryGetValue(uid, out IRenderObject? renderObject))
-        {
-            renderObject.Draw();
-        }
+        LightEmitter.ClearShadowMaps();
     }
-    
+
+    internal static void Interrupt()
+    {
+        _interrupt = true;
+    }
 }

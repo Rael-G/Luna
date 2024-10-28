@@ -7,8 +7,8 @@ public class GlTexture2DMultiSample : GlTexture2D
 {
     public int Samples { get; set; }
 
-    private GlTexture2DMultiSample(Vector2 size, TextureFilter filter, TextureWrap wrap, string hash, int samples)
-        : base(string.Empty, filter, wrap, 0, false, TextureTarget.Texture2DMultisample, hash, ImageType.Linear)
+    private GlTexture2DMultiSample(Vector2 size, TextureFilter filter, TextureWrap wrap, Color borderColor, string hash, int samples)
+        : base(string.Empty, filter, wrap, borderColor, 0, false, TextureTarget.Texture2DMultisample, hash, ImageType.Linear)
     {
         Samples = Math.Clamp(samples, 2, _gl.GetInteger(GLEnum.MaxSamples));
         Size = size;
@@ -16,7 +16,7 @@ public class GlTexture2DMultiSample : GlTexture2D
 
     public static GlTexture2DMultiSample Create(Texture2D texture2D, int samples)
     {
-        var texture = new GlTexture2DMultiSample(texture2D.Size, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.Hash, samples);
+        var texture = new GlTexture2DMultiSample(texture2D.Size, texture2D.TextureFilter, texture2D.TextureWrap, texture2D.BorderColor, texture2D.Hash, samples);
 
         texture.LoadMultisampleTexture();
         return texture;

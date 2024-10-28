@@ -50,15 +50,27 @@ public abstract class TextureBase : Disposable
         }
     }
 
+    public virtual Color BorderColor
+    {
+        get => _borderColor;
+        set
+        {
+            _borderColor = value;
+            _gl.TextureParameter(Handle, TextureParameterName.TextureBorderColor, _borderColor.ToFloatArray());
+        }
+    }
+
     protected TextureFilter _textureFilter;
     protected TextureWrap _textureWrap;
+    protected Color _borderColor;
 
     protected string Hash { get; set; }
 
-    protected TextureBase(TextureFilter textureFilter, TextureWrap textureWrap, int mipmaps, TextureTarget textureTarget, string hash, ImageType imageType)
+    protected TextureBase(TextureFilter textureFilter, TextureWrap textureWrap, Color borderColor, int mipmaps, TextureTarget textureTarget, string hash, ImageType imageType)
     {
         _textureFilter = textureFilter;
         _textureWrap = textureWrap;
+        _borderColor = borderColor;
         MipmapLevel = mipmaps;
         ImageType = imageType;
         TextureTarget = textureTarget;
@@ -80,22 +92,26 @@ public abstract class TextureBase : Disposable
 
     public override void Dispose(bool disposing)
     {
-        if (TextureManager.StopUsing(Hash) <= 0)
+        if (disposing)
         {
-            if (_disposed) return;
+            if (TextureManager.StopUsing(Hash) <= 0)
+            {
+                if (_disposed) return;
 
-            TextureManager.Delete(Hash);
-            _gl.DeleteTexture(Handle);
+                TextureManager.Delete(Hash);
+                _gl.DeleteTexture(Handle);
 
-            base.Dispose(disposing);
+                base.Dispose(disposing);
+            }
         }
+        
     }
 
-    protected static (PixelFormat, InternalFormat) GetFormat(ImageType type, int numChannels = 3)
+    protected static (PixelFormat, InternalFormat, PixelType) GetFormat(ImageType type, int numChannels = 3)
     {
         if (type == ImageType.DeathMap)
         {
-            return (PixelFormat.DepthComponent, InternalFormat.DepthComponent);
+            return (PixelFormat.DepthComponent, InternalFormat.DepthComponent, PixelType.Float);
         }
         
         var pixelFormat = numChannels switch
@@ -127,6 +143,6 @@ public abstract class TextureBase : Disposable
             },
         };
 
-        return (pixelFormat, internalFormat);
+        return (pixelFormat, internalFormat, PixelType.UnsignedByte);
     }
 }

@@ -12,6 +12,7 @@ public struct Texture2D
     public Vector2 Size { get; set; }
     public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
     public TextureWrap TextureWrap { get; set; } = TextureWrap.Repeat;
+    public Color BorderColor { get; set; } = Colors.White;
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
     public ImageType ImageType { get; set; } = ImageType.SRGB;

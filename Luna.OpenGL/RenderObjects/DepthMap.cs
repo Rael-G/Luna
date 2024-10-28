@@ -3,12 +3,9 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-public class DepthMap 
+public class DepthMap : Disposable
 {
     GL _gl;
-    string _data;
-    Material _material;
-    ShaderSource[] _shaders;
     FrameBufferObject _fbo { get; set; }
     bool useCulling;
 
@@ -18,15 +15,11 @@ public class DepthMap
     public DepthMap(Vector2 size, GL gl)
     {
         _gl = gl;
-        _size = size;
-        _material = new Material()
-        {
-            Shaders = _shaders
-        };
         _fbo = new(gl, FramebufferTarget.Framebuffer);
+        CreateDepthMap(size);
     }
 
-    private void Bind()
+    public void Bind()
     {
         _gl.Viewport(0, 0, (uint)_size.X, (uint)_size.Y);
         _fbo.Bind();
@@ -37,10 +30,10 @@ public class DepthMap
         window.Flags |= WindowFlags.BackFaceCulling;
         _gl.CullFace(TriangleFace.Front);
 
-        GlErrorUtils.CheckError("PostProcessor Bind");
+        GlErrorUtils.CheckError("DepthMap Bind");
     }
 
-    private void Unbind()
+    public void Unbind()
     {
         _gl.CullFace(TriangleFace.Back);
         if (!useCulling)
@@ -53,35 +46,36 @@ public class DepthMap
         var size = Injector.Get<IWindow>().Size;
         _gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
         _gl.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
-        GlErrorUtils.CheckError("PostProcessor Unbind");
+        GlErrorUtils.CheckError("DepthMap Unbind");
     }
 
-    public void CreateDepthMap()
+    public void CreateDepthMap(Vector2 size)
     {
+        _size = size;
         TextureManager.Get(DepthMapTexture.Hash)?.Dispose();
         
-        var width = (uint)_size.X;
-        var height = (uint)_size.Y;
+        var width = (uint)size.X;
+        var height = (uint)size.Y;
 
         DepthMapTexture = new Texture2D()
         {
             Size = new Vector2(width, height),
             TextureFilter = TextureFilter.Nearest,
-            TextureWrap = TextureWrap.Repeat,
+            TextureWrap = TextureWrap.ClampToBorder,
             Hash = Guid.NewGuid().ToString(),
             ImageType = ImageType.DeathMap
         };
 
-        var texture = GlTexture2D.Create(DepthMapTexture);
-        TextureManager.Cache(DepthMapTexture.Hash, texture);
+        var depthMapTexture = GlTexture2D.Create(DepthMapTexture);
+        TextureManager.Cache(DepthMapTexture.Hash, depthMapTexture);
 
-        _fbo.AttachTexture2D(texture, FramebufferAttachment.DepthAttachment);
+        _fbo.AttachTexture2D(depthMapTexture, FramebufferAttachment.DepthAttachment);
         _fbo.Bind();
         _gl.DrawBuffer(DrawBufferMode.None);
         _gl.ReadBuffer(ReadBufferMode.None);
         _fbo.Unbind();
     
-        GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);
+        _fbo.CheckFrameBuffer("DepthMap");
     }
 
 }

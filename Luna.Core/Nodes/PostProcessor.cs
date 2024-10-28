@@ -23,15 +23,4 @@ public class PostProcessor : Node
 
         base.Update();
     }
-
-    internal override void Draw()
-    {
-        if (Invisible)  return;
-
-        var map = Injector.Get<IRenderer>();
-        map.Draw(UID);
-
-        foreach (var child in Children)
-            child.Draw();
-    }
 }
