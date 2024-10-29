@@ -1,39 +1,43 @@
-﻿namespace Luna.OpenGL;
+﻿using Silk.NET.OpenGL;
 
-public class TextureManager
+namespace Luna.OpenGL;
+
+internal class TextureManager
 {   
-    private static readonly Dictionary<string, TextureBase> Textures = [];
+    private static readonly Dictionary<string, Texture> Textures = [];
     private static readonly Dictionary<string, int> Counters = [];
 
-    internal static GlTexture2D Load(Texture2D texture2D)
+    private static readonly GL _gl = Window.GL?? throw new WindowException("Window.Gl is null.");
+
+    public static Texture2DGL Load(Texture2D texture2D)
     {
-        StartUsing(texture2D.Hash);
-        GlTexture2D? texture = Get(texture2D.Hash) as GlTexture2D;
+        Texture2DGL? texture = Get(texture2D.Hash) as Texture2DGL;
         if (texture is not null)
         {
+            StartUsing(texture2D.Hash);
             return texture;
         }
 
-        texture = GlTexture2D.Create(texture2D);
+        texture = Create(texture2D);
         Cache(texture2D.Hash, texture);
         return texture;
     }
 
-    internal static GlCubeMap Load(CubeMap cubemap)
+    public static CubeMapGL Load(CubeMap cubemap)
     {
         StartUsing(cubemap.Hash);
-        GlCubeMap? texture = Get(cubemap.Hash) as GlCubeMap;
+        CubeMapGL? texture = Get(cubemap.Hash) as CubeMapGL;
         if (texture is not null)
         {
             return texture;
         }
 
-        texture = GlCubeMap.Create(cubemap);
+        texture = Create(cubemap);
         Cache(cubemap.Hash, texture);
         return texture;
     }
 
-    internal static TextureBase? Get(string hash)
+    public static Texture? Get(string hash)
     {
         if (Textures.TryGetValue(hash, out var texture))
             return texture;
@@ -41,34 +45,68 @@ public class TextureManager
         return null;
     }
 
-    internal static int StopUsing(string hash)
+    public static void Dispose(string hash)
     {
-        if (!Counters.TryGetValue(hash, out _))
-            return 0;
-
-        return --Counters[hash];
+        try
+        {
+            if (--Counters[hash] <= 0)
+            {
+                Delete(hash);
+            }
+        }
+        catch
+        {
+            Console.WriteLine();
+        }
     }
 
-    internal static void Cache(string hash, TextureBase texture)
+    public static void Cache(string hash, Texture texture)
     {
+        if (Counters.TryGetValue(hash, out _) || Textures.TryGetValue(hash, out _))
+            throw new LunaException("Caching an already registered texture is not allowed.");
+        
         Textures[hash] = texture;
+        Counters[hash] = 0;
+        StartUsing(hash);
     }
 
-    internal static void Dispose(string hash)
-        => Get(hash)?.Dispose();
-
-    internal static void Delete(string hash)
+    public static void Delete(string hash)
     {
+        Textures[hash].Dispose();
         Counters.Remove(hash);
         Textures.Remove(hash);
     }
 
     private static void StartUsing(string hash)
     {
-        if (!Counters.TryGetValue(hash, out _))
-            Counters.Add(hash, 0);
-
         Counters[hash]++;
+    }
+
+    private static Texture2DGL Create(Texture2D texture2D)
+    {
+        if (!string.IsNullOrEmpty(texture2D.Path))
+        {
+            return new Texture2DGL(_gl, texture2D.Path, texture2D.FlipV, texture2D.ImageType, 
+                texture2D.FilterMode, texture2D.WrapMode);
+        }
+        else
+        {
+            return new Texture2DGL(_gl, texture2D.Size, texture2D.ImageType, texture2D.FilterMode, 
+                texture2D.WrapMode);
+        }
+    }
+
+    private static CubeMapGL Create(CubeMap cubeMap)
+    {
+        if (cubeMap.Paths.Length > 0)
+        {
+            return new CubeMapGL(_gl, cubeMap.Paths, cubeMap.FlipV, cubeMap.ImageType, cubeMap.FilterMode, 
+                cubeMap.WrapMode);
+        }
+        else
+        {
+            return new CubeMapGL(_gl, cubeMap.Size, cubeMap.ImageType, cubeMap.FilterMode, cubeMap.WrapMode);
+        }
     }
 
 }

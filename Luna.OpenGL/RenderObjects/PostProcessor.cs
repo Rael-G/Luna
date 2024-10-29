@@ -26,8 +26,8 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         {
             Shaders = data.Shaders
         };
-        _fbo = new(GL, FramebufferTarget.Framebuffer);
-        _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
+        _fbo = new(GL, FramebufferTarget.Framebuffer, data.Resolution);
+        _intermediateFbo = new(GL, FramebufferTarget.Framebuffer, data.Resolution);
 
         CreatePostProcessor(data.Resolution, data.Samples);
 
@@ -43,6 +43,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         }
         _draw = false;
 
+        // Draw into the fbo
         Bind();
         Injector.Get<IRenderer>().DrawQueue();
         Unbind();
@@ -58,6 +59,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         _material.SetTexture2D("SCREEN_TEXTURE", _texture);
         
+        //Draw to the screen
         _material.Bind();
         _mesh!.Draw(PrimitiveType.Triangles);
 
@@ -78,13 +80,14 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         if (data.Resolution != _data.Resolution || data.Samples != _data.Samples)
         {
             _data = data;
+            _fbo.Viewport = data.Resolution;
+            _intermediateFbo.Viewport = data.Resolution;
             CreatePostProcessor(data.Resolution, data.Samples);
         }
     }
 
     private void Bind()
     {
-        GL.Viewport(0, 0, (uint)_data.Resolution.X, (uint)_data.Resolution.Y);
         _fbo.Bind();
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GlErrorUtils.CheckError("PostProcessor Bind");
@@ -102,21 +105,25 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         }
         _fbo.Unbind();
 
-        var size = Injector.Get<IWindow>().Size;
-        GL.Viewport(0, 0, (uint)size.X, (uint)size.Y);
         GlErrorUtils.CheckError("PostProcessor Unbind");
     }
 
     private void CreatePostProcessor(Vector2 resolution, int samples)
     {
-        TextureManager.Get(_texture.Hash)?.Dispose();
-        _rbo?.Dispose();
-        _mesh?.Dispose();
+        if (TextureManager.Get(_texture.Hash) is not null)
+        {
+            TextureManager.Dispose(_texture.Hash);
+        }
         if (_multisampleTexture != null) 
         {
-            TextureManager.Get(_multisampleTexture?.Hash!)?.Dispose();
+            if (TextureManager.Get(_multisampleTexture.Value.Hash) is not null)
+            {
+                TextureManager.Dispose(_multisampleTexture.Value.Hash);
+            }
         }
-        
+        _rbo?.Dispose();
+        _mesh?.Dispose();
+
         var width = (uint)resolution.X;
         var height = (uint)resolution.Y;
 
@@ -124,30 +131,33 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
         _texture = new Texture2D()
         {
-            Size = new Vector2(width, height),
-            TextureFilter = TextureFilter.Bilinear,
-            TextureWrap = TextureWrap.ClampToEdge,
+            Size = resolution,
+            FilterMode = FilterMode.Bilinear,
+            WrapMode = WrapMode.ClampToEdge,
             Hash = Guid.NewGuid().ToString(),
             ImageType = ImageType.Linear
         };
 
-        var texture = GlTexture2D.Create(_texture);
-        TextureManager.Cache(_texture.Hash, texture);
+        var texture = TextureManager.Load(_texture);
         if (samples > 0)
         {
             _multisampleTexture = new Texture2D()
             {
-                Size = new Vector2(width, height),
-                TextureFilter = TextureFilter.Bilinear,
-                TextureWrap = TextureWrap.ClampToEdge,
+                Size = resolution,
+                FilterMode = FilterMode.Bilinear,
+                WrapMode = WrapMode.ClampToEdge,
                 Hash = Guid.NewGuid().ToString(),
                 ImageType = ImageType.Linear
             };
 
-            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height, samples);
+            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, 
+                InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, 
+                    width, height, samples);
 
-            var msTexture = GlTexture2DMultiSample.Create((Texture2D)_multisampleTexture, samples);
-            TextureManager.Cache(_multisampleTexture?.Hash!, msTexture);
+            var msTexture = new Texture2DGL(GL, _multisampleTexture.Value.Size, 
+                _multisampleTexture.Value.ImageType, _multisampleTexture.Value.FilterMode, 
+                _multisampleTexture.Value.WrapMode, 0, samples);
+            TextureManager.Cache(_multisampleTexture.Value.Hash, msTexture);
 
             _fbo.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);
@@ -158,7 +168,9 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         }
         else
         {
-            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, width, height);
+            _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, 
+                InternalFormat.Depth24Stencil8, FramebufferAttachment.DepthStencilAttachment, 
+                width, height);
 
             _fbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);

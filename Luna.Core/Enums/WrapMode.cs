@@ -1,6 +1,6 @@
 ﻿namespace Luna;
 
-public enum TextureWrap
+public enum WrapMode
 {
     Repeat = 10497,
     ClampToBorder = 33069,

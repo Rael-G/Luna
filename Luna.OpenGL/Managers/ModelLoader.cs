@@ -84,7 +84,7 @@ public static unsafe class ModelLoader
             textures.Add(new Texture2D()
             { 
                 Path = Path.Combine(directory, path),
-                TextureFilter = modelData.TextureFilter,
+                FilterMode = modelData.TextureFilter,
                 ImageType = GetImageType(type)
             });
         }

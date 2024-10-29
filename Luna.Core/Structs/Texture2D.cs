@@ -10,10 +10,8 @@ public struct Texture2D
 
     public string Path { get; set; } = string.Empty;
     public Vector2 Size { get; set; }
-    public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
-    public TextureWrap TextureWrap { get; set; } = TextureWrap.Repeat;
-    public Color BorderColor { get; set; } = Colors.White;
-    public int MipmapLevel { get; set; }
+    public FilterMode FilterMode { get; set; } = FilterMode.Bilinear;
+    public WrapMode WrapMode { get; set; } = WrapMode.Repeat;
     public bool FlipV { get; set; }
     public ImageType ImageType { get; set; } = ImageType.SRGB;
 
@@ -28,6 +26,6 @@ public struct Texture2D
     public override readonly int GetHashCode()
     {
 
-        return (Path + Size + TextureFilter + TextureWrap + MipmapLevel).GetHashCode();
+        return (Path + Size + FilterMode + WrapMode + FlipV + ImageType).GetHashCode();
     }
 }

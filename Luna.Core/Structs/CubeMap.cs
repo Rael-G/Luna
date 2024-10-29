@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Luna;
 
 public struct CubeMap
@@ -8,8 +10,9 @@ public struct CubeMap
     }
 
     public string[] Paths { get; set; } = [];
-    public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
-    public TextureWrap TextureWrap { get; set; } = TextureWrap.ClampToEdge;
+    public Vector2 Size { get; set; }
+    public FilterMode FilterMode { get; set; } = FilterMode.Bilinear;
+    public WrapMode WrapMode { get; set; } = WrapMode.ClampToEdge;
     public Color BorderColor { get; set; } = Colors.White;
     public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
@@ -25,6 +28,6 @@ public struct CubeMap
 
     public override readonly int GetHashCode()
     {
-        return (string.Join("", Paths) + TextureFilter + TextureWrap + MipmapLevel + FlipV).GetHashCode();
+        return (string.Join("", Paths) + FilterMode + WrapMode + MipmapLevel + FlipV).GetHashCode();
     }
 }

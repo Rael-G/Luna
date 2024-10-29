@@ -1,6 +1,6 @@
 ﻿namespace Luna;
 
-public enum TextureFilter
+public enum FilterMode
 {
     Nearest = 0,
     Bilinear,

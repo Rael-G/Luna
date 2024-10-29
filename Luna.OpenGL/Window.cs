@@ -17,8 +17,6 @@ internal unsafe class Window : IWindow
         }
     }
 
-    private int _msaa;
-
     public CursorMode CursorMode
     {
         get => _cursorMode;

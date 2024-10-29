@@ -69,7 +69,7 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
-            Samples = 16
+            Samples = 0
             //Resolution = resolutions[0]
 
         };
@@ -77,7 +77,7 @@ public class Root : Node
         var texture = new Texture2D()
         {
             Path = "Assets/images/Hamburger.png",
-            TextureFilter = TextureFilter.Nearest,
+            FilterMode = FilterMode.Nearest,
             FlipV = false
         };
         var camera2D = new OrtographicCamera(){

@@ -32,7 +32,7 @@ public class Material() : Disposable, IMaterial
     {
         if (Textures2D.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
         {
-            TextureManager.Get(oldTexture.Hash)?.Dispose();
+            TextureManager.Dispose(oldTexture.Hash);
         }
 
         if (texture.Hash != oldTexture.Hash)
@@ -47,7 +47,7 @@ public class Material() : Disposable, IMaterial
     {
         if (CubeMaps.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
         {
-            TextureManager.Get(oldTexture.Hash)?.Dispose();
+            TextureManager.Dispose(oldTexture.Hash);
         }
 
         if (texture.Hash != oldTexture.Hash)

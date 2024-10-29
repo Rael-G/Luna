@@ -9,19 +9,17 @@ public class DepthMap : Disposable
     FrameBufferObject _fbo { get; set; }
     bool useCulling;
 
-    Vector2 _size;
     public Texture2D DepthMapTexture { get; private set; }
 
     public DepthMap(Vector2 size, GL gl)
     {
         _gl = gl;
-        _fbo = new(gl, FramebufferTarget.Framebuffer);
+        _fbo = new(gl, FramebufferTarget.Framebuffer, size);
         CreateDepthMap(size);
     }
 
     public void Bind()
     {
-        _gl.Viewport(0, 0, (uint)_size.X, (uint)_size.Y);
         _fbo.Bind();
         _gl.Clear(ClearBufferMask.DepthBufferBit);
 
@@ -44,15 +42,17 @@ public class DepthMap : Disposable
         _fbo.Unbind();
 
         var size = Injector.Get<IWindow>().Size;
-        _gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
         _gl.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
         GlErrorUtils.CheckError("DepthMap Unbind");
     }
 
     public void CreateDepthMap(Vector2 size)
     {
-        _size = size;
-        TextureManager.Get(DepthMapTexture.Hash)?.Dispose();
+        _fbo.Viewport = size;
+        if (TextureManager.Get(DepthMapTexture.Hash) is not null)
+        {
+            TextureManager.Dispose(DepthMapTexture.Hash);
+        }
         
         var width = (uint)size.X;
         var height = (uint)size.Y;
@@ -60,14 +60,14 @@ public class DepthMap : Disposable
         DepthMapTexture = new Texture2D()
         {
             Size = new Vector2(width, height),
-            TextureFilter = TextureFilter.Nearest,
-            TextureWrap = TextureWrap.ClampToBorder,
+            FilterMode = FilterMode.Nearest,
+            WrapMode = WrapMode.ClampToBorder,
             Hash = Guid.NewGuid().ToString(),
             ImageType = ImageType.DeathMap
         };
 
-        var depthMapTexture = GlTexture2D.Create(DepthMapTexture);
-        TextureManager.Cache(DepthMapTexture.Hash, depthMapTexture);
+        var depthMapTexture = TextureManager.Load(DepthMapTexture);
+        depthMapTexture.SetBorderColor(Colors.White);
 
         _fbo.AttachTexture2D(depthMapTexture, FramebufferAttachment.DepthAttachment);
         _fbo.Bind();

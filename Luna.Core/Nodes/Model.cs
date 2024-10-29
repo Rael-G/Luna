@@ -11,7 +11,7 @@ public class Model : Node
         }
     }
 
-    public TextureFilter TextureFilter { get; set; } = TextureFilter.Bilinear;
+    public FilterMode TextureFilter { get; set; } = FilterMode.Bilinear;
 
     public IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
 
