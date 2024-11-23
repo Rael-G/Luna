@@ -21,17 +21,6 @@ public class OrtographicCamera : Node, ICamera
     [IgnoreDataMember]
     public virtual Matrix4x4 View 
         => Matrix4x4.CreateTranslation(-Transform.GlobalPosition);
-    
-    protected override Node? Parent 
-    { 
-        get => base.Parent; 
-        set
-        {
-            base.Parent = value;
-            if (Parent is not null)
-                Parent.Camera = this;
-        } 
-    }
 
     public override void LateUpdate()
     {

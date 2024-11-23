@@ -34,22 +34,31 @@ public class Node : Disposable
         }
     }
 
-    protected virtual Node? Parent 
+    public Node? Parent 
     { 
         get => _parent;
-        set 
+        private set 
         {
             _parent = value;
             Transform.Parent = _parent?.Transform;
         }
     }
 
-    internal virtual ICamera? Camera 
+    /// <summary>
+    /// Gets or sets the camera associated with this node. 
+    /// 
+    /// When getting the camera, if this node has a camera assigned, it returns that camera. 
+    /// If no camera is assigned to this node, it recursively checks the parent nodes for an assigned camera. 
+    /// If no cameras are found in the hierarchy, it returns null.
+    /// 
+    /// When setting a camera, it directly assigns the specified camera to this node, 
+    /// without affecting parent or child nodes.
+    /// </summary>
+    public ICamera? Camera 
     { 
         get
         {
-            if (_camera is not null)
-                return _camera;
+            if (_camera is not null) return _camera;
 
             return _parent?.Camera;
         }
