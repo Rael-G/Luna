@@ -79,22 +79,25 @@ public class Node : Disposable
     }
 
     [IgnoreDataMember]
-    public Action? AwakeAction { get; set; }
+    public Action? OnAwake { get; set; }
 
     [IgnoreDataMember]
-    public Action? StartAction { get; set; }
+    public Action? OnStart { get; set; }
 
     [IgnoreDataMember]
-    public Action? EarlyUpdateAction { get; set; }
+    public Action? OnEarlyUpdate { get; set; }
 
     [IgnoreDataMember]
-    public Action? UpdateAction { get; set; }
+    public Action? OnUpdate { get; set; }
 
     [IgnoreDataMember]
-    public Action? LateUpdateAction { get; set; }
+    public Action? OnLateUpdate { get; set; }
 
     [IgnoreDataMember]
-    public Action? FixedUpdateAction { get; set; }
+    public Action? OnFixedUpdate { get; set; }
+
+    [IgnoreDataMember]
+    public Func<Task>? OnExecuteAsync { get; set; }
 
     private bool _awakened;
     private bool _started;
@@ -122,7 +125,7 @@ public class Node : Disposable
     {
         if (_awakened) return;
         Awake();
-        AwakeAction?.Invoke();
+        OnAwake?.Invoke();
         foreach (var child in Children)
             child.InternalAwake();
         _awakened = true;
@@ -176,7 +179,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         EarlyUpdate();
-        EarlyUpdateAction?.Invoke();
+        OnEarlyUpdate?.Invoke();
         foreach (var child in Children)
             child.InternalEarlyUpdate();
     }
@@ -194,7 +197,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         Update();
-        UpdateAction?.Invoke();
+        OnUpdate?.Invoke();
         foreach (var child in Children)
             child.InternalUpdate();
     }
@@ -212,7 +215,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         LateUpdate();
-        LateUpdateAction?.Invoke();
+        OnLateUpdate?.Invoke();
         foreach (var child in Children)
             child.InternalLateUpdate();
     }
@@ -230,7 +233,7 @@ public class Node : Disposable
         if (Paused)  return;
 
         FixedUpdate();
-        FixedUpdateAction?.Invoke();
+        OnFixedUpdate?.Invoke();
         foreach (var child in Children)
             child.InternalFixedUpdate();
     }
