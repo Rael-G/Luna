@@ -34,6 +34,8 @@ public static class Host
             Tree.Root.InternalLateUpdate();
             Physics.FixedUpdate();
 
+            MainThreadDispatcher.ExecutePending();
+
             Window.EngineWindow.BeginRender();
             Tree.Root.Draw();
             Injector.Get<IRenderer>().DrawQueue();

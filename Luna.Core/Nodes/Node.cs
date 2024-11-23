@@ -140,11 +140,28 @@ public class Node : Disposable
     {
         if (_started) return;
         Start();
-        StartAction?.Invoke();
+        Task.Run(() => ExecuteAsync());
+        OnStart?.Invoke();
+        OnExecuteAsync?.Invoke();
+        if (OnExecuteAsync is not null)
+        {
+            OnExecuteAsync();
+        }
         foreach (var child in Children)
+        {
             child.InternalStart();
+        }
         _started = true;
     }
+    
+    protected virtual async Task ExecuteAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+    protected static async Task AwaitMainThread()
+        => await MainThreadDispatcher.AwaitMainThread();
+    
 
     /// <summary>
     /// Updates this Node once per frame early.
