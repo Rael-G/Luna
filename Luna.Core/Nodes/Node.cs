@@ -270,17 +270,21 @@ public class Node : Disposable
     {
         foreach (var node in nodes)
         {
-            if (Children.FirstOrDefault(c => c == node) != null) 
-                continue;
+            if (Children.Contains(node)) continue;
 
-            node.Parent?.RemoveChild(node);
+            node.Orphan();
 
             node.Parent = this;
             Children.Add(node);
-            if (Window.Running && _awakened)   
+
+            if (Window.Running && _awakened)
+            {
                 node.InternalAwake();
-            if (Window.Running && _started) 
+            }
+            if (Window.Running && _started)
+            {
                 node.InternalStart();
+            }
             Tree.AddNode(node);
         }
     }
@@ -293,11 +297,26 @@ public class Node : Disposable
     {
         foreach(var node in nodes)
         {
-            Children.Remove(node);
+            if (!Children.Remove(node)) continue;
+
             node.Parent = null;
             Tree.RemoveNode(node.UID);
-            node.Dispose();
         }
+    }
+
+    public void Orphan()
+    {
+        Parent?.RemoveChild(this);
+    }
+
+    public void Destroy()
+    {
+        foreach(var child in Children)
+        {
+            child.Destroy();
+        }
+
+        Orphan();
     }
 
     /// <summary>

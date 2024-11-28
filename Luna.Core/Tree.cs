@@ -7,22 +7,33 @@ public static class Tree
 {
     public static Node Root 
     {
-         get => _root;
+         get => _root?? throw new LunaException("Root is null.");
          internal set
          {
+            if (_root is not null)
+            {
+                RemoveNode(_root.UID);
+            }
             _root = value;
             AddNode(value);
          }
     }
 
-    // Is registered by host
-    private static Node _root = null!;
+    private static Node? _root;
 
-    private static readonly Dictionary<string, Node> _nodes = [];
+    private static readonly Dictionary<string, Node> _index = [];
+
+    public static T? FindNodeByUID<T>(string uid) where T : Node
+        => FindNodeByUID(uid) as T;
+
+    public static Node? FindNodeByUID(string uid)
+        => _index.GetValueOrDefault(uid);
 
     internal static void AddNode(Node node)
     {
-        _nodes[node.UID] = node;
+        if (!IsDescendantOfRoot(node)) return;
+        
+        _index[node.UID] = node;
         foreach (var child in node.Children)
         {
             AddNode(child);
@@ -39,9 +50,18 @@ public static class Tree
         {
             RemoveNode(child.UID);
         }
-        _nodes.Remove(uid);
+        node.Dispose();
+        _index.Remove(uid);
     }
 
-    public static T? FindNodeByUID<T>(string uid) where T : Node
-        => _nodes.GetValueOrDefault(uid) as T;
+    private static bool IsDescendantOfRoot(Node node)
+    {
+        var current = node;
+        while (current != null)
+        {
+            if (current == Root) return true;
+            current = current.Parent;
+        }
+        return false;
+    }
 }
