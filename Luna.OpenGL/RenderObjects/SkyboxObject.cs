@@ -37,26 +37,26 @@ public class SkyboxObject : RenderObject<SkyboxData>
         _material.MatricesProperties["view"] = _data.ModelViewProjection.View;
         _material.MatricesProperties["projection"] = _data.ModelViewProjection.Projection;
         _material.SetCubeMap("skybox", data.CubeMap);
+        Priority = -1;
     }
 
     public override void Draw()
     {
-        Draw(_material);
-    }
-
-    public override void Draw(IMaterial material)
-    {
-        GlErrorUtils.CheckError("Before SkyboxDraw");
         var window = Injector.Get<IWindow>();
         var previousDepthMode = window.DepthMode;
 
         window.DepthMode = DepthMode.Lequal;
-        GlErrorUtils.CheckError("raw");
-        material.Bind();
+        _material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
-        GlErrorUtils.CheckError("raw");
+        GL.BindTexture(TextureTarget.TextureCubeMap, 0);
+        _material.Unbind();
         window.DepthMode = previousDepthMode;
         GlErrorUtils.CheckError("SkyboxDraw");
+    }
+
+    public override void Draw(IMaterial material)
+    {
+        // Do nothing
     }
 
     public override void Update(SkyboxData data)

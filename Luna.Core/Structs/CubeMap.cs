@@ -13,8 +13,6 @@ public struct CubeMap
     public Vector2 Size { get; set; }
     public FilterMode FilterMode { get; set; } = FilterMode.Bilinear;
     public WrapMode WrapMode { get; set; } = WrapMode.ClampToEdge;
-    public Color BorderColor { get; set; } = Colors.White;
-    public int MipmapLevel { get; set; }
     public bool FlipV { get; set; }
     public ImageType ImageType { get; set; } = ImageType.SRGB;
 
@@ -28,6 +26,11 @@ public struct CubeMap
 
     public override readonly int GetHashCode()
     {
-        return (string.Join("", Paths) + FilterMode + WrapMode + MipmapLevel + FlipV).GetHashCode();
+        var str = string.Join("", Paths);
+        str += FilterMode;
+        str += WrapMode;
+        str += FlipV;
+
+        return (str).GetHashCode();
     }
 }

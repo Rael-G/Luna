@@ -22,6 +22,7 @@ internal static class ShaderManager
     public static void UseProgram(ProgramShader program)
     {
         _gl.UseProgram(GetShader(program));
+        GlErrorUtils.CheckError("ShaderManager UseProgram");
     }
 
     public static void StartUsing(ProgramShader program)
@@ -44,6 +45,7 @@ internal static class ShaderManager
             _gl.DeleteProgram(GetShader(program));
             Counters.Remove(program.Name);
             Shaders.Remove(program.Name);
+            GlErrorUtils.CheckError("ShaderManager StopUsing");
         }
     }
 
@@ -79,6 +81,7 @@ internal static class ShaderManager
 
             return GetFromSource(program);
         }
+        GlErrorUtils.CheckError("ShaderManager GetFromBinary");
 
         Shaders.Add(program.Name, id);
         return id;
@@ -129,6 +132,8 @@ internal static class ShaderManager
         SaveBinary(program, programId);
         Shaders.Add(program.Name, programId);
 
+        GlErrorUtils.CheckError("ShaderManager GetFromSource");
+
         return programId;
     }
 
@@ -145,6 +150,8 @@ internal static class ShaderManager
 
         binaryWriter.Write((int)binaryFormat);
         binaryWriter.Write(binary);
+
+        GlErrorUtils.CheckError("ShaderManager SaveBinary");
     }
 
     public static void SetMat4(ProgramShader program, string name, float[] mat4)
@@ -152,6 +159,7 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.UniformMatrix4(loc, false, mat4);
+        GlErrorUtils.CheckError("ShaderManager SetMat4");
     }
 
     public static void SetVec4(ProgramShader program, string name, float[] vec4)
@@ -159,6 +167,7 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform4(loc, vec4);
+        GlErrorUtils.CheckError("ShaderManager SetVec4");
     }
 
     public static void SetVec3(ProgramShader program, string name, float[] vec3)
@@ -166,6 +175,7 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform3(loc, vec3);
+        GlErrorUtils.CheckError("ShaderManager SetVec3");
     }
 
     public static void Set(ProgramShader program, string name, int value)
@@ -173,6 +183,7 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform1(loc, value);
+        GlErrorUtils.CheckError("ShaderManager SetI");
     }
 
     public static void Set(ProgramShader program, string name, float value)
@@ -180,6 +191,7 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform1(loc, value);
+        GlErrorUtils.CheckError("ShaderManager SetF");
     }
 
     public static void Set(ProgramShader program, string name, bool value)
@@ -187,5 +199,6 @@ internal static class ShaderManager
         var programId = GetShader(program);
         var loc = _gl.GetUniformLocation(programId, name);
         _gl.Uniform1(loc, value? 1 : 0);
+        GlErrorUtils.CheckError("ShaderManager SetB");
     }
 }

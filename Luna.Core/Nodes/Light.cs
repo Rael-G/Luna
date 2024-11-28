@@ -6,7 +6,6 @@ public class Light : Node
 
     public override void Awake()
     {
-        Injector.Get<ILightEmitter>().Add(UID, LightSource);
         CreateRenderObject(LightSource);
 
         base.Awake();
@@ -18,14 +17,5 @@ public class Light : Node
         UpdateRenderObject(LightSource);
 
         base.LateUpdate();
-    }
-
-    public override void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-
-        Injector.Get<ILightEmitter>().Remove(UID);
-
-        base.Dispose(disposing);
     }
 }

@@ -30,12 +30,15 @@ public class Material() : Disposable, IMaterial
 
     public void SetTexture2D(string key, Texture2D texture)
     {
-        if (Textures2D.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
+        if (Textures2D.TryGetValue(key, out var oldTexture))
         {
-            TextureManager.Dispose(oldTexture.Hash);
+            if (texture.Hash != oldTexture.Hash)
+            {
+                TextureManager.Dispose(oldTexture.Hash);
+                TextureManager.Load(texture);
+            }
         }
-
-        if (texture.Hash != oldTexture.Hash)
+        else
         {
             TextureManager.Load(texture);
         }
@@ -45,12 +48,15 @@ public class Material() : Disposable, IMaterial
 
     public void SetCubeMap(string key, CubeMap texture)
     {
-        if (CubeMaps.TryGetValue(key, out var oldTexture) && texture.Hash != oldTexture.Hash)
+        if (CubeMaps.TryGetValue(key, out var oldTexture))
         {
-            TextureManager.Dispose(oldTexture.Hash);
+            if (texture.Hash != oldTexture.Hash)
+            {
+                TextureManager.Dispose(oldTexture.Hash);
+                TextureManager.Load(texture);
+            }
         }
-
-        if (texture.Hash != oldTexture.Hash)
+        else
         {
             TextureManager.Load(texture);
         }
@@ -108,6 +114,27 @@ public class Material() : Disposable, IMaterial
         foreach (var property in MatricesProperties)
         {
             Shader.SetMat4(property.Key, property.Value.ToFloatArray());
+        }
+    }
+
+    public virtual void Unbind()
+    {
+        Shader.Use();
+
+        int textureUnit = 0;
+
+        foreach (var pair in Textures2D)
+        {
+            var texture = TextureManager.Get(pair.Value.Hash);
+            texture?.Unbind(TextureUnit.Texture0 + textureUnit);
+            textureUnit++;
+        }
+
+        foreach (var pair in CubeMaps)
+        {
+            var texture = TextureManager.Get(pair.Value.Hash);
+            texture?.Unbind(TextureUnit.Texture0 + textureUnit);
+            textureUnit++;
         }
     }
 

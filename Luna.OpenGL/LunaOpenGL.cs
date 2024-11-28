@@ -27,7 +27,6 @@ public static class LunaOpenGL
     {
         Injector.AddSingleton<IWindow>(new Window());
         Injector.AddSingleton<IRenderer>(new Renderer());
-        Injector.AddSingleton<ILightEmitter>(new LightEmitter());
         Injector.AddSingleton<IRenderObjectFactory>(new RenderObjectFactory());
         Injector.AddSingleton<IEngineUtils>(new EngineUtils());
         Injector.AddSingleton(DefaultShader);
@@ -42,7 +41,7 @@ public static class LunaOpenGL
         RenderObjectFactory.RegisterCallback<ModelData>((data) => new Model(data));
         RenderObjectFactory.RegisterCallback<PostProcessorData>((data) => new PostProcessor(data));
         RenderObjectFactory.RegisterCallback<SkyboxData>((data) => new SkyboxObject(data));
-        RenderObjectFactory.RegisterCallback<DirectionalLight>((data) => new ShadowMapper(data));
+        RenderObjectFactory.RegisterCallback<DirectionalLight>((data) => new DirectionalShadowMapper(data));
 
     }
 }

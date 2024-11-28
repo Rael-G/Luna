@@ -40,7 +40,6 @@ public static class Host
             Tree.Root.Draw();
             Injector.Get<IRenderer>().DrawQueue();
             Window.EngineWindow.EndRender();
-            Injector.Get<IRenderer>().ClearRoutine();
         }
 
         Window.EngineWindow.Close();

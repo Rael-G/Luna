@@ -103,59 +103,40 @@ public class StandardMaterial : Material, IStandardMaterial
         DirLight();
         PointLight();
         SpotLight();
-        Shadow();
-    }
-
-    private void Shadow()
-    {
-        int shadowMapsLength = 0;
-        foreach(var (matrix, texture) in LightEmitter.ShadowMaps)
-        {
-            MatricesProperties[$"lightSpaceMatrix[{shadowMapsLength}]"] = matrix;
-            SetTexture2D($"shadowMaps[{shadowMapsLength}]", texture);
-            
-            shadowMapsLength++;
-        }
-
-        
-        IntProperties["shadowMapsLength"] = shadowMapsLength;
-
     }
 
     private void DirLight()
     {
-        var dirLightLength = 0;
-        
-        foreach(var pair in LightEmitter.DirLights)
-        {
-            var light = pair.Value;
+        var dir = LightEmitter.DirLight;
+        if (dir is null) return;
 
-            Vector3Properties[$"dirLights[{dirLightLength}].direction"] = light.Direction;
-            Vector3Properties[$"dirLights[{dirLightLength}].ambient"] = light.Ambient;
-            Vector3Properties[$"dirLights[{dirLightLength}].diffuse"] = light.Diffuse;
-            Vector3Properties[$"dirLights[{dirLightLength}].specular"] = light.Specular;
-            
-            dirLightLength++;
-        }
+        Vector3Properties[$"dirLight.direction"] = dir.Light.Direction;
+        Vector3Properties[$"dirLight.ambient"] = dir.Light.Ambient;
+        Vector3Properties[$"dirLight.diffuse"] = dir.Light.Diffuse;
+        Vector3Properties[$"dirLight.specular"] = dir.Light.Specular;
 
-        IntProperties["dirLightLength"] = dirLightLength;
+        MatricesProperties[$"dirLight.lightSpaceMatrix"] = dir.LightSpaceMatrix;
+        MatricesProperties[$"lightSpaceMatrix"] = dir.LightSpaceMatrix;
+        SetTexture2D($"dirLight.shadowMap", dir.ShadowMap);
     }
 
     private void PointLight()
     {
         var pointLightLength = 0;
         
-        foreach(var pair in LightEmitter.PointLights)
+        foreach(var point in LightEmitter.PointLights)
         {
-            var light = pair.Value;
-            Vector3Properties[$"pointLights[{pointLightLength}].position"] = light.Position;
-            Vector3Properties[$"pointLights[{pointLightLength}].ambient"] = light.Ambient;
-            Vector3Properties[$"pointLights[{pointLightLength}].diffuse"] = light.Diffuse;
-            Vector3Properties[$"pointLights[{pointLightLength}].specular"] = light.Specular;
+            Vector3Properties[$"pointLights[{pointLightLength}].position"] = point.Light.Position;
+            Vector3Properties[$"pointLights[{pointLightLength}].ambient"] = point.Light.Ambient;
+            Vector3Properties[$"pointLights[{pointLightLength}].diffuse"] = point.Light.Diffuse;
+            Vector3Properties[$"pointLights[{pointLightLength}].specular"] = point.Light.Specular;
 
-            FloatProperties[$"pointLights[{pointLightLength}].constant"] = light.Constant;
-            FloatProperties[$"pointLights[{pointLightLength}].linear"] = light.Linear;
-            FloatProperties[$"pointLights[{pointLightLength}].quadratic"] = light.Quadratic;
+            FloatProperties[$"pointLights[{pointLightLength}].constant"] = point.Light.Constant;
+            FloatProperties[$"pointLights[{pointLightLength}].linear"] = point.Light.Linear;
+            FloatProperties[$"pointLights[{pointLightLength}].quadratic"] = point.Light.Quadratic;
+
+            FloatProperties[$"pointLights[{pointLightLength}].farPlane"] = point.FarPlane;
+            SetCubeMap($"pointLights[{pointLightLength}].shadowMap", point.ShadowMap);
 
             pointLightLength++;
         }
@@ -167,27 +148,24 @@ public class StandardMaterial : Material, IStandardMaterial
     {
         var spotLightLength = 0;
 
-        foreach(var pair in LightEmitter.SpotLights)
+        foreach(var spot in LightEmitter.SpotLights)
         {
-            var light = pair.Value;
+            Vector3Properties[$"spotLights[{spotLightLength}].position"] = spot.Light.Position;
+            Vector3Properties[$"spotLights[{spotLightLength}].ambient"] = spot.Light.Ambient;
+            Vector3Properties[$"spotLights[{spotLightLength}].diffuse"] = spot.Light.Diffuse;
+            Vector3Properties[$"spotLights[{spotLightLength}].specular"] = spot.Light.Specular;
 
-            Vector3Properties[$"spotLights[{spotLightLength}].position"] = light.Position;
-            Vector3Properties[$"spotLights[{spotLightLength}].ambient"] = light.Ambient;
-            Vector3Properties[$"spotLights[{spotLightLength}].diffuse"] = light.Diffuse;
-            Vector3Properties[$"spotLights[{spotLightLength}].specular"] = light.Specular;
+            FloatProperties[$"spotLights[{spotLightLength}].constant"] = spot.Light.Constant;
+            FloatProperties[$"spotLights[{spotLightLength}].linear"] = spot.Light.Linear;
+            FloatProperties[$"spotLights[{spotLightLength}].quadratic"] = spot.Light.Quadratic;
 
-            FloatProperties[$"spotLights[{spotLightLength}].constant"] = light.Constant;
-            FloatProperties[$"spotLights[{spotLightLength}].linear"] = light.Linear;
-            FloatProperties[$"spotLights[{spotLightLength}].quadratic"] = light.Quadratic;
-
-            Vector3Properties[$"spotLights[{spotLightLength}].direction"] = light.Direction;
-            FloatProperties[$"spotLights[{spotLightLength}].cutOff"] = light.CutOff;
-            FloatProperties[$"spotLights[{spotLightLength}].outerCutOff"] = light.OuterCutOff;
+            Vector3Properties[$"spotLights[{spotLightLength}].direction"] = spot.Light.Direction;
+            FloatProperties[$"spotLights[{spotLightLength}].cutOff"] = spot.Light.CutOff;
+            FloatProperties[$"spotLights[{spotLightLength}].outerCutOff"] = spot.Light.OuterCutOff;
 
             spotLightLength++;
         }
 
         IntProperties["spotLightLength"] = spotLightLength;
-
     }
 }

@@ -32,6 +32,7 @@ public class Mesh : Disposable
     public void Draw(PrimitiveType primitiveType)
     {
         _vao.Bind();
+        GlErrorUtils.CheckError("Before Mesh Draw");
         GL.DrawElements(primitiveType, _size, DrawElementsType.UnsignedInt, new ReadOnlySpan<int>());
         GlErrorUtils.CheckError("Mesh Draw");
     }

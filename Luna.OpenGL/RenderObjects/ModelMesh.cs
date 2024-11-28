@@ -12,7 +12,5 @@ public class ModelMesh(Vertex[] vertices, uint[] indices, Texture2D[]? diffuseMa
 
         if (_specularMaps is not null)
             material.SpecularMaps = _specularMaps;
-        
-        material.Bind();
     }
 }

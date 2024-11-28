@@ -63,11 +63,6 @@ internal class Renderer : IRenderer
         _interrupt = false;
     }
 
-    public void ClearRoutine()
-    {
-        LightEmitter.ClearShadowMaps();
-    }
-
     internal static void Interrupt()
     {
         _interrupt = true;

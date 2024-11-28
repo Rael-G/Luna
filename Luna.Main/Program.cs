@@ -69,7 +69,6 @@ public class Root : Node
                     ShaderType = ShaderType.FragmentShader
                 }
             ],
-            Samples = 0
             //Resolution = resolutions[0]
 
         };
@@ -193,9 +192,20 @@ public class Root : Node
         //camera3D.AddChild(light);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
-        AddChild(camera3D, box, light, model, postProcessor);
+        Camera = camera3D;
+        AddChild(skybox, camera3D, light, postProcessor, box, model, box3);
 
         base.Start();
+    }
+
+    protected override async Task ExecuteAsync()
+    {
+        while(Window.Running)
+        {
+            await Task.Delay(5000);
+            await AwaitMainThread();
+            Console.WriteLine(Time.ElapsedTime);
+        }
     }
 
     public override void Update()

@@ -10,16 +10,17 @@ internal class Model(ModelData data) : RenderObject<ModelData>
         foreach (var mesh in _meshes)
         {
             mesh.BindMaterial(_modelData.Material);
+            _modelData.Material.Bind();
             mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
         }
     }
 
     public override void Draw(IMaterial material)
     {
+        material.MatricesProperties["model"] = _modelData.Material.ModelViewProjection.Model;
+        material.Bind();
         foreach (var mesh in _meshes)
         {
-            material.MatricesProperties["model"] = _modelData.Material.ModelViewProjection.Model;
-            material.Bind();
             mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
         }
     }

@@ -26,9 +26,8 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         {
             Shaders = data.Shaders
         };
-        _fbo = new(GL, FramebufferTarget.Framebuffer, data.Resolution);
-        _intermediateFbo = new(GL, FramebufferTarget.Framebuffer, data.Resolution);
-
+        _fbo = new(GL, FramebufferTarget.Framebuffer);
+        _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
         CreatePostProcessor(data.Resolution, data.Samples);
 
         Priority = 2;
@@ -80,8 +79,6 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         if (data.Resolution != _data.Resolution || data.Samples != _data.Samples)
         {
             _data = data;
-            _fbo.Viewport = data.Resolution;
-            _intermediateFbo.Viewport = data.Resolution;
             CreatePostProcessor(data.Resolution, data.Samples);
         }
     }
@@ -110,6 +107,9 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
     private void CreatePostProcessor(Vector2 resolution, int samples)
     {
+        _fbo.Viewport = resolution;
+        _intermediateFbo.Viewport = resolution;
+
         if (TextureManager.Get(_texture.Hash) is not null)
         {
             TextureManager.Dispose(_texture.Hash);

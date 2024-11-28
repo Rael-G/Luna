@@ -25,10 +25,10 @@ internal class TextureManager
 
     public static CubeMapGL Load(CubeMap cubemap)
     {
-        StartUsing(cubemap.Hash);
         CubeMapGL? texture = Get(cubemap.Hash) as CubeMapGL;
         if (texture is not null)
         {
+            StartUsing(cubemap.Hash);
             return texture;
         }
 
@@ -47,16 +47,9 @@ internal class TextureManager
 
     public static void Dispose(string hash)
     {
-        try
+        if (--Counters[hash] <= 0)
         {
-            if (--Counters[hash] <= 0)
-            {
-                Delete(hash);
-            }
-        }
-        catch
-        {
-            Console.WriteLine();
+            Delete(hash);
         }
     }
 

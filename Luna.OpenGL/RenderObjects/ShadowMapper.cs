@@ -1,53 +1,28 @@
 using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL.RenderObjects;
 
-public class ShadowMapper : RenderObject<DirectionalLight>
+public abstract class ShadowMapper<TLight> : RenderObject<TLight>
 {
-    private const string VertexName = "DepthMapVertexShader.glsl";
-    private const string FragmentName = "DepthMapFragmentShader.glsl";
+    protected FrameBufferObject FBO { get; private set; }
 
-    private static ShaderSource[] _shader = 
-    [
-        new()
-        {
-            Name = VertexName,
-            Path = ProgramShader.DefaultShaderPath(VertexName),
-            ShaderType = ShaderType.VertexShader
-        },
-        new()
-        {
-            Name = FragmentName,
-            Path = ProgramShader.DefaultShaderPath(FragmentName),
-            ShaderType = ShaderType.FragmentShader
-        }
-    ];
+    protected Material Material { get; private set; }
 
-    private DepthMap _depthMap;
-    private Matrix4x4 _lightSpaceMatrix;
+    private bool _useCulling;
 
-    private Material _material = new()
+    public ShadowMapper(Material material)
     {
-        Shaders = _shader
-    };
-
-    private Vector3 _lightPosition;
-    private Vector3 _lightDirection;
-
-    public ShadowMapper(DirectionalLight light)
-    {
-        CreateLightMatrix(light);
-        _depthMap = new(new Vector2(1024, 1024), GL);
+        Material = material;
+        FBO = new(GL, FramebufferTarget.Framebuffer);
         Priority = 1;
     }
 
     public override void Draw()
     {
-        _depthMap.Bind();
-        Injector.Get<IRenderer>().DrawQueue(_material, false);
-        _depthMap.Unbind();
-
-        LightEmitter.ShadowMaps.Add((_lightSpaceMatrix, _depthMap.DepthMapTexture));
+        Bind();
+        Injector.Get<IRenderer>().DrawQueue(Material, false);
+        Unbind();
     }
 
     public override void Draw(IMaterial material)
@@ -55,24 +30,31 @@ public class ShadowMapper : RenderObject<DirectionalLight>
         // Do nothing
     }
 
-    public override void Update(DirectionalLight light)
+    private void Bind()
     {
-        if (light.Position != _lightPosition || light.Direction != _lightDirection)
-        {
-            CreateLightMatrix(light);
-        }
+        FBO.Bind();
+        GL.Clear(ClearBufferMask.DepthBufferBit);
+
+        var window = Injector.Get<IWindow>();
+        _useCulling = window.Flags.HasFlag(WindowFlags.BackFaceCulling);
+        window.Flags |= WindowFlags.BackFaceCulling;
+        GL.CullFace(TriangleFace.Front);
+
+        GlErrorUtils.CheckError("ShadowMapper Bind");
     }
 
-    private void CreateLightMatrix(DirectionalLight light)
+    private void Unbind()
     {
-        _lightPosition = light.Position;
-        _lightDirection = light.Direction;
-        var lightProjection = Matrix4x4.CreateOrthographic(20, 20, 1f, 50);
-        Vector3 up = Vector3.Cross(light.Direction, Vector3.UnitY).LengthSquared() < 0.001f
-            ? Vector3.UnitZ
-            : Vector3.UnitY;
-        var lightView = Matrix4x4.CreateLookAt(light.Position, light.Position + light.Direction * 1000, up);
-        _lightSpaceMatrix = lightView * lightProjection;
-        _material.MatricesProperties["lightSpaceMatrix"] = _lightSpaceMatrix;
+        GL.CullFace(TriangleFace.Back);
+        if (!_useCulling)
+        {
+            Injector.Get<IWindow>().Flags &= ~WindowFlags.BackFaceCulling;
+        }
+
+        FBO.Unbind();
+
+        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        GlErrorUtils.CheckError("ShadowMapper Unbind");
     }
+
 }
