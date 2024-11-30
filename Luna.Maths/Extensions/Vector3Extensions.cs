@@ -103,7 +103,7 @@ public static class Vector3Extensions
     }
 
     public static Vector3 Scale(this Vector3 vector, Vector3 other)
-        => vector.Transform(other.CreateScale());
+        => vector.TransformVector(other.CreateScale());
 
     // public static Vector3 Shear(this Vector3 vector, Vector3 shearFactor, Vector3 axis)
     //     => (Vector3)(Transformations.ShearMatrix(shearFactor, axis) * vector.ToMatrix()).ToVector3()!;
@@ -141,9 +141,9 @@ public static class Vector3Extensions
     public static Matrix4x4 CreateScale(this Vector3 vector)
         => Matrix4x4.CreateScale(vector);
 
-    public static Vector3 Transform(this Vector3 vector, Matrix4x4 matrix)    
+    public static Vector3 TransformVector(this Vector3 vector, Matrix4x4 matrix)    
         => Vector3.Transform(vector, matrix);
 
-    public static Vector3 Transform(this Vector3 vector, Quaternion quaternion)
+    public static Vector3 TransformVector(this Vector3 vector, Quaternion quaternion)
         => Vector3.Transform(vector, quaternion);
 }
