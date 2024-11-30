@@ -22,7 +22,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light light;
+    Light<PointLight> light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -140,16 +140,16 @@ public class Root : Node
         box.Size = new Vector3(1000f, 1f, 1000f);
         //box.Material.DiffuseMaps = [texture];
         
-        light = new Light
+        light = new Light<PointLight>
         {
-            LightSource = new DirectionalLight()
+            LightSource = new PointLight()
         };
-        light.Transform.Position = new Vector3(0f, 10, 0f);
         light.LightSource.Direction = new Vector3(0f, -1f, 0f);
+        light.Transform.Position = new Vector3(0f, 10, 0f);
         // light.LightSource.Ambient = new Vector3(0.4f, 0.4f, 0.4f);
         // light.LightSource.Specular = new Vector3(0.8f, 0.8f, 0.8f);
         // light.LightSource.Diffuse = Vector3.One;
-        //light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
+        light.Transform.EulerAngles = new Vector3(-90f, 0, 0);
 
         model = new Model()
         {
@@ -220,6 +220,7 @@ public class Root : Node
         //light.LightSource.Direction = camera3D.Target - camera3D.Transform.Position;
 
         Movement();
+        LightMove();
         camera3D.Target = camera3D.Transform.GlobalPosition + cameraFront.Normalize();
         
         base.Update();
@@ -302,6 +303,36 @@ public class Root : Node
             camera3D.Transform.Position += cameraSpeed * camera3D.Up;
         if (Keyboard.KeyDown(Keys.ControlLeft))
             camera3D.Transform.Position += -cameraSpeed * camera3D.Up;
+    }
+
+    public void LightMove()
+    {
+        var speed = 10 * Time.DeltaTime;
+        if (Keyboard.KeyDown(Keys.I))
+        {
+            light.Transform.Position += Vector3.UnitZ * speed;
+        }
+        if (Keyboard.KeyDown(Keys.K))
+        {
+            light.Transform.Position += -Vector3.UnitZ * speed;
+        }
+        if (Keyboard.KeyDown(Keys.J))
+        {
+            light.Transform.Position += Vector3.UnitX * speed;
+        }
+        if (Keyboard.KeyDown(Keys.L))
+        {
+            light.Transform.Position += -Vector3.UnitX * speed;
+        }
+
+        if (Keyboard.KeyDown(Keys.Minus))
+        {
+            light.Transform.Position += -Vector3.UnitY * speed;
+        }
+        if (Keyboard.KeyDown(Keys.Equal))
+        {
+            light.Transform.Position += Vector3.UnitY * speed;
+        }
     }
 
     public void Mouse(float xpos, float ypos)
