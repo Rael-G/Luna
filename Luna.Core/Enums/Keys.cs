@@ -36,10 +36,6 @@ public enum Keys
     Number0 = 48,
     //
     // Summary:
-    //     The 0 key; alias for Silk.NET.GLFW.Keys.Number0
-    D0 = 48,
-    //
-    // Summary:
     //     The 1 key.
     Number1 = 49,
     //
