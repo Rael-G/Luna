@@ -42,6 +42,7 @@ public static class LunaOpenGL
         RenderObjectFactory.RegisterCallback<PostProcessorData>((data) => new PostProcessor(data));
         RenderObjectFactory.RegisterCallback<SkyboxData>((data) => new SkyboxObject(data));
         RenderObjectFactory.RegisterCallback<DirectionalLight>((data) => new DirectionalShadowMapper(data));
+        RenderObjectFactory.RegisterCallback<PointLight>((data) => new PointShadowMapper(data));
 
     }
 }
