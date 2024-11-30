@@ -26,11 +26,15 @@ public struct CubeMap
 
     public override readonly int GetHashCode()
     {
-        var str = string.Join("", Paths);
+        var str = string.Empty;
+        if (Paths is not null)
+        {
+            str = string.Join("", Paths);
+        }
         str += FilterMode;
         str += WrapMode;
         str += FlipV;
 
-        return (str).GetHashCode();
+        return str.GetHashCode();
     }
 }
