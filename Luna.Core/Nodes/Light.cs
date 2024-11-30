@@ -1,8 +1,8 @@
 ﻿namespace Luna;
 
-public class Light : Node 
+public class Light<T> : Node where T : DirectionalLight
 {
-    public DirectionalLight LightSource { get; set; }
+    public T LightSource { get; set; }
 
     public override void Awake()
     {
