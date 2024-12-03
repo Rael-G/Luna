@@ -8,26 +8,51 @@ public class StandardMaterial : Material, IStandardMaterial
 
     public Texture2D[] DiffuseMaps 
     {
-        get => _diffuse;
+        get => _diffuseMaps;
         set
         {
-            _diffuse = value;
-            for(int i = 0; i < _diffuse.Length; i++)
-                SetTexture2D("material.diffuse" + i, _diffuse[i]);
+            _diffuseMaps = value;
+            for(int i = 0; i < _diffuseMaps.Length; i++)
+            {
+                SetTexture2D("material.diffuse" + i, _diffuseMaps[i]);
+            }
         } 
     }
 
     public Texture2D[] SpecularMaps 
     { 
-        get => _specullar;
+        get => _specullarMaps;
         set 
         {
-            _specullar = value;
-            for(int i = 0; i < _specullar.Length; i++)
-                SetTexture2D("material.specular" + i , _specullar[i]);
+            _specullarMaps = value;
+            for(int i = 0; i < _specullarMaps.Length; i++)
+            {
+                SetTexture2D("material.specular" + i , _specullarMaps[i]);
+            }
         }
     }
-    
+
+    public Texture2D[] NormalMaps
+    {
+        get => _normalMaps;
+        set 
+        {
+            _normalMaps = value;
+            if (_normalMaps.Length > 0)
+            {
+                for(int i = 0; i < _normalMaps.Length; i++)
+                {
+                    SetTexture2D("material.normalMap" + i , _normalMaps[i]);
+                }
+                BoolProperties["useNormalMap"] = true;
+            }
+            else
+            {
+                BoolProperties["useNormalMap"] = false;
+            }
+        }
+    }
+
     public Color Color 
     {
         get => _color;
@@ -75,16 +100,18 @@ public class StandardMaterial : Material, IStandardMaterial
         CameraPosition = Vector3.Zero
     };
 
-    private Texture2D[] _diffuse = [ new(){ Path = DefaultTexturePath } ];
-    private Texture2D[] _specullar = [ new(){ Path = DefaultTexturePath } ];
+    private Texture2D[] _diffuseMaps = [ new(){ Path = DefaultTexturePath } ];
+    private Texture2D[] _specullarMaps = [ new(){ Path = DefaultTexturePath } ];
+    private Texture2D[] _normalMaps = [];
     private Color _color = Colors.White;
     private float _shininess = 32;
     private bool _isAffectedByLight = true;
 
     public StandardMaterial() 
     {
-        DiffuseMaps = _diffuse;
-        SpecularMaps = _specullar;
+        DiffuseMaps = _diffuseMaps;
+        SpecularMaps = _specullarMaps;
+        NormalMaps = _normalMaps;
         Color = _color;
         Shininess = _shininess;
         IsAffectedByLight = _isAffectedByLight;

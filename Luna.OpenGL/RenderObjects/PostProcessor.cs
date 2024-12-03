@@ -61,6 +61,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
         //Draw to the screen
         _material.Bind();
         _mesh!.Draw(PrimitiveType.Triangles);
+        _material.Unbind();
 
         GL.Enable(EnableCap.DepthTest);
 

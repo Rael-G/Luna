@@ -7,21 +7,21 @@ internal class Model(ModelData data) : RenderObject<ModelData>
 
     public override void Draw()
     {
-        foreach (var mesh in _meshes)
-        {
-            mesh.BindMaterial(_modelData.Material);
-            _modelData.Material.Bind();
-            mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
-        }
+        Draw(_modelData.Material);
     }
 
     public override void Draw(IMaterial material)
     {
         material.MatricesProperties["model"] = _modelData.Material.ModelViewProjection.Model;
-        material.Bind();
         foreach (var mesh in _meshes)
         {
+            material.Bind();
+            if (material is IStandardMaterial standardMaterial)
+            {
+                mesh.BindMaterial(standardMaterial);
+            }
             mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
+            material.Unbind();
         }
     }
 

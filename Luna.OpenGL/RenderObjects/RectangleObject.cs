@@ -10,7 +10,12 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
         0, 3, 2    // second triangle
     ];
 
-    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);
+    private Mesh _mesh = new(
+        Tangent.CalculateTangents(
+            GetVertices(data.Size.X, data.Size.Y), 
+            _indices),
+        _indices
+    );
     private RectangleData _rectangleData = data;
 
     public override void Draw()
@@ -22,6 +27,7 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
     {
         material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
+        material.Unbind();
     }
 
     public override void Update(RectangleData data)
@@ -29,7 +35,12 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
         if (data.Size != _rectangleData.Size || data.Material != _rectangleData.Material)
         {
             _mesh.Dispose();
-            _mesh = new(GetVertices(data.Size.X, data.Size.Y), _indices);
+            _mesh = new(
+                Tangent.CalculateTangents(
+                    GetVertices(data.Size.X, data.Size.Y), 
+                    _indices),
+                _indices
+            );
         }
         _rectangleData = data;
     }

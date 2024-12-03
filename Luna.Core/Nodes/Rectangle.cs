@@ -11,7 +11,7 @@ public class Rectangle : Node
 
     public bool Center { get; set; }
     
-    public IStandardMaterial? Material { get; set; } = Injector.Get<IStandardMaterial>();
+    public IStandardMaterial Material { get; set; } = Injector.Get<IStandardMaterial>();
 
     public override void Awake()
     {

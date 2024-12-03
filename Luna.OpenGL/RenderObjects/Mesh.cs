@@ -25,6 +25,8 @@ public class Mesh : Disposable
         _vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, _stride, 0 * sizeof(float));
         _vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, _stride, 3 * sizeof(float));
         _vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, _stride, 6 * sizeof(float));
+        _vao.VertexAttributePointer(3, 3, VertexAttribPointerType.Float, _stride, 8 * sizeof(float));
+        _vao.VertexAttributePointer(4, 3, VertexAttribPointerType.Float, _stride, 11 * sizeof(float));
 
         GlErrorUtils.CheckError("Mesh Setup");
     }
@@ -34,7 +36,10 @@ public class Mesh : Disposable
         _vao.Bind();
         GlErrorUtils.CheckError("Before Mesh Draw");
         GL.DrawElements(primitiveType, _size, DrawElementsType.UnsignedInt, new ReadOnlySpan<int>());
-        GlErrorUtils.CheckError("Mesh Draw");
+        if (GlErrorUtils.CheckError("Mesh Draw "))
+        {
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+        }
     }
 
     public override void Dispose(bool disposing)

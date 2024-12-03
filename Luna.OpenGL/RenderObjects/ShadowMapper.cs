@@ -1,4 +1,3 @@
-using System.Numerics;
 using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL.RenderObjects;

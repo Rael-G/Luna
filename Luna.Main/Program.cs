@@ -22,7 +22,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light<PointLight> light;
+    Light<DirectionalLight> light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -43,7 +43,7 @@ public class Root : Node
     {
         Window.Title = "Hello Rectangle!";
         Window.Size = resolutions[resolutionsIndex];
-        Window.Flags |= WindowFlags.BackFaceCulling;
+        Window.Flags |= ~WindowFlags.BackFaceCulling;
         base.Awake();
     }
 
@@ -75,8 +75,14 @@ public class Root : Node
 
         var texture = new Texture2D()
         {
-            Path = "Assets/images/Hamburger.png",
-            FilterMode = FilterMode.Nearest,
+            Path = "Assets/images/brickwall.jpg",
+            FilterMode = FilterMode.Bilinear,
+            FlipV = false
+        };
+        var normalTexture = new Texture2D()
+        {
+            Path = "Assets/images/brickwall_normal.jpg",
+            FilterMode = FilterMode.Bilinear,
             FlipV = false
         };
         var camera2D = new OrtographicCamera(){
@@ -97,22 +103,18 @@ public class Root : Node
         };
 
         ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
-        ellipse.Material.DiffuseMaps = [ texture ];
-        ellipse.Material.SpecularMaps = [ texture ];
         ellipse.Material.IsAffectedByLight = false;
 
 
         rect = new Rectangle(){
-            Size = new(400, 400),
+            Size = new(40, 40),
             Center = false,
         };
         rect.Transform.Position = Window.VirtualCenter;
-        rect.Transform.Position = new Vector3(0, 0, 0);
         rect.Transform.Position = Vector3.Zero;
-
-        rect.Material.DiffuseMaps = [texture];
-        rect.Material.IsAffectedByLight = false;
-
+        //rect.Transform.EulerAngles = new Vector3(90, 0, 0);
+        //rect.Material.DiffuseMaps = [texture];
+        rect.Material.NormalMaps = [normalTexture];
 
         label = new Label()
         {
@@ -133,16 +135,16 @@ public class Root : Node
 
         box = new Box()
         {
-            Color = Colors.Lime,
             Center = true
         };
         box.Transform.Position = new Vector3(0f, -1f, 0f);
         box.Size = new Vector3(1000f, 1f, 1000f);
-        //box.Material.DiffuseMaps = [texture];
+        box.Material.DiffuseMaps = [texture];
+        box.Material.NormalMaps = [normalTexture];
         
-        light = new Light<PointLight>
+        light = new Light<DirectionalLight>
         {
-            LightSource = new PointLight()
+            LightSource = new DirectionalLight()
         };
         light.LightSource.Direction = new Vector3(0f, -1f, 0f);
         light.Transform.Position = new Vector3(0f, 10, 0f);
@@ -193,7 +195,7 @@ public class Root : Node
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         Camera = camera3D;
-        AddChild(skybox, camera3D, light, postProcessor, box, model, box3);
+        AddChild(camera3D, light, box, box2, skybox, postProcessor, model, rect);
 
         base.Start();
     }
@@ -332,6 +334,16 @@ public class Root : Node
         if (Keyboard.KeyDown(Keys.Equal))
         {
             light.Transform.Position += Vector3.UnitY * speed;
+        }
+
+        var rotationSpeed = 10 * Time.DeltaTime;
+        if (Keyboard.KeyDown(Keys.Comma))
+        {
+            rect.Transform.EulerAngles += Vector3.UnitX * rotationSpeed;
+        }
+        if (Keyboard.KeyDown(Keys.Period))
+        {
+            rect.Transform.EulerAngles -= Vector3.UnitX * rotationSpeed;
         }
     }
 

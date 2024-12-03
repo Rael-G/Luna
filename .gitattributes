@@ -1,1 +1,2 @@
 Luna.Main/Assets/ filter=lfs diff=lfs merge=lfs -text
+Luna.Main/Assets/** filter=lfs diff=lfs merge=lfs -text

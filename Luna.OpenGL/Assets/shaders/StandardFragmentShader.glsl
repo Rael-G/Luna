@@ -3,6 +3,7 @@
 struct Material {
     sampler2D diffuse0;
     sampler2D specular0;
+    sampler2D normalMap0;
     vec4 color;
     float shininess;
 };
@@ -64,6 +65,7 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
 in vec4 FragPosLightSpace;
+in mat3 TBN;
 
 uniform int pointLightLength;
 uniform int spotLightLength;
@@ -76,27 +78,38 @@ uniform PointLight pointLights[POINT_LIGHT_LENGTH];
 uniform SpotLight spotLights[SPOT_LIGHT_LENGTH];
 
 uniform bool isAffectedByLight;
+uniform bool useNormalMap;
 
 void main()
 {
-    FragColor = Light(Normal, viewPos, FragPos, TexCoord);
+    vec3 normal;
+    if (useNormalMap)
+    {
+        normal = texture(material.normalMap0, TexCoord).rgb;
+        normal = normalize(TBN * (normal * 2.0 - 1.0)); 
+    }
+    else
+    {
+        normal = normalize(Normal);
+    }
+
+    FragColor = Light(normal, viewPos, FragPos, TexCoord);
 }
 
 vec4 Light(vec3 normal, vec3 viewPos, vec3 fragPos, vec2 texCoord)
 {
-    vec3 norm = normalize(normal);
     vec3 viewDir = normalize(viewPos - fragPos);
 
     if (!isAffectedByLight)
         return material.color * texture(material.diffuse0, texCoord);
     
-    vec3 result = CalcDirLight(dirLight, norm, viewDir, texCoord, FragPosLightSpace);
+    vec3 result = CalcDirLight(dirLight, normal, viewDir, texCoord, FragPosLightSpace);
     
     for (int i = 0; i < pointLightLength; i++)
-        result += CalcPointLight(pointLights[i], norm, fragPos, viewDir, texCoord);    
+        result += CalcPointLight(pointLights[i], normal, fragPos, viewDir, texCoord);    
     
     for (int i = 0; i < spotLightLength; i++)
-        result += CalcSpotLight(spotLights[i], norm, fragPos, viewDir, texCoord);
+        result += CalcSpotLight(spotLights[i], normal, fragPos, viewDir, texCoord);
     
     return vec4(result, texture(material.diffuse0, texCoord).a);
 }

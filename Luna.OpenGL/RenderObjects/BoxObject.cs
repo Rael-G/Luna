@@ -20,7 +20,13 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
         23, 21, 22, 21, 23, 20,
     ];
 
-    private Mesh _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices);
+    private Mesh _mesh = new(
+        Tangent.CalculateTangents(
+            GetVertices(data.Size.X, data.Size.Y, data.Size.Z),
+            _indices),
+        _indices
+    );
+
     private BoxData _boxData = data;
 
     public override void Draw()
@@ -33,6 +39,7 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
         material.MatricesProperties["model"] = _boxData.Material.ModelViewProjection.Model;
         material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
+        material.Unbind();
     }
     
     public override void Update(BoxData data)
@@ -40,7 +47,12 @@ internal class BoxObject(BoxData data) : RenderObject<BoxData>
         if (data.Size != _boxData.Size || data.Material != _boxData.Material)
         {
             _mesh.Dispose();
-            _mesh = new(GetVertices(data.Size.X, data.Size.Y, data.Size.Z), _indices);
+            _mesh = new(
+                Tangent.CalculateTangents(
+                    GetVertices(data.Size.X, data.Size.Y, data.Size.Z),
+                    _indices),
+                _indices
+            );
         }
         _boxData = data;
     }

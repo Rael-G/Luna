@@ -48,7 +48,6 @@ public class SkyboxObject : RenderObject<SkyboxData>
         window.DepthMode = DepthMode.Lequal;
         _material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
-        GL.BindTexture(TextureTarget.TextureCubeMap, 0);
         _material.Unbind();
         window.DepthMode = previousDepthMode;
         GlErrorUtils.CheckError("SkyboxDraw");

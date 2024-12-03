@@ -47,6 +47,8 @@ public static unsafe class ModelLoader
             {
                 Position = aiMesh->MVertices[i],
                 Normal = aiMesh->MNormals[i],
+                Tangent = aiMesh->MTangents[i],
+                Bitangent = aiMesh->MBitangents[i]
             };
             if (aiMesh->MTextureCoords[0] != null)
                 vertex.TexCoords = new Vector2(aiMesh->MTextureCoords[0][i].X, aiMesh->MTextureCoords[0][i].Y);
@@ -62,15 +64,21 @@ public static unsafe class ModelLoader
 
         Texture2D[]? diffuseMaps = null;
         Texture2D[]? specularMaps = null;
+        Texture2D[]? normalMaps = null;
 
         if (aiMesh->MMaterialIndex >= 0)
         {
             var aiMaterial = aiScene->MMaterials[aiMesh->MMaterialIndex];
             diffuseMaps = ProcessTextures(aiMaterial, TextureType.Diffuse, modelData, directory);
             specularMaps = ProcessTextures(aiMaterial, TextureType.Specular, modelData, directory);
+            normalMaps = ProcessTextures(aiMaterial, TextureType.Normals, modelData, directory);
+            if (normalMaps.Length < 1)
+            {
+                normalMaps = ProcessTextures(aiMaterial, TextureType.Height, modelData, directory);
+            }
         }
 
-        return new ModelMesh([.. vertices], [.. indices], diffuseMaps, specularMaps);
+        return new ModelMesh([.. vertices], [.. indices], diffuseMaps, specularMaps, normalMaps);
     }
 
     private static Texture2D[] ProcessTextures(Silk.NET.Assimp.Material* aiMaterial, TextureType type, ModelData modelData, string directory)

@@ -1,12 +1,3 @@
-#version 330 core
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 texCoords;
-
-out vec2 TexCoords;
-
-void main()
-{
-    gl_Position = vec4(position.xy, 0.0, 1.0); 
-    TexCoords = texCoords;
-}  
+version https://git-lfs.github.com/spec/v1
+oid sha256:8cdfda5d378cf9de10475b41984fdd1269710887150e64bbf68b9cb82c00b539
+size 259

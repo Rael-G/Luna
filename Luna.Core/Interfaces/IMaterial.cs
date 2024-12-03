@@ -15,4 +15,5 @@ public interface IMaterial : IDisposable
     void SetCubeMap(string key, CubeMap texture);
 
     void Bind();
+    void Unbind();
 }
