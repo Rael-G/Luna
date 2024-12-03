@@ -26,7 +26,6 @@ public class Mesh : Disposable
         _vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, _stride, 3 * sizeof(float));
         _vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, _stride, 6 * sizeof(float));
         _vao.VertexAttributePointer(3, 3, VertexAttribPointerType.Float, _stride, 8 * sizeof(float));
-        _vao.VertexAttributePointer(4, 3, VertexAttribPointerType.Float, _stride, 11 * sizeof(float));
 
         GlErrorUtils.CheckError("Mesh Setup");
     }

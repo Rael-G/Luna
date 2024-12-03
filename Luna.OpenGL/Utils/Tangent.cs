@@ -10,7 +10,6 @@ public static class Tangent
             throw new ArgumentException("Indices array must have a multiple of 3 elements.");
 
         Vector3[] tangents = new Vector3[vertices.Length];
-        Vector3[] bitangents = new Vector3[vertices.Length];
 
         for (int i = 0; i < indices.Length; i += 3)
         {
@@ -32,21 +31,14 @@ public static class Tangent
 
             Vector3 tangent = f * (deltaUV2.Y * edge1 - deltaUV1.Y * edge2);
 
-            Vector3 bitangent = f * (-deltaUV2.X * edge1 + deltaUV1.X * edge2);
-
             tangents[i0] += tangent;
             tangents[i1] += tangent;
             tangents[i2] += tangent;
-
-            bitangents[i0] += bitangent;
-            bitangents[i1] += bitangent;
-            bitangents[i2] += bitangent;
         }
 
         for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i].Tangent = Vector3.Normalize(tangents[i]);
-            vertices[i].Bitangent = Vector3.Normalize(bitangents[i]);
         }
 
         return vertices;

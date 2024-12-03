@@ -22,7 +22,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light<DirectionalLight> light;
+    Light<PointLight> light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -142,9 +142,9 @@ public class Root : Node
         box.Material.DiffuseMaps = [texture];
         box.Material.NormalMaps = [normalTexture];
         
-        light = new Light<DirectionalLight>
+        light = new Light<PointLight>
         {
-            LightSource = new DirectionalLight()
+            LightSource = new PointLight()
         };
         light.LightSource.Direction = new Vector3(0f, -1f, 0f);
         light.Transform.Position = new Vector3(0f, 10, 0f);

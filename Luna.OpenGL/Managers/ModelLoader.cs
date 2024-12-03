@@ -48,7 +48,6 @@ public static unsafe class ModelLoader
                 Position = aiMesh->MVertices[i],
                 Normal = aiMesh->MNormals[i],
                 Tangent = aiMesh->MTangents[i],
-                Bitangent = aiMesh->MBitangents[i]
             };
             if (aiMesh->MTextureCoords[0] != null)
                 vertex.TexCoords = new Vector2(aiMesh->MTextureCoords[0][i].X, aiMesh->MTextureCoords[0][i].Y);
