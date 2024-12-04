@@ -4,5 +4,6 @@ public enum ImageType
 {
     Linear,
     SRGB,
+    HDR,
     DeathMap,
 }

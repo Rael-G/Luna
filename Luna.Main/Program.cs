@@ -54,24 +54,26 @@ public class Root : Node
         };
         postProcessor = new Luna.PostProcessor()
         {
-            Shaders =
-            [
-                new ShaderSource
-                {
-                    Name = "ScreenShaderVertex",
-                    Path = "Assets/shaders/ScreenVertexShader.glsl",
-                    ShaderType = ShaderType.VertexShader
-                },
-                new ShaderSource
-                {
-                    Name = "ScreenShaderFragment",
-                    Path = "Assets/shaders/ScreenFragmentShader.glsl",
-                    ShaderType = ShaderType.FragmentShader
-                }
-            ],
+            Material = new Material()
+            {
+                Shaders = [
+                    new ShaderSource
+                    {
+                        Name = "ScreenShaderVertex",
+                        Path = "Assets/shaders/ScreenVertexShader.glsl",
+                        ShaderType = ShaderType.VertexShader
+                    },
+                    new ShaderSource
+                    {
+                        Name = "ScreenShaderFragment",
+                        Path = "Assets/shaders/ScreenFragmentShader.glsl",
+                        ShaderType = ShaderType.FragmentShader
+                    }
+                ]
+            },
             //Resolution = resolutions[0]
-
         };
+        postProcessor.Material.FloatProperties["exposure"] = 1f;
 
         var texture = new Texture2D()
         {

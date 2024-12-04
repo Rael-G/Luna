@@ -4,7 +4,7 @@ namespace Luna;
 
 public class PostProcessor : Node
 {
-    public ShaderSource[] Shaders { get; set; } = [];
+    public IMaterial Material { get; set; }
 
     public Vector2 Resolution { get; set; } = Window.Size;
 
@@ -12,14 +12,14 @@ public class PostProcessor : Node
 
     public override void Awake()
     {
-        CreateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, Samples = Samples });
+        CreateRenderObject(new PostProcessorData(){ Material = Material, Resolution = Resolution, Samples = Samples });
 
         base.Awake();
     }
 
     public override void Update()
     {
-        UpdateRenderObject(new PostProcessorData(){ Shaders = Shaders, Resolution = Resolution, Samples = Samples });
+        UpdateRenderObject(new PostProcessorData(){ Material = Material, Resolution = Resolution, Samples = Samples });
 
         base.Update();
     }

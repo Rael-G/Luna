@@ -22,10 +22,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
     public PostProcessor(PostProcessorData data)
     {
         _data = data;
-        _material = new Material()
-        {
-            Shaders = data.Shaders
-        };
+        _material = data.Material;
         _fbo = new(GL, FramebufferTarget.Framebuffer);
         _intermediateFbo = new(GL, FramebufferTarget.Framebuffer);
         CreatePostProcessor(data.Resolution, data.Samples);
@@ -136,7 +133,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
             FilterMode = FilterMode.Bilinear,
             WrapMode = WrapMode.ClampToEdge,
             Hash = Guid.NewGuid().ToString(),
-            ImageType = ImageType.Linear
+            ImageType = ImageType.HDR
         };
 
         var texture = TextureManager.Load(_texture);
@@ -148,7 +145,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
                 FilterMode = FilterMode.Bilinear,
                 WrapMode = WrapMode.ClampToEdge,
                 Hash = Guid.NewGuid().ToString(),
-                ImageType = ImageType.Linear
+                ImageType = ImageType.HDR
             };
 
             _rbo = new RenderBufferObject(GL, RenderbufferTarget.Renderbuffer, 

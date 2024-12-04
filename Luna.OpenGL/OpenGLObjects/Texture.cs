@@ -97,37 +97,49 @@ public abstract class Texture : Disposable
         {
             return (PixelFormat.DepthComponent, InternalFormat.DepthComponent, PixelType.Float);
         }
-        
+
         var pixelFormat = numChannels switch
         {
-            1 => PixelFormat.Red, 
+            1 => PixelFormat.Red,
             2 => PixelFormat.RG,
             3 => PixelFormat.Rgb,
             4 => PixelFormat.Rgba,
             _ => throw new ArgumentException("Unsupported number of channels")
         };
 
-        var internalFormat = type switch
+        return type switch
         {
-            ImageType.Linear => numChannels switch
-            {
-                1 => InternalFormat.R8,
-                2 => InternalFormat.RG8,
-                3 => InternalFormat.Rgb8,
-                4 => InternalFormat.Rgba8,
-                _ => throw new ArgumentException("Unsupported number of channels")
-            },
-            _ => numChannels switch
-            {
-                1 => InternalFormat.R8,
-                2 => InternalFormat.RG8,
-                3 => InternalFormat.Srgb8,
-                4 => InternalFormat.Srgb8Alpha8,
-                _ => throw new ArgumentException("Unsupported number of channels")
-            },
-        };
+            ImageType.HDR => (pixelFormat, 
+                            numChannels switch
+                            {
+                                3 => InternalFormat.Rgb16f,
+                                4 => InternalFormat.Rgba16f,
+                                _ => throw new ArgumentException("HDR supports only 3 or 4 channels")
+                            }, 
+                            PixelType.Float),
 
-        return (pixelFormat, internalFormat, PixelType.UnsignedByte);
+            ImageType.Linear => (pixelFormat, 
+                                numChannels switch
+                                {
+                                    1 => InternalFormat.R8,
+                                    2 => InternalFormat.RG8,
+                                    3 => InternalFormat.Rgb8,
+                                    4 => InternalFormat.Rgba8,
+                                    _ => throw new ArgumentException("Unsupported number of channels")
+                                }, 
+                                PixelType.UnsignedByte),
+
+            _ => (pixelFormat, 
+                numChannels switch
+                {
+                    1 => InternalFormat.R8,
+                    2 => InternalFormat.RG8,
+                    3 => InternalFormat.Srgb8,
+                    4 => InternalFormat.Srgb8Alpha8,
+                    _ => throw new ArgumentException("Unsupported number of channels")
+                }, 
+                PixelType.UnsignedByte),
+        };
     }
 
     public override void Dispose(bool disposing)
