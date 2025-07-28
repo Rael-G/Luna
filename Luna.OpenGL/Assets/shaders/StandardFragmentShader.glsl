@@ -243,4 +243,4 @@ float CalcPointShadow(PointLight light, vec3 fragPos, vec3 viewPos)
             shadow += 1.0;
     }
     return shadow /= float(samples); 
-} 
+}
