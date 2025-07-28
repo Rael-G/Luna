@@ -22,7 +22,7 @@ public class Root : Node
     Rectangle rect;
     Box box;
     Model model;
-    Light<PointLight> light;
+    Light<Luna.PointLight> light;
     PerspectiveCamera camera3D;
     Luna.PostProcessor postProcessor;
 
@@ -49,7 +49,8 @@ public class Root : Node
 
     public override void Start()
     {
-        var background = new BackGroundColor{
+        var background = new BackGroundColor
+        {
             Color = Colors.Azure
         };
         postProcessor = new Luna.PostProcessor()
@@ -87,7 +88,8 @@ public class Root : Node
             FilterMode = FilterMode.Bilinear,
             FlipV = false
         };
-        var camera2D = new OrtographicCamera(){
+        var camera2D = new OrtographicCamera()
+        {
             Left = 0.0f,
             Right = Window.VirtualSize.X,
             Bottom = Window.VirtualSize.Y,
@@ -104,11 +106,12 @@ public class Root : Node
             Segments = 10,
         };
 
-        ellipse.Transform.Position = new Vector3{ X = 400, Y = 300, Z = 0 };
+        ellipse.Transform.Position = new Vector3 { X = 400, Y = 300, Z = 0 };
         ellipse.Material.IsAffectedByLight = false;
 
 
-        rect = new Rectangle(){
+        rect = new Rectangle()
+        {
             Size = new(40, 40),
             Center = false,
         };
@@ -128,7 +131,7 @@ public class Root : Node
         };
         label.Transform.Position = Window.VirtualCenter;
         label.Transform.Position = Vector3.Zero;
-        
+
         var sound = new Sound()
         {
             Path = "Assets/audio/music/Death.wav"
@@ -141,9 +144,7 @@ public class Root : Node
         };
         box.Transform.Position = new Vector3(0f, -1f, 0f);
         box.Size = new Vector3(1000f, 1f, 1000f);
-        box.Material.DiffuseMaps = [texture];
-        box.Material.NormalMaps = [normalTexture];
-        
+
         light = new Light<PointLight>
         {
             LightSource = new PointLight()
@@ -159,8 +160,9 @@ public class Root : Node
         {
             Path = "Assets/models/backpack/backpack.obj"
         };
-        model.Transform.Position = new Vector3(-6f, 3f, 3);
+        model.Transform.Position = new Vector3(0, 0, 6);
         model.Transform.EulerAngles = new Vector3(0, -45, 0);
+        //model.Transform.Scale = new Vector3(100.0f, 100.0f, 100.0f);
 
         var skybox = new Skybox()
         {
@@ -184,6 +186,8 @@ public class Root : Node
         };
         box2.Transform.Position = new Vector3(-6f, 3f, 3f);
         box2.Size = new Vector3(1, 1f, 1);
+        box2.Material.DiffuseMaps = [texture];
+        box2.Material.NormalMaps = [normalTexture];
 
         var box3 = new Box()
         {
@@ -192,19 +196,21 @@ public class Root : Node
         };
         box3.Transform.Position = new Vector3(2f, 2f, 2f);
         box3.Size = new Vector3(1, 1f, 1);
-        
+
         //camera3D.AddChild(light);
         //postProcessor.UpdateAction = () => postProcessor.Resolution = Window.Size;
         //AddChild(skybox ,camera3D, model, ellipse, rect, label, light);
         Camera = camera3D;
-        AddChild(camera3D, light, box, box2, skybox, postProcessor, model, rect);
+        AddChild(camera3D, light, box, skybox, postProcessor, model, box2, box3);
+        //AddChild(camera3D, light, model);
+
 
         base.Start();
     }
 
     protected override async Task ExecuteAsync()
     {
-        while(Window.Running)
+        while (Window.Running)
         {
             await Task.Delay(5000);
             await AwaitMainThread();
@@ -226,7 +232,7 @@ public class Root : Node
         Movement();
         LightMove();
         camera3D.Target = camera3D.Transform.GlobalPosition + cameraFront.Normalize();
-        
+
         base.Update();
     }
 
@@ -278,11 +284,11 @@ public class Root : Node
     }
 
     bool firstMouse = true;
-    float yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-    float pitch =  0.0f;
-    float lastX =  Window.Size.X / 2;
-    float lastY =  Window.Size.Y / 2;
-    float fov   =  45.0f;
+    float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+    float pitch = 0.0f;
+    float lastX = Window.Size.X / 2;
+    float lastY = Window.Size.Y / 2;
+    float fov = 45.0f;
     Vector3 cameraFront;
 
     public void Movement()
@@ -364,7 +370,7 @@ public class Root : Node
         lastX = xpos;
         lastY = ypos;
 
-        float sensitivity = 0.1f; 
+        float sensitivity = 0.1f;
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
@@ -380,7 +386,7 @@ public class Root : Node
         front.X = (float)Math.Cos(yaw.ToRadians()) * (float)Math.Cos(pitch.ToRadians());
         front.Y = (float)Math.Sin(pitch.ToRadians());
         front.Z = (float)Math.Sin(yaw.ToRadians()) * (float)Math.Cos(pitch.ToRadians());
-    
+
         cameraFront = Vector3.Normalize(front);
     }
 
