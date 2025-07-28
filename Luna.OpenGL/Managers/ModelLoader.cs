@@ -46,11 +46,10 @@ public static unsafe class ModelLoader
             var vertex = new Vertex()
             {
                 Position = aiMesh->MVertices[i],
-                Normal = aiMesh->MNormals[i],
-                Tangent = aiMesh->MTangents[i],
+                Normal = aiMesh->MNormals != null ? aiMesh->MNormals[i] : Vector3.UnitY,
+                Tangent = aiMesh->MTangents != null ? aiMesh->MTangents[i] : Vector3.Zero,
+                TexCoords = aiMesh->MTextureCoords[0] != null ? new Vector2(aiMesh->MTextureCoords[0][i].X, aiMesh->MTextureCoords[0][i].Y) : Vector2.Zero
             };
-            if (aiMesh->MTextureCoords[0] != null)
-                vertex.TexCoords = new Vector2(aiMesh->MTextureCoords[0][i].X, aiMesh->MTextureCoords[0][i].Y);
             vertices.Add(vertex);
         }
 
