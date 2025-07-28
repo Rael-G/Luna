@@ -6,4 +6,5 @@ public struct RectangleData
 {
     public Vector2 Size { get; set; }
     public IMaterial Material { get; set; }
+    public ModelViewProjection ModelViewProjection { get; set; }
 }

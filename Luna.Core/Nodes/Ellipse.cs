@@ -15,12 +15,11 @@ public class Ellipse : Node
     public override void Awake()
     {
         Material.Color = Color;
-        Material.ModelViewProjection = ModelViewProjection;
         CreateRenderObject
         (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, Material = Material
+                Radius = Radius, Segments = Segments, Material = Material, ModelViewProjection = ModelViewProjection
             }
         );
 
@@ -30,12 +29,11 @@ public class Ellipse : Node
     public override void LateUpdate()
     {
         Material.Color = Color;
-        Material.ModelViewProjection = ModelViewProjection;
         UpdateRenderObject
          (
             new EllipseData
             { 
-                Radius = Radius, Segments = Segments, Material = Material
+                Radius = Radius, Segments = Segments, Material = Material, ModelViewProjection = ModelViewProjection
             }
          );
         base.LateUpdate();

@@ -2,7 +2,6 @@
 
 public interface IStandardMaterial : IMaterial
 {
-    public ModelViewProjection ModelViewProjection { get; set; }
     public Texture2D[] DiffuseMaps { get; set; }
     public Texture2D[] SpecularMaps { get; set; }
     public Texture2D[] NormalMaps { get; set; }

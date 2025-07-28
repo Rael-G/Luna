@@ -21,12 +21,11 @@ public class Model : Node
 
     public override void Awake()
     {
-        Material.ModelViewProjection = ModelViewProjection;
         CreateRenderObject
         (
             new ModelData
             { 
-                Path = Path, TextureFilter = TextureFilter, Material = Material
+                Path = Path, TextureFilter = TextureFilter, Material = Material, ModelViewProjection = ModelViewProjection
             }
         );
 
@@ -35,12 +34,11 @@ public class Model : Node
 
     public override void LateUpdate()
     {
-        Material.ModelViewProjection = ModelViewProjection;
         UpdateRenderObject
          (
             new ModelData
             { 
-                Path = Path, TextureFilter = TextureFilter, Material = Material
+                Path = Path, TextureFilter = TextureFilter, Material = Material, ModelViewProjection = ModelViewProjection
             }
          );
         base.LateUpdate();

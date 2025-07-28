@@ -34,14 +34,13 @@ public class SkyboxObject : RenderObject<SkyboxData>
     public SkyboxObject(SkyboxData data)
     {
         _data = data;
-        _material.MatricesProperties["view"] = _data.ModelViewProjection.View;
-        _material.MatricesProperties["projection"] = _data.ModelViewProjection.Projection;
         _material.SetCubeMap("skybox", data.CubeMap);
         Priority = -1;
     }
 
     public override void Draw()
     {
+        SetMVP(_material, _data.ModelViewProjection);
         var window = Injector.Get<IWindow>();
         var previousDepthMode = window.DepthMode;
 

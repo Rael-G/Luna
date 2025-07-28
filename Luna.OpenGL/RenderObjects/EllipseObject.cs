@@ -22,6 +22,7 @@ internal class EllipseObject(EllipseData data) : RenderObject<EllipseData>
 
     public override void Draw(IMaterial material)
     {
+        SetMVP(material, _ellipseData.ModelViewProjection);
         material.Bind();
         _mesh.Draw(PrimitiveType.TriangleFan);
         material.Unbind();

@@ -79,27 +79,6 @@ public class StandardMaterial : Material, IStandardMaterial
         }
     }
 
-    public ModelViewProjection ModelViewProjection 
-    {
-        get => _modelViewProjection;
-        set
-        {
-            _modelViewProjection = value;
-            MatricesProperties["model"] = _modelViewProjection.Model;
-            MatricesProperties["view"] = _modelViewProjection.View;
-            MatricesProperties["projection"] = _modelViewProjection.Projection;
-            Vector3Properties["viewPos"] = _modelViewProjection.CameraPosition;
-        }
-    }
-
-    private ModelViewProjection _modelViewProjection = new() 
-    { 
-        Model = Matrix4x4.Identity, 
-        View = Matrix4x4.Identity, 
-        Projection = Matrix4x4.Identity,
-        CameraPosition = Vector3.Zero
-    };
-
     private Texture2D[] _diffuseMaps = [ new(){ Path = DefaultTexturePath } ];
     private Texture2D[] _specullarMaps = [ new(){ Path = DefaultTexturePath } ];
     private Texture2D[] _normalMaps = [];
@@ -115,7 +94,6 @@ public class StandardMaterial : Material, IStandardMaterial
         Color = _color;
         Shininess = _shininess;
         IsAffectedByLight = _isAffectedByLight;
-        ModelViewProjection = _modelViewProjection;
         Shaders = Injector.Get<ShaderSource[]>();
     }
 

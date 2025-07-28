@@ -1,4 +1,6 @@
-﻿namespace Luna.OpenGL;
+﻿using Silk.NET.OpenGL;
+
+namespace Luna.OpenGL;
 
 internal class Model(ModelData data) : RenderObject<ModelData>
 {
@@ -12,7 +14,7 @@ internal class Model(ModelData data) : RenderObject<ModelData>
 
     public override void Draw(IMaterial material)
     {
-        material.MatricesProperties["model"] = _modelData.Material.ModelViewProjection.Model;
+        SetMVP(material, _modelData.ModelViewProjection);
         foreach (var mesh in _meshes)
         {
             material.Bind();
@@ -20,14 +22,14 @@ internal class Model(ModelData data) : RenderObject<ModelData>
             {
                 mesh.BindMaterial(standardMaterial);
             }
-            mesh.Draw(Silk.NET.OpenGL.PrimitiveType.Triangles);
+            mesh.Draw(PrimitiveType.Triangles);
             material.Unbind();
         }
     }
 
     public override void Update(ModelData data)
     {
-        
+        _modelData = data;
     }
 
     public override void Dispose(bool disposing)

@@ -15,12 +15,11 @@ public class Box : Node
     public override void Awake()
     {
         Material.Color = Color;
-        Material.ModelViewProjection = ModelViewProjection;
         CreateRenderObject
         (
             new BoxData
             { 
-                Size = Size, Material = Material
+                Size = Size, Material = Material, ModelViewProjection = ModelViewProjection
             }
         );
 
@@ -36,12 +35,11 @@ public class Box : Node
     public override void LateUpdate()
     {
         Material.Color = Color;
-        Material.ModelViewProjection = ModelViewProjection;
         UpdateRenderObject
          (
             new BoxData
             { 
-                Size = Size, Material = Material
+                Size = Size, Material = Material, ModelViewProjection = ModelViewProjection
             }
          );
         base.LateUpdate();

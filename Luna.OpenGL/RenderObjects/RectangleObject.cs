@@ -25,6 +25,7 @@ internal class RectangleObject(RectangleData data) : RenderObject<RectangleData>
 
     public override void Draw(IMaterial material)
     {
+        SetMVP(material, _rectangleData.ModelViewProjection);
         material.Bind();
         _mesh.Draw(PrimitiveType.Triangles);
         material.Unbind();
