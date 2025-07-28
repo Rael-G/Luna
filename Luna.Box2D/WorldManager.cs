@@ -1,4 +1,7 @@
-﻿using Box2DSharp.Dynamics;
+﻿using System.Collections.Concurrent;
+using System.Numerics;
+using Box2DSharp.Dynamics;
+using Luna.Maths;
 
 namespace Luna.Box2D;
 
@@ -24,7 +27,7 @@ public class WorldManager : Node
             return _instance;
         }
     }
-    
+
     public static float PixelsPerMeter { get; set; } = 1;
 
     private static readonly Dictionary<int, World> Worlds = [];
@@ -34,8 +37,27 @@ public class WorldManager : Node
 
     private static ContactListener _contactListener = new();
 
+    private static CancellationTokenSource? _physicsCancellationTokenSource;
+    private static Task? _physicsLoopTask;
+    private static readonly ConcurrentDictionary<string, (Vector2 Position, float Angle)> _physicsResultsBuffer = [];
+
+    private static float _accumulator;
+
     private WorldManager()
     {
+    }
+
+    public override void Start()
+    {
+        base.Start();
+
+        StartPhysicsLoopThread();
+    }
+
+    public override void FixedUpdate()
+    {
+        var collisionBodies = Tree.GetAllNodesOfType<CollisionBody2D>();
+        ApplyPhysicsResultsToGameObjects(collisionBodies);
     }
 
     public static World GetWorld(int worldIndex = 0)
@@ -63,15 +85,92 @@ public class WorldManager : Node
 
     public static void SetIterations(int worldIndex, Iteration iteration)
         => Iterations[worldIndex] = iteration;
-    
-    public override void FixedUpdate()
+
+    private static void StartPhysicsLoopThread()
     {
-        foreach(var pair in Worlds)
+        if (_physicsLoopTask != null && !_physicsLoopTask.IsCompleted)
+            return;
+
+        _physicsCancellationTokenSource = new CancellationTokenSource();
+        var token = _physicsCancellationTokenSource.Token;
+
+        _physicsLoopTask = Task.Run(async () =>
         {
-            var velocity = Iterations[pair.Key].Velocity;
-            var position = Iterations[pair.Key].Position;
-            pair.Value.Step(Physics.TimeStep, velocity, position);
-        }
+            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
+            long lastFrameTicks = stopWatch.ElapsedTicks;
+
+            while (!token.IsCancellationRequested)
+            {
+                long currentTicks = stopWatch.ElapsedTicks;
+                float deltaTime = (float)((currentTicks - lastFrameTicks) / (double)System.Diagnostics.Stopwatch.Frequency);
+                lastFrameTicks = currentTicks;
+
+                // Acumulador de tempo próprio para a física.
+                // Não dependa de Physics.Time.DeltaTime, pois ele é da thread principal.
+                _accumulator += deltaTime; // _accumulator aqui é um campo de WorldManager, não Physics
+
+                while (_accumulator >= Physics.TimeStep) // Usando Physics.TimeStep do Core
+                {
+                    // === EXECUÇÃO DO PASSO DE FÍSICA DO BOX2D ===
+                    foreach (var pair in Worlds)
+                    {
+                        var worldId = pair.Key;
+                        var worldInstance = pair.Value;
+                        var iteration = Iterations[worldId]; // Acessa diretamente o dictionary
+
+                        // Executa o Step do Box2D. Isto é feito SEQUENCIALMENTE para cada mundo,
+                        // mas todos os passos para TODOS os mundos acontecem NESTA thread de física.
+                        worldInstance.Step(Physics.TimeStep, iteration.Velocity, iteration.Position);
+
+                        // === COLETAR RESULTADOS E ENFILEIRAR PARA A THREAD PRINCIPAL ===
+                        foreach (var body in worldInstance.BodyList)
+                        {
+                            // Supondo que Body.UserData é o UID (Guid) do seu CollisionBody2D
+                            if (body.UserData is string bodyUid)
+                            {
+                                // Atualiza o buffer de resultados. ConcurrentDictionary é thread-safe.
+                                _physicsResultsBuffer[bodyUid] = (body.GetPosition(), body.GetAngle());
+                            }
+                        }
+                    }
+                    _accumulator -= Physics.TimeStep;
+                }
+
+                // Pequena pausa para evitar CPU 100%
+                await Task.Delay(1, token);
+            }
+        }, token);
     }
     
+    private static void StopPhysicsLoopThread()
+    {
+        _physicsCancellationTokenSource?.Cancel();
+        try
+        {
+            _physicsLoopTask?.Wait(); // Espera a tarefa de física terminar
+        }
+        catch (OperationCanceledException) { }
+        _physicsLoopTask = null;
+    }
+
+    private static void ApplyPhysicsResultsToGameObjects(IEnumerable<CollisionBody2D> gameBodies)
+    {
+        foreach (var body in gameBodies)
+        {
+            if (_physicsResultsBuffer.TryRemove(body.UID, out var result)) // TryRemove para consumir o dado
+            {
+                body.Transform.Position = result.Position.ToPixels().ToVector3();
+                body.Transform.Rotation = new (body.Transform.Rotation.X, body.Transform.Rotation.Y, result.Angle);
+            }
+        }
+    }
+
+    public override void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+
+        StopPhysicsLoopThread();
+
+        base.Dispose(disposing);
+    }
 }

@@ -70,16 +70,16 @@ public abstract class CollisionBody2D : Node
     }
 
     // Is constructed at CollisionBody2D.Awake()
-    protected Fixture? Fixture { get; set; } = null!;
+    internal protected Fixture? Fixture { get; set; } = null!;
 
     // Is constructed at CollisionBody2D.Awake()
-    protected Body? Body { get; set; } = null!;
+    internal protected Body? Body { get; set; } = null!;
 
-    protected BodyDef BodyDef;
+    internal protected BodyDef BodyDef;
 
-    protected FixtureDef FixtureDef;
+    internal protected FixtureDef FixtureDef;
 
-    private IShape2D? _shape;
+    internal protected IShape2D? _shape;
 
     public CollisionBody2D()
     {
@@ -89,14 +89,13 @@ public abstract class CollisionBody2D : Node
     public override void Awake()
     {
         CreateBody();
-        
-        base.Awake();
     }
 
     private void CreateBody()
     {
         var world = WorldManager.GetWorld(WorldIndex);
         Body = world.CreateBody(BodyDef);
+        Body.UserData = UID;
 
         if (Shape is null)
             throw new LunaBox2DException("Shape2D should be defined before CollisionBody2D.Awake().");

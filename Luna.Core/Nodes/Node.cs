@@ -143,12 +143,11 @@ public class Node : Disposable
     {
         if (_started) return;
         Start();
-        Task.Run(() => ExecuteAsync());
+        Task.Run(ExecuteAsync);
         OnStart?.Invoke();
-        OnExecuteAsync?.Invoke();
         if (OnExecuteAsync is not null)
         {
-            OnExecuteAsync();
+            Task.Run(async () => await OnExecuteAsync());
         }
         foreach (var child in Children)
         {
@@ -157,6 +156,21 @@ public class Node : Disposable
         _started = true;
     }
     
+    /*
+    protected override async Task ExecuteAsync()
+    {
+        while (Window.Running)
+        {
+            //await Task.Delay(1000);
+
+            Console.WriteLine($"[ExecuteAsync] Tempo Decorrido: {Time.ElapsedTime:F2} segundos. Executando em Thread ID: {Thread.CurrentThread.ManagedThreadId}");
+
+            await AwaitMainThread();
+
+            Console.WriteLine($"[ExecuteAsync] Retornou para a Thread ID: {Thread.CurrentThread.ManagedThreadId}. É a thread principal");
+        }
+    }
+    */
     protected virtual async Task ExecuteAsync()
     {
         await Task.CompletedTask;

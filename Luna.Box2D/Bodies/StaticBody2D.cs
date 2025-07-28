@@ -14,9 +14,9 @@ public class StaticBody2D
         BodyDef.BodyType = BodyType.StaticBody;
     }
 
-    public override void FixedUpdate()
+    public override void Start()
     {
-        Body.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
+        Body?.SetTransform(Transform.Position.ToMeters().ToVector2(), Transform.Rotation.Z);
         base.FixedUpdate();
     }
 }

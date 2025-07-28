@@ -5,18 +5,18 @@
 /// </summary>
 public static class Tree
 {
-    public static Node Root 
+    public static Node Root
     {
-         get => _root?? throw new LunaException("Root is null.");
-         internal set
-         {
+        get => _root ?? throw new LunaException("Root is null.");
+        internal set
+        {
             if (_root is not null)
             {
                 RemoveNode(_root.UID);
             }
             _root = value;
             AddNode(value);
-         }
+        }
     }
 
     private static Node? _root;
@@ -32,14 +32,14 @@ public static class Tree
     internal static void AddNode(Node node)
     {
         if (!IsDescendantOfRoot(node)) return;
-        
+
         _index[node.UID] = node;
         foreach (var child in node.Children)
         {
             AddNode(child);
         }
     }
- 
+
     internal static void RemoveNode(string uid)
     {
         var node = FindNodeByUID<Node>(uid);
@@ -64,4 +64,8 @@ public static class Tree
         }
         return false;
     }
+    
+    public static IEnumerable<T> GetAllNodesOfType<T>() where T : Node
+        => _index.Values.OfType<T>();
+    
 }
