@@ -159,10 +159,10 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
             _fbo.AttachTexture2D(msTexture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);
-            _fbo.CheckFrameBuffer("PostProcessor CreatePostProcessor MultiSample");
+            _fbo.CheckFrameBuffer();
 
             _intermediateFbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
-            _intermediateFbo.CheckFrameBuffer("PostProcessor CreatePostProcessor MultiSample Intermediate");
+            _intermediateFbo.CheckFrameBuffer();
         }
         else
         {
@@ -172,7 +172,7 @@ public class PostProcessor :  RenderObject<PostProcessorData>
 
             _fbo.AttachTexture2D(texture, FramebufferAttachment.ColorAttachment0);
             _fbo.AttachRenderBuffer(_rbo);
-            _fbo.CheckFrameBuffer("PostProcessor CreatePostProcessor");
+            _fbo.CheckFrameBuffer();
         }
 
         GlErrorUtils.CheckFrameBuffer(FramebufferTarget.Framebuffer);

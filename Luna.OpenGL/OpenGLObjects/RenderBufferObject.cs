@@ -52,7 +52,7 @@ public class RenderBufferObject : Disposable
     {
         Bind();
         _gl.FramebufferRenderbuffer(frameBufferType, _frameBufferAttachment, _renderBufferType, _handle);
-        GlErrorUtils.CheckFrameBuffer(frameBufferType, "RenderBufferObject AttachRenderBuffer");
+        GlErrorUtils.CheckFrameBuffer(frameBufferType);
     }
 
     public override void Dispose(bool disposing)

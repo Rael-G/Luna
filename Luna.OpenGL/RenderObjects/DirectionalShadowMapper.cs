@@ -91,7 +91,7 @@ public class DirectionalShadowMapper : ShadowMapper<DirectionalLight>
         GL.ReadBuffer(ReadBufferMode.None);
         FBO.Unbind();
 
-        FBO.CheckFrameBuffer("DirectionalShadowMapper");
+        FBO.CheckFrameBuffer();
         GlErrorUtils.CheckError("DirectionalShadowMapper CreateDepthMap");
     }
 

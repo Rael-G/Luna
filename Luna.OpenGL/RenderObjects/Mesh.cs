@@ -3,10 +3,10 @@ using Silk.NET.OpenGL;
 
 namespace Luna.OpenGL;
 
-public class Mesh : Disposable
+public unsafe class Mesh : Disposable
 {
     private static readonly GL GL = Window.GL ?? throw new WindowException("Window.GL is null.");
-    private static readonly uint _stride = (uint)Marshal.SizeOf(typeof(Vertex));
+    private static readonly uint _stride = (uint)(3 * sizeof(float) + 3 * sizeof(float) + 2 * sizeof(float) + 3 * sizeof(float));
 
     private readonly VertexArrayObject<Vertex, uint> _vao;
     private readonly BufferObject<uint> _ebo;
@@ -36,8 +36,7 @@ public class Mesh : Disposable
         GlErrorUtils.CheckError("Before Mesh Draw");
         GL.DrawElements(primitiveType, _size, DrawElementsType.UnsignedInt, new ReadOnlySpan<int>());
         if (GlErrorUtils.CheckError("Mesh Draw "))
-        {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
+        {            Console.BackgroundColor = ConsoleColor.DarkBlue;
         }
     }
 

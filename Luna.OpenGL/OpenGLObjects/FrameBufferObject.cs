@@ -79,10 +79,10 @@ public class FrameBufferObject : Disposable
         Unbind();
     }
 
-    public void CheckFrameBuffer(string location)
+    public void CheckFrameBuffer()
     {
         Bind();
-        GlErrorUtils.CheckFrameBuffer(FrameBufferType, location);
+        GlErrorUtils.CheckFrameBuffer(FrameBufferType);
         Unbind();
     }
 

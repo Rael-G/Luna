@@ -48,14 +48,11 @@ internal static class GlErrorUtils
             return true;
     }
 
-    public static bool CheckFrameBuffer(FramebufferTarget fboType, string issue = "")
+    public static bool CheckFrameBuffer(FramebufferTarget fboType)
     {
-        var status = _gl.CheckFramebufferStatus(fboType);
-        bool complete = status == GLEnum.FramebufferComplete;
+        var complete = _gl.CheckFramebufferStatus(fboType) == GLEnum.FramebufferComplete;
         if (!complete)
-        {
-            Console.WriteLine($"OpenGL FrameBuffer Error: {status}. " + (!string.IsNullOrEmpty(issue)? $" At {issue}.": ""));
-        }
+            Console.WriteLine("Framebuffer is not complete");
 
         return complete;
     }

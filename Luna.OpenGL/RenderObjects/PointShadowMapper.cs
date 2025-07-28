@@ -91,7 +91,7 @@ public class PointShadowMapper : ShadowMapper<PointLight>
         GL.ReadBuffer(ReadBufferMode.None);
         FBO.Unbind();
 
-        FBO.CheckFrameBuffer("PointShadowMapper");
+        FBO.CheckFrameBuffer();
         GlErrorUtils.CheckError("PointShadowMapper CreateDepthMap");
     }
 
